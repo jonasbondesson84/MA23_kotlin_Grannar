@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "985180069644",
+    "project_id": "grannar-e37a1",
+    "storage_bucket": "grannar-e37a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985180069644:android:372c98f7847ed8e7c5b329",
+        "android_client_info": {
+          "package_name": "com.example.grannar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiHd3l87ox7SRT3AL2eUjLgFOTsoIQ5C4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
