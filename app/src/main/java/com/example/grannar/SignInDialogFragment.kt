@@ -2,18 +2,20 @@ package com.example.grannar
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInDialogFragment() : DialogFragment() {
 
-    lateinit var emailEditText: EditText
-    lateinit var passwordEditText: EditText
+    private lateinit var emailEditText: EditText
+    private lateinit var passwordEditText: EditText
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
@@ -22,6 +24,7 @@ class SignInDialogFragment() : DialogFragment() {
         passwordEditText = view.findViewById(R.id.signInPasswordEditText)
         val singInButton = view.findViewById<Button>(R.id.signInButton)
         val cancelButton = view.findViewById<Button>(R.id.cancelSignInButton)
+        val signUpTextView = view.findViewById<TextView>(R.id.signUpTextView)
 
         cancelButton.setOnClickListener {
             dismiss()
@@ -31,13 +34,14 @@ class SignInDialogFragment() : DialogFragment() {
             signIn()
         }
 
+        signUpTextView.setOnClickListener {
+            val intent = Intent(activity, SignUpActivity::class.java)
+            startActivity(intent)
+        }
 
 
         val builder = AlertDialog.Builder(requireActivity())
-
-
         builder.setView(view)
-
         return builder.create()
 
     }
@@ -48,19 +52,17 @@ class SignInDialogFragment() : DialogFragment() {
 
 
         val auth = FirebaseAuth.getInstance()
-        auth.signInWithEmailAndPassword(email,password)
+        auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 Log.d("!!!", "Logged in")
                 dismiss()
-        }
+            }
             .addOnFailureListener {
                 Log.d("!!!", "Failure logging in!")
             }
 
 
     }
-
-
 
 
 }
