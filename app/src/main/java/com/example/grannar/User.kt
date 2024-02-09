@@ -5,7 +5,7 @@ import com.google.type.LatLng
 import java.util.Date
 
 class User(
-    @DocumentId val docID: String? = null,
+   // @DocumentId val docID: String? = null,
     var userID: String? = null,
     var firstName: String? = null,
     var surname: String? = null,

@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import androidx.annotation.StringRes
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -16,6 +16,7 @@ class SignUpActivity : AppCompatActivity() {
     lateinit var passwordEditText: EditText
     lateinit var confirmPasswordEditText: EditText
     lateinit var emailEditText: EditText
+    lateinit var genderRadioGroup: RadioGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +27,7 @@ class SignUpActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText)
         emailEditText = findViewById(R.id.emailEditText)
+        genderRadioGroup = findViewById(R.id.genderRadioGroup)
         findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener{
             finish()
         }
@@ -56,6 +58,7 @@ class SignUpActivity : AppCompatActivity() {
 
         val password = passwordEditText.text.toString()
         val email = emailEditText.text.toString()
+        val gender = getGender()
 
         auth.createUserWithEmailAndPassword(email, password). addOnCompleteListener {signUp ->
             if (signUp.isSuccessful){
@@ -63,7 +66,8 @@ class SignUpActivity : AppCompatActivity() {
                     userID = auth.currentUser?.uid,
                     firstName = firstNameEditText.text.toString(),
                     surname = surNameEditText.text.toString(),
-                    email = email
+                    email = email,
+                    gender = gender
                 )
                 newUser.userID?.let {uid ->
                     db.collection("users").document(uid).set(newUser).addOnSuccessListener {
@@ -74,10 +78,15 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    private fun getGender(): String {
+        val pickedRadioButtonID = genderRadioGroup.checkedRadioButtonId
+        return findViewById<RadioButton>(pickedRadioButtonID).text.toString()
+    }
+
     private fun checkInformation(): Boolean{
         if (firstNameEditText.text.isEmpty() || surNameEditText.text.isEmpty() ||
             passwordEditText.text.isEmpty() || confirmPasswordEditText.text.isEmpty() ||
-            emailEditText.text.isEmpty()
+            emailEditText.text.isEmpty() || genderRadioGroup.checkedRadioButtonId == -1
             ){
             return false
         }
