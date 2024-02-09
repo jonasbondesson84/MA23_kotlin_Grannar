@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-        <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+        <style name="Theme.Grannar" parent="Theme.Material3.Light.NoActionBar">
             <item name="colorPrimary">@color/md_theme_primary</item>
             <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
             <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -51,6 +51,6 @@
 
 
 
-    <style name="Theme.Grannar" parent="Base.Theme.Grannar" />
+
 
 </resources>
