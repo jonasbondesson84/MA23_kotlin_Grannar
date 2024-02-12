@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +37,24 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
+
+
+
+
+
+        val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
+        rvSearchList.layoutManager = LinearLayoutManager(view.context)
+        val adapter = SearchListAdapter(view.context, searchList)
+        rvSearchList.adapter = adapter
+
+        adapter.onUserClick = {
+            //findNavController().navigate(R.id.action_searchFragment_to_friendProfileFragment)
+        }
+
+
+
+        return view
     }
 
     companion object {
