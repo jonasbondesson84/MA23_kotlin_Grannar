@@ -1,12 +1,13 @@
 package com.example.grannar
 
+import com.google.firebase.firestore.DocumentId
 import com.google.type.LatLng
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
 class User(
-
+@DocumentId var docID: String,
     var userID: String? = null,
     var firstName: String? = null,
     var surname: String? = null,
@@ -18,9 +19,11 @@ class User(
     var interests: MutableList<Interests>? = null,
     var aboutMe: String? = null,
     var imageURLs: MutableList<String>? = null,
-    var friendsList: MutableList<String>? = null
+    var friendsList: MutableList<User>? = mutableListOf<User>()
 
     ) {
+    constructor() : this("", null, null, null, null, null, null, null, null, null, null, null, null)
+
 
     fun getBirthDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
