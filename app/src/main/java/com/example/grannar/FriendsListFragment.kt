@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +32,11 @@ class FriendsListFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var adapter: SearchListAdapter
+    private val Int.dp
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            toFloat(), resources.displayMetrics
+        ).roundToInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +53,8 @@ class FriendsListFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_friends_list, container, false)
         val displayMetrics: DisplayMetrics = resources.displayMetrics
-        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
+        var deleteIcon = resources.getDrawable(R.drawable.baseline_delete_24, null)
 
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchListFriends)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
@@ -65,7 +73,6 @@ class FriendsListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 Log.d("!!!", "swiped")
                 showDeleteDialog(view, viewHolder.adapterPosition)
-                //adapter.removeFriend(viewHolder.adapterPosition)
 
             }
 
@@ -83,7 +90,19 @@ class FriendsListFragment : Fragment() {
 
                     else -> c.drawColor(Color.RED)
                 }
+                val textMargin = 16.dp
+                val desiredIconSize = 40.dp
+                val iconWidth = desiredIconSize
+                val iconHeight = desiredIconSize
 
+                val iconLeft = width - textMargin - iconWidth
+                val iconRight = width - textMargin
+                val iconTop = viewHolder.itemView.top + textMargin + 8.dp
+                val iconBottom = iconTop + iconHeight
+
+                deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                deleteIcon.draw(c)
 
                 super.onChildDraw(
                     c,

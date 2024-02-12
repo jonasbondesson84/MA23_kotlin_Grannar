@@ -19,10 +19,10 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.friend_name)
-        val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
         val tvAge: TextView = itemView.findViewById(R.id.age)
         val addFriend: LinearLayout = itemView.findViewById(R.id.addFriend_linearLayout)
-//        val tvAddFriend: TextView = itemView.findViewById(R.id.friend_request_icon)
+        val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
+
     }
 
     override fun onCreateViewHolder(
@@ -42,14 +42,16 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
         if(selectedUser in CurrentUser.friendsList) {
             holder.addFriend.visibility = View.INVISIBLE
-//            holder.btnAddFriend.visibility = View.INVISIBLE
-//            holder.tvAddFriend.visibility = View.INVISIBLE
+
         }
 
         holder.itemView.setOnClickListener {
             onUserClick?.invoke(selectedUser)
         }
         holder.btnAddFriend.setOnClickListener {
+            saveFriend(selectedUser, position)
+        }
+        holder.addFriend.setOnClickListener {
 
             saveFriend(selectedUser, position)
 
