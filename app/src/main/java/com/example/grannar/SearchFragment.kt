@@ -1,13 +1,15 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +25,7 @@ class SearchFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var searchList = mutableListOf<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +33,22 @@ class SearchFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        createDummySearchList()
+
+    }
+    private fun createDummySearchList() {
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        searchList.add(User(firstName = "Jonas", userID = "userID1", age = "1950/01/12"))
+        Log.d("!!!", Date(1990, 0, 12).toString())
+        searchList.add(User(firstName = "Frida", userID = "userID2", age = "1970/01/12"))
+        searchList.add(User(firstName = "Kristian", userID = "userID3", age = "1990/01/12"))
+        searchList.add(User(firstName = "Wed", userID = "userID4", age = "1990/01/12"))
+
+        CurrentUser.firstName = "Jonas"
+        CurrentUser.surname = "Bondesson"
+
+
     }
 
     override fun onCreateView(
@@ -49,7 +68,7 @@ class SearchFragment : Fragment() {
         rvSearchList.adapter = adapter
 
         adapter.onUserClick = {
-            //findNavController().navigate(R.id.action_searchFragment_to_friendProfileFragment)
+
         }
 
 
