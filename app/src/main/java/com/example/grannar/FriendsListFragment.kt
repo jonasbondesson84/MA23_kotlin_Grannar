@@ -123,7 +123,7 @@ class FriendsListFragment : Fragment() {
                 .show()
         }
     }
-    
+
 
     companion object {
         /**
