@@ -2,14 +2,16 @@ package com.example.grannar
 
 import com.google.firebase.firestore.DocumentId
 import com.google.type.LatLng
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 class User(
-   // @DocumentId val docID: String? = null,
+
     var userID: String? = null,
     var firstName: String? = null,
     var surname: String? = null,
-    var age: Date? = null,
+    var age: String? = null,
     var location: LatLng? = null,
     var email: String? = null,
     var gender: String? = null,
@@ -21,4 +23,8 @@ class User(
 
     ) {
 
+    fun getBirthDate(): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        return LocalDate.parse(age, formatter)
+    }
 }
