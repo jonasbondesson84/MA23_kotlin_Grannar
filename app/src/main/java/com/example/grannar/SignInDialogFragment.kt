@@ -2,6 +2,7 @@ package com.example.grannar
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,12 @@ class SignInDialogFragment() : DialogFragment() {
 
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var signInResultListener: SignInResultListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        signInResultListener = requireActivity() as SignInResultListener
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
@@ -27,6 +34,7 @@ class SignInDialogFragment() : DialogFragment() {
         val signUpTextView = view.findViewById<TextView>(R.id.signUpTextView)
 
         cancelButton.setOnClickListener {
+            signInResultListener.onSignInFailure()
             dismiss()
         }
 
@@ -55,10 +63,13 @@ class SignInDialogFragment() : DialogFragment() {
         val auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                signInResultListener.onSignInSuccess()
                 CurrentUser.loadUserInfo(auth.uid.toString())
+
                 dismiss()
             }
             .addOnFailureListener {
+
                 Log.d("!!!", "Failure logging in!")
             }
     }
