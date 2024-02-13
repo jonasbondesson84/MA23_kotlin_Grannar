@@ -32,13 +32,14 @@ class SignInDialogFragment() : DialogFragment() {
 
         singInButton.setOnClickListener {
             signIn()
+            dismiss()
         }
 
         signUpTextView.setOnClickListener {
             val intent = Intent(activity, SignUpActivity::class.java)
             startActivity(intent)
+            dismiss()
         }
-
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
@@ -54,15 +55,10 @@ class SignInDialogFragment() : DialogFragment() {
         val auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                Log.d("!!!", "Logged in")
                 dismiss()
             }
             .addOnFailureListener {
                 Log.d("!!!", "Failure logging in!")
             }
-
-
     }
-
-
 }
