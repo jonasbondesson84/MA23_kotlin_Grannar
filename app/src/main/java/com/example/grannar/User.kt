@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter
 
 
 data class User(
-    @DocumentId var docID: String,
+    @DocumentId var docID: String? = null,
 
     var userID: String? = null,
     var firstName: String? = null,
@@ -25,7 +25,7 @@ data class User(
     var friendsList: MutableList<User>? = mutableListOf<User>()
 
     ) {
-    constructor() : this("", null, null, null, null, null, null, null, null, null, null, null, null)
+   // constructor() : this("", null, null, null, null, null, null, null, null, null, null, null, null)
 
 
     @Exclude

@@ -55,10 +55,13 @@ class SignInDialogFragment() : DialogFragment() {
         val auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                CurrentUser.loadUserInfo(auth.uid.toString())
                 dismiss()
             }
             .addOnFailureListener {
                 Log.d("!!!", "Failure logging in!")
             }
     }
+
+
 }

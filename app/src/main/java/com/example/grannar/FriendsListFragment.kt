@@ -58,8 +58,9 @@ class FriendsListFragment : Fragment() {
 
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchListFriends)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
+        Log.d("!!!", CurrentUser.friendsList.toString())
 
-        adapter = SearchListAdapter(view.context, CurrentUser.friendsList)
+        adapter = CurrentUser.friendsList?.let { SearchListAdapter(view.context, it) } ?: SearchListAdapter(view.context, mutableListOf())
         rvSearchList.adapter = adapter
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
             override fun onMove(
@@ -129,7 +130,7 @@ class FriendsListFragment : Fragment() {
         context?.let {
             MaterialAlertDialogBuilder(it)
                 .setTitle("Warning")
-                .setMessage("Do you want to remove ${CurrentUser.friendsList[adapterPosition].firstName} from your friendlist?")
+                .setMessage("Do you want to remove ${CurrentUser.friendsList?.get(adapterPosition)?.firstName} from your friendlist?")
                 .setNegativeButton("No") { dialog, which ->
                     // Respond to negative button press
                     adapter.notifyDataSetChanged()
