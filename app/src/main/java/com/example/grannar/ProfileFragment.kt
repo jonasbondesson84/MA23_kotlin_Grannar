@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+
+private lateinit var userProfile: User
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +38,18 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+
+        val view = inflater.inflate(R.layout.fragment_profile,container,false)
+
+
+
+        val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
+        val genderTextView = view.findViewById<TextView>(R.id.genderTextView)
+        val ageTextView = view.findViewById<TextView>(R.id.ageTextView)
+        val locationTextView = view.findViewById<TextView>(R.id.locationTextView)
+
+
+        return view
     }
 
     companion object {
