@@ -64,6 +64,8 @@ class SignInDialogFragment() : DialogFragment() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 signInResultListener.onSignInSuccess()
+                CurrentUser.loadUserInfo(auth.uid.toString())
+
                 dismiss()
             }
             .addOnFailureListener {
@@ -71,4 +73,6 @@ class SignInDialogFragment() : DialogFragment() {
                 Log.d("!!!", "Failure logging in!")
             }
     }
+
+
 }

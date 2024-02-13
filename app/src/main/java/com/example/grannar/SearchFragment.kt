@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
@@ -43,32 +45,18 @@ class SearchFragment : Fragment() {
 
 
     }
-//    private fun createDummySearchList() {
-//
-//        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-//        searchList.add(User(firstName = "Jonas", userID = "userID1", age = "1950/01/12"))
-//        Log.d("!!!", Date(1990, 0, 12).toString())
-//        searchList.add(User(firstName = "Frida", userID = "userID2", age = "1970/01/12"))
-//        searchList.add(User(firstName = "Kristian", userID = "userID3", age = "1990/01/12"))
-//        searchList.add(User(firstName = "Wed", userID = "userID4", age = "1990/01/12"))
-//
-//        CurrentUser.firstName = "Jonas"
-//        CurrentUser.surname = "Bondesson"
-//
-//
-//    }
 
     private fun getUsersList() {
         searchList.clear()
         Log.d("!!!", db.toString())
+
         db.collection("users").get().addOnSuccessListener { result ->
             for ((i, document) in result.withIndex()) {
                 Log.d("!!!", "${document.id} => ${document.data}")
                 val user = document.toObject<User>()
                 searchList.add(user)
-                adapter.notifyItemInserted(i)
+                adapter.notifyItemChanged(i)
             }
-
         }
 
             .addOnFailureListener { exception ->
@@ -84,17 +72,25 @@ class SearchFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
-
+        val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
 
         rvSearchList.adapter = adapter
+        //getUsersList()
+
 
 
         adapter.onUserClick = {
 
         }
-
+        btnGetuser.setOnClickListener {
+            //adapter.notifyDataSetChanged()
+            //getUsersList()
+            val auth = Firebase.auth
+            CurrentUser.clearUser()
+            auth.signOut()
+        }
 
 
         return view

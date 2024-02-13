@@ -2,7 +2,6 @@ package com.example.grannar
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -10,8 +9,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 
 
 interface SignInResultListener {
@@ -33,8 +30,13 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         val navController = findNavController(R.id.nav_host_fragment)
 
 
+        //Gets logged in users from database and save it to CurrentUser
         val auth = FirebaseAuth.getInstance()
-        auth.signOut()
+        if( auth.currentUser != null) {
+            CurrentUser.loadUserInfo(auth.uid.toString())
+        }
+
+
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, bundle ->
 
