@@ -2,6 +2,7 @@
 package com.example.grannar
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +45,8 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
 
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
-        if(selectedUser in CurrentUser.friendsList) {
+
+        if(CurrentUser.friendsList?.any{it.userID == selectedUser.userID} == true) {
             holder.addFriend.visibility = View.INVISIBLE
 
         }
@@ -87,15 +89,13 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
             FieldValue.arrayRemove(userMap)
         )
 
-        CurrentUser.friendsList.remove(selectedUser)
+        CurrentUser.friendsList?.remove(selectedUser)
         notifyItemRemoved(position)
     }
 
     private fun saveFriend(friend: User, position: Int) {
-        CurrentUser.friendsList.add(friend)
-        CurrentUser.userID="bJZDtEbTLAN0iFOYwr8Hsds41V62"
-        var i = 0
-
+        CurrentUser.friendsList?.add(friend)
+        Log.d("!!!", CurrentUser.userID.toString())
         val userMap = mapOf(
             "userID" to friend.userID,
             "firstName" to friend.firstName,
@@ -114,7 +114,9 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         db.collection("users").document(CurrentUser.userID.toString()).update(
                 "friendsList",
                 FieldValue.arrayUnion(userMap)
-            )
+            ).addOnCompleteListener {
+                Log.d("!!!", "saved friend")
+        }
 
         notifyItemChanged(position)
     }
@@ -123,11 +125,4 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         return searchList.size
     }
 
-    private fun createFriendsListJSON() {
-
-    }
-
-    private fun collectFriendsListFromJSON() {
-
-    }
 }

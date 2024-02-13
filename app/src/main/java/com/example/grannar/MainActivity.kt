@@ -2,14 +2,11 @@ package com.example.grannar
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +15,12 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = findNavController(R.id.nav_host_fragment)
+
+        //Gets logged in users from database and save it to CurrentUser
+        val auth = FirebaseAuth.getInstance()
+        if( auth.currentUser != null) {
+            CurrentUser.loadUserInfo(auth.uid.toString())
+        }
 
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
