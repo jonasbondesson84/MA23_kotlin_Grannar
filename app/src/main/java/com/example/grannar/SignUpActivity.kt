@@ -116,7 +116,7 @@ class SignUpActivity : AppCompatActivity() {
         val calenderConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
 
-        // Andra kalendern
+
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Birthdate")
@@ -128,9 +128,9 @@ class SignUpActivity : AppCompatActivity() {
         datePicker.addOnPositiveButtonClickListener {
             if (datePicker.selection != null) {
                 val selectedDate = Date(datePicker.selection as Long)
-                val formatedDate =
+                val formattedDate =
                     SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(selectedDate)
-                birthdayEditText.setText(formatedDate)
+                birthdayEditText.setText(formattedDate)
                 birthDate = selectedDate
             }
         }
