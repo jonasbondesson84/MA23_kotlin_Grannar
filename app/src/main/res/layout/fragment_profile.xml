@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Profile"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="37dp" />
+            tools:layout_editor_absoluteX="77dp"
+            tools:layout_editor_absoluteY="16dp" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
@@ -29,7 +29,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -94,18 +94,34 @@
                     android:text="location"
                     app:layout_constraintStart_toEndOf="@+id/profileImageView"
                     app:layout_constraintTop_toBottomOf="@+id/ageTextView" />
+
+                <ImageButton
+                    android:id="@+id/imageButton6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/baseline_edit_24" />
+
             </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/imageButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/baseline_add_a_photo_24" />
+
         </RelativeLayout>
 
         <TextView
             android:id="@+id/squareTextView"
             android:layout_width="344dp"
             android:layout_height="72dp"
-            android:layout_marginTop="29dp"
+            android:layout_marginTop="28dp"
             android:background="@drawable/box"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.54"
+            app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
@@ -166,18 +182,18 @@
 
         <ImageView
             android:id="@+id/personalImageView"
-            android:layout_width="344dp"
-            android:layout_height="200dp"
+            android:layout_width="324dp"
+            android:layout_height="190dp"
             android:scaleType="fitCenter"
             android:src="@drawable/img_album"
             app:civ_border_color="#00201B"
             app:civ_border_width="3dp"
             app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
             app:layout_constraintEnd_toEndOf="@+id/frameImageView"
-            app:layout_constraintHorizontal_bias="0.565"
+            app:layout_constraintHorizontal_bias="0.437"
             app:layout_constraintStart_toStartOf="@+id/frameImageView"
             app:layout_constraintTop_toTopOf="@+id/frameImageView"
-            app:layout_constraintVertical_bias="0.553" />
+            app:layout_constraintVertical_bias="0.437" />
 
         <TextView
             android:id="@+id/interest1TextView"
@@ -240,6 +256,43 @@
             android:text="TextView"
             app:layout_constraintEnd_toEndOf="@+id/squareTextView"
             app:layout_constraintTop_toBottomOf="@+id/interest3TextView" />
+
+        <ImageButton
+            android:id="@+id/chooseImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/baseline_add_a_photo_24"
+            app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
+            app:layout_constraintEnd_toEndOf="@+id/frameImageView"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/frameImageView"
+            app:layout_constraintTop_toTopOf="@+id/frameImageView"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="49dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="160dp"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/baseline_person_add_alt_1_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/imageButton3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/baseline_message_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.713"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,10 @@
 package com.example.grannar
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +12,16 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 
 private lateinit var userProfile: User
 val db = Firebase.firestore
-
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,19 +39,26 @@ class ProfileFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val PICK_IMAGE_REQUEST = 1
+    private var imageUri: Uri? = null
+    private var personalImageView: ImageView? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+             super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+            }
         }
-    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
@@ -59,6 +71,13 @@ class ProfileFragment : Fragment() {
         val aboutMeEditText = view.findViewById<EditText>(R.id.about_meEditText)
         //val saveAboutMeButton =view.findViewById<Button>(R.id.saveAboutMeButton)
 
+        //Anv ska kunna ladda upp en övrig bild
+        val chooseImageButton = view.findViewById<Button>(R.id.chooseImageButton)
+        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+
+        chooseImageButton.setOnClickListener {
+            openImageChooser()
+        }
 
 
         getUserInfo { user ->
@@ -76,7 +95,6 @@ class ProfileFragment : Fragment() {
                         Log.d("!!!", "savebutton")
                         saveAboutMe(aboutMeEditText.text.toString())
                         return@setOnEditorActionListener true
-
                     }
                     false
                     }
@@ -85,7 +103,6 @@ class ProfileFragment : Fragment() {
                 showGender.text=" "
                 showAge.text=" "
                 showLocation.text=" "
-
                 showInterest(null)
             }
         }
@@ -98,7 +115,44 @@ class ProfileFragment : Fragment() {
     //funktioner
 
 
-   private fun getUserInfo(callback: (User?) -> Unit) {
+
+    private fun openImageChooser() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            imageUri = data.data
+            personalImageView?.setImageURI(imageUri)
+
+            uploadImageToFirebase()
+        }
+    }
+
+    private fun uploadImageToFirebase(){
+        if (imageUri != null) {
+            val storageRef = FirebaseStorage.getInstance().reference
+            val imageRef = storageRef.child("images/${userProfile.userID}/profileImage.jpg")
+
+            imageRef.putFile(imageUri!!)
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener {e ->
+
+                }
+        }
+    }
+
+
+
+
+
+
+
+    private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document("K2clKql2GHhX3ZKyErAiG3axf6r2")
         //documentPath kommer behöva ändras sedan till den anv som är inloggad.
 
