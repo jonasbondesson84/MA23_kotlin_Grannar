@@ -1,12 +1,11 @@
 package com.example.grannar
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -89,7 +88,9 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { signUp ->
             if (signUp.isSuccessful) {
                 val newUser = User(
+                    docID = "",
                     userID = auth.currentUser?.uid,
+
                     firstName = firstNameEditText.text.toString(),
                     surname = surNameEditText.text.toString(),
                     email = email,

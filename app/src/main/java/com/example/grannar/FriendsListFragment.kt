@@ -1,10 +1,21 @@
 package com.example.grannar
 
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +31,12 @@ class FriendsListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var adapter: SearchListAdapter
+    private val Int.dp
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            toFloat(), resources.displayMetrics
+        ).roundToInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +51,98 @@ class FriendsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_friends_list, container, false)
+        val displayMetrics: DisplayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
+        var deleteIcon = resources.getDrawable(R.drawable.baseline_delete_24, null)
+
+        val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchListFriends)
+        rvSearchList.layoutManager = LinearLayoutManager(view.context)
+
+        adapter = SearchListAdapter(view.context, CurrentUser.friendsList)
+        rvSearchList.adapter = adapter
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                Log.d("!!!", "swiped")
+                showDeleteDialog(view, viewHolder.adapterPosition)
+
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                when {
+                    abs(dX) < width / 3 -> c.drawColor(Color.GRAY)
+
+                    else -> c.drawColor(Color.RED)
+                }
+                val textMargin = 16.dp
+                val desiredIconSize = 40.dp
+                val iconWidth = desiredIconSize
+                val iconHeight = desiredIconSize
+
+                val iconLeft = width - textMargin - iconWidth
+                val iconRight = width - textMargin
+                val iconTop = viewHolder.itemView.top + textMargin + 8.dp
+                val iconBottom = iconTop + iconHeight
+
+                deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                deleteIcon.draw(c)
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+
+        })
+        itemTouchHelper.attachToRecyclerView(rvSearchList)
+
+//        adapter.onUserClick = {
+//            findNavController().navigate(R.id.)
+//        }
+
+
+        return view
     }
+    private fun showDeleteDialog(view: View, adapterPosition: Int) {
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle("Warning")
+                .setMessage("Do you want to remove ${CurrentUser.friendsList[adapterPosition].firstName} from your friendlist?")
+                .setNegativeButton("No") { dialog, which ->
+                    // Respond to negative button press
+                    adapter.notifyDataSetChanged()
+                }
+                .setPositiveButton("Yes") { dialog, which ->
+                    // Respond to positive button press
+                    adapter.removeFriend(adapterPosition)
+
+                }
+                .show()
+        }
+    }
+
 
     companion object {
         /**
