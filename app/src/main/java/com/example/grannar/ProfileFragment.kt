@@ -78,21 +78,18 @@ class ProfileFragment : Fragment() {
 
     fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document("K2clKql2GHhX3ZKyErAiG3axf6r2")
+        //documentPath kommer behöva ändras sedan till den anv som är inloggad.
 
         docRef.addSnapshotListener { snapshot, e ->
 
             if (e != null) {
                 callback(null)
-                Log.d("!!!" ,"snapshotError: ${e.message}")
                 return@addSnapshotListener
             }
             if (snapshot != null && snapshot.exists()) {
-                Log.d("!!!", "snapshot: ${snapshot}")
                 val user = snapshot.toObject(User::class.java)
-                Log.d("!!!", "user ${user?.firstName}")
                 callback(user)
             } else {
-                Log.d("!!!", "else callback null")
                 callback(null)
             }
             //val user = documentSnapshot.toObject<User>()
