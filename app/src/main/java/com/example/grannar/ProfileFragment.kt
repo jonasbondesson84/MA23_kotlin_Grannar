@@ -5,7 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -52,6 +56,9 @@ class ProfileFragment : Fragment() {
         val showAge = view.findViewById<TextView>(R.id.ageTextView)
         val showLocation = view.findViewById<TextView>(R.id.locationTextView)
 
+        val aboutMeEditText = view.findViewById<EditText>(R.id.about_meEditText)
+        //val saveAboutMeButton =view.findViewById<Button>(R.id.saveAboutMeButton)
+
 
 
         getUserInfo { user ->
@@ -59,12 +66,27 @@ class ProfileFragment : Fragment() {
                 showName.text = user?.firstName
                 showGender.text = user?.gender
                 showAge.text = user?.age
-                showLocation.text = user?.location?.toString() ?: "N/A"
-            }else {
-                showName.text="N/A"
-                showGender.text="N/A"
-                showAge.text="N/A"
-                showLocation.text="N/A"
+                showLocation.text = user?.location?.toString() ?: "none location to show"
+
+                showInterest(user.interests)
+                aboutMeEditText.setText(user.aboutMe)
+
+                aboutMeEditText.setOnEditorActionListener{ _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        Log.d("!!!", "savebutton")
+                        saveAboutMe(aboutMeEditText.text.toString())
+                        return@setOnEditorActionListener true
+
+                    }
+                    false
+                    }
+                } else {
+                showName.text=" "
+                showGender.text=" "
+                showAge.text=" "
+                showLocation.text=" "
+
+                showInterest(null)
             }
         }
 
@@ -76,7 +98,7 @@ class ProfileFragment : Fragment() {
     //funktioner
 
 
-    fun getUserInfo(callback: (User?) -> Unit) {
+   private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document("K2clKql2GHhX3ZKyErAiG3axf6r2")
         //documentPath kommer behöva ändras sedan till den anv som är inloggad.
 
@@ -96,8 +118,46 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun showInterest(interests: MutableList<Interests>?) {
+
+        val interest1TextView = view?.findViewById<TextView>(R.id.interest1TextView)
+        val interest2TextView = view?.findViewById<TextView>(R.id.interest2TextView)
+        val interest3TextView = view?.findViewById<TextView>(R.id.interest3TextView)
+        val interest4TextView = view?.findViewById<TextView>(R.id.interest4TextView)
+        val interest5TextView = view?.findViewById<TextView>(R.id.interest5TextView)
+        val interest6TextView = view?.findViewById<TextView>(R.id.interest6TextView)
 
 
+        if (interests != null && interests.size >= 6){
+            interest1TextView?.text = interests[0].name
+            interest2TextView?.text = interests[1].name
+            interest3TextView?.text = interests[2].name
+            interest4TextView?.text = interests[3].name
+            interest5TextView?.text = interests[4].name
+            interest6TextView?.text = interests[5].name
+        } else{
+            interest1TextView?.text = " "
+            interest2TextView?.text = " "
+            interest3TextView?.text = " "
+            interest4TextView?.text = " "
+            interest5TextView?.text = " "
+            interest6TextView?.text = " "
+        }
+    }
+
+private fun saveAboutMe(newAboutMe: String) {
+
+    val userId = "K2clKql2GHhX3ZKyErAiG3axf6r2"
+    val userRef = db.collection("users").document(userId)
+    userRef.update("aboutMe", newAboutMe)
+        .addOnSuccessListener {
+            Log.d("!!!", "success about me ${db}")
+            Toast.makeText(requireContext(), "About me updated successfully", Toast.LENGTH_SHORT).show()
+        } .addOnFailureListener{
+            Log.d("!!!", "Error updating About Me ${db}")
+            Toast.makeText(requireContext(), "Failed to update About Me", Toast.LENGTH_SHORT).show()
+        }
+}
 
 
 
