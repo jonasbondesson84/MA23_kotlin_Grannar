@@ -44,8 +44,11 @@ class SignInDialogFragment() : DialogFragment() {
         }
 
         signUpTextView.setOnClickListener {
-            val intent = Intent(activity, SignUpActivity::class.java)
-            startActivity(intent)
+            signInResultListener.onSignUpPress()
+
+//            val intent = Intent(activity, SignUpActivity::class.java)
+//
+//            startActivity(intent)
             dismiss()
         }
 
