@@ -63,12 +63,12 @@ class ProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
 
-        val showName = view.findViewById<TextView>(R.id.friendProfileNameTextView)
-        val showGender = view.findViewById<TextView>(R.id.friendProfileGenderTextView)
-        val showAge = view.findViewById<TextView>(R.id.friendProfileAgeTextView)
-        val showLocation = view.findViewById<TextView>(R.id.friendProfileLocationTextView)
+        val showName = view.findViewById<TextView>(R.id.profileNameTextView)
+        val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
+        val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
+        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
 
-        val aboutMeEditText = view.findViewById<EditText>(R.id.about_meEditText)
+        val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         //val saveAboutMeButton =view.findViewById<Button>(R.id.saveAboutMeButton)
 
         //Anv ska kunna ladda upp en övrig bild
