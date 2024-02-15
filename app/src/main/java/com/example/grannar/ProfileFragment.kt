@@ -42,6 +42,7 @@ class ProfileFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
     private var personalImageView: ImageView? = null
+    private var interestTextViewList = mutableListOf<TextView>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +75,15 @@ class ProfileFragment : Fragment() {
         //Anv ska kunna ladda upp en övrig bild
         val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+
+
+        interestTextViewList.add(view.findViewById(R.id.interest1TextView))
+        interestTextViewList.add(view.findViewById(R.id.interest2TextView))
+        interestTextViewList.add(view.findViewById(R.id.interest3TextView))
+        interestTextViewList.add(view.findViewById(R.id.interest4TextView))
+        interestTextViewList.add(view.findViewById(R.id.interest5TextView))
+        interestTextViewList.add(view.findViewById(R.id.interest6TextView))
+
 
         chooseImageButton.setOnClickListener {
             openImageChooser()
@@ -172,7 +182,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun showInterest(interests: MutableList<Interests>?) {
+    private fun showInterest(interests: MutableList<Interest>?) {
 
         val interest1TextView = view?.findViewById<TextView>(R.id.interest1TextView)
         val interest2TextView = view?.findViewById<TextView>(R.id.interest2TextView)
@@ -195,8 +205,21 @@ class ProfileFragment : Fragment() {
             interest3TextView?.text = " "
             interest4TextView?.text = " "
             interest5TextView?.text = " "
-            interest6TextView?.text = " "
+            interest6TextView?.text = getString(R.string.add_interest)
+            interest6TextView?.setOnClickListener {
+                Log.d("!!!", "Start Dialogfragment")
+                val dialogFragment = AddInterestDialogFragment()
+                dialogFragment.show(parentFragmentManager, "AddInterestFragment")
+            }
         }
+    }
+
+    private fun showInterestsWithColor(interests: MutableList<Interest>?){
+
+
+
+
+
     }
 
 private fun saveAboutMe(newAboutMe: String) {
