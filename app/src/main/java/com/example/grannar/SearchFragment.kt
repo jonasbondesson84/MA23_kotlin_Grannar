@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
@@ -82,6 +83,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
         adapter.onUserClick = {
+            val uid = it.userID
+            if(uid != null) {
+                val action =
+                    SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
+                findNavController().navigate(action)
+            }
 
         }
         btnGetuser.setOnClickListener {
@@ -124,7 +131,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
     }
 
-    override fun onItemClicked(user: User) {
+    override fun onAddFriendsListener(user: User) {
         openDialogFragment()
     }
 

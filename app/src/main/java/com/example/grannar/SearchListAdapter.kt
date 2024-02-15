@@ -20,7 +20,7 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
     private val db = Firebase.firestore
 
     interface MyAdapterListener {
-        fun onItemClicked(user: User)
+        fun onAddFriendsListener(user: User)
     }
 
     var onUserClick: ((User) -> Unit)? = null
@@ -55,20 +55,25 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         }
 
         holder.itemView.setOnClickListener {
-            onUserClick?.invoke(selectedUser)
+
+            if(CurrentUser.userID != null) {
+                onUserClick?.invoke(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
         }
         holder.btnAddFriend.setOnClickListener {
             if(CurrentUser.userID != null) {
             saveFriend(selectedUser, position)
             } else {
-                listener.onItemClicked(selectedUser)
+                listener.onAddFriendsListener(selectedUser)
             }
         }
         holder.addFriend.setOnClickListener {
             if(CurrentUser.userID != null) {
                 saveFriend(selectedUser, position)
             } else {
-                listener.onItemClicked(selectedUser)
+                listener.onAddFriendsListener(selectedUser)
             }
         }
 

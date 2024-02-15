@@ -8,7 +8,15 @@
         android:id="@+id/searchFragment"
         android:name="com.example.grannar.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_friendProfileFragment"
+            app:destination="@id/friendProfileFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/friendsListFragment"
         android:name="com.example.grannar.FriendsListFragment"
@@ -17,10 +25,28 @@
         <action
             android:id="@+id/action_friendsListFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_friendsListFragment_to_friendProfileFragment"
+            app:destination="@id/friendProfileFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.grannar.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/friendProfileFragment"
+        android:name="com.example.grannar.FriendProfileFragment"
+        android:label="fragment_friend_profile"
+        tools:layout="@layout/fragment_friend_profile" >
+        <argument
+            android:name="userID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>
