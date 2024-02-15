@@ -34,7 +34,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/friendProfileImageView"
+                android:id="@+id/profileImageView"
                 android:layout_width="135dp"
                 android:layout_height="142dp"
                 android:layout_alignParentStart="true"
@@ -50,13 +50,13 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/friendProfileImageView"
+                android:layout_alignTop="@+id/profileImageView"
                 android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/friendProfileImageView"
+                android:layout_toEndOf="@+id/profileImageView"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/friendProfileNameTextView"
+                    android:id="@+id/profileNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
@@ -67,26 +67,26 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/friendProfileGenderTextView"
+                    android:id="@+id/profileGenderTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
                     android:text="gender"
-                    app:layout_constraintStart_toEndOf="@+id/friendProfileImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/friendProfileNameTextView" />
+                    app:layout_constraintStart_toEndOf="@+id/profileImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/profileNameTextView" />
 
                 <TextView
-                    android:id="@+id/friendProfileAgeTextView"
+                    android:id="@+id/profileAgeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="8dp"
                     android:text="age"
-                    app:layout_constraintStart_toEndOf="@+id/friendProfileImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/friendProfileGenderTextView" />
+                    app:layout_constraintStart_toEndOf="@+id/profileImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/profileGenderTextView" />
 
                 <TextView
-                    android:id="@+id/friendProfileLocationTextView"
+                    android:id="@+id/profileLocationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
@@ -128,7 +128,7 @@
             app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
         <EditText
-            android:id="@+id/friendProfileAbout_meTextView"
+            android:id="@+id/profileAbout_meEditText"
             android:layout_width="344dp"
             android:layout_height="117dp"
             android:layout_marginTop="29dp"
@@ -162,7 +162,7 @@
             android:text="About me:"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/friendProfileAbout_meTextView"
+            app:layout_constraintBottom_toTopOf="@+id/profileAbout_meEditText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.132"
             app:layout_constraintStart_toStartOf="parent"
@@ -180,7 +180,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.565"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friendProfileAbout_meTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/profileAbout_meEditText"/>
 
         <ImageView
             android:id="@+id/personalImageView"
