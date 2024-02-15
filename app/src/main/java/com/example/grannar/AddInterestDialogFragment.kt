@@ -17,11 +17,16 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import javax.security.auth.callback.Callback
 
+interface AddedInterestCallback{
+    fun interestAdded()
+}
 class AddInterestDialogFragment(): DialogFragment() {
 
     lateinit var tvInterestName: TextView
     lateinit var autoCompleteTextView: AutoCompleteTextView
+    private var interestCallback: AddedInterestCallback? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
@@ -30,6 +35,7 @@ class AddInterestDialogFragment(): DialogFragment() {
         tvInterestName = view.findViewById(R.id.tvInterestName)
         autoCompleteTextView = view.findViewById(R.id.dropDown)
         autoCompleteTextView.setAdapter(adapter)
+
 
         view.findViewById<Button>(R.id.interestCancelButton).setOnClickListener {
             dismiss()
@@ -66,13 +72,17 @@ class AddInterestDialogFragment(): DialogFragment() {
                 )
                 docRef.update(updates).addOnSuccessListener {
                     Log.d("!!!", "Updated")
-                    CurrentUser.loadUserInfo(uid)
+                    //CurrentUser.loadUserInfo(uid)
+                    interestCallback?.interestAdded()
                     dismiss()
                 }
             }
 
 
         }
+    }
+    fun setAddedInterestCallback(callback: AddedInterestCallback){
+        interestCallback = callback
     }
 
 }

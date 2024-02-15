@@ -20,9 +20,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 
+
+
 private lateinit var userProfile: User
 val db = Firebase.firestore
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +35,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ProfileFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), AddedInterestCallback{
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -130,6 +131,11 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         showInterestsWithColor(CurrentUser.interests)
     }
 
@@ -216,12 +222,7 @@ class ProfileFragment : Fragment() {
             interest3TextView?.text = " "
             interest4TextView?.text = " "
             interest5TextView?.text = " "
-            interest6TextView?.text = getString(R.string.add_interest)
-            interest6TextView?.setOnClickListener {
-                Log.d("!!!", "Start Dialogfragment")
-                val dialogFragment = AddInterestDialogFragment()
-                dialogFragment.show(parentFragmentManager, "AddInterestFragment")
-            }
+            interest6TextView?.text = " "
         }
     }
 
@@ -234,7 +235,11 @@ class ProfileFragment : Fragment() {
 
     private fun startAddInterestDialog() {
         val dialogFragment = AddInterestDialogFragment()
+        dialogFragment.setAddedInterestCallback(this)
         dialogFragment.show(parentFragmentManager, "AddInterestFragment")
+    }
+    override fun interestAdded() {
+        showInterestsWithColor(CurrentUser.interests)
     }
 
 private fun saveAboutMe(newAboutMe: String) {
@@ -274,4 +279,8 @@ private fun saveAboutMe(newAboutMe: String) {
                 }
             }
     }
+
+
+
+
 }
