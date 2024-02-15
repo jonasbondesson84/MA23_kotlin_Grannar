@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 class AddInterestDialogFragment(): DialogFragment() {
 
@@ -47,6 +48,7 @@ class AddInterestDialogFragment(): DialogFragment() {
     }
 
     private fun saveInterest() {
+        Log.d("!!!", "${autoCompleteTextView.text.toString()}")
         val category = CategoryManager.getCategoryFromName(autoCompleteTextView.text.toString())
         val interestName = tvInterestName.text.toString()
         if (category != null) {
@@ -55,25 +57,21 @@ class AddInterestDialogFragment(): DialogFragment() {
                 CurrentUser.interests = mutableListOf()
             }
             CurrentUser.interests?.add(interest)
-
+            val db = Firebase.firestore
             val uid = CurrentUser.userID
-            if (uid != null) {
-                CurrentUser.saveInterests(uid)
+            if (uid != null){
+                val docRef = db.collection("users").document(uid)
+                val updates = mapOf(
+                    "interests" to CurrentUser.interests
+                )
+                docRef.update(updates).addOnSuccessListener {
+                    Log.d("!!!", "Updated")
+                    CurrentUser.loadUserInfo(uid)
+                    dismiss()
+                }
             }
 
 
-//            val db = FirebaseFirestore.getInstance()
-//            val auth = FirebaseAuth.getInstance()
-//            val userID = auth.currentUser?.uid
-//                if (userID != null) {
-//                    db.collection("users").document(userID).
-//                }
-//
-//        }
-//
-//        val interest = CategoryManager.getCategoryFromName(autoCompleteTextView.text.toString())
-//            ?.let { Interest(it, tvInterestName.text.toString(), ) }
-            Log.d("!!!", "${interest?.name} ${interest?.category?.name}")
         }
     }
 

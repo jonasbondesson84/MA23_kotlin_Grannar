@@ -83,6 +83,11 @@ class ProfileFragment : Fragment() {
         interestTextViewList.add(view.findViewById(R.id.interest4TextView))
         interestTextViewList.add(view.findViewById(R.id.interest5TextView))
         interestTextViewList.add(view.findViewById(R.id.interest6TextView))
+        view.findViewById<TextView>(R.id.interest6TextView).setOnClickListener {
+            startAddInterestDialog()
+        }
+        Log.d("!!!", "${CurrentUser.interests?.size}")
+
 
 
         chooseImageButton.setOnClickListener {
@@ -97,7 +102,7 @@ class ProfileFragment : Fragment() {
                 showAge.text = user?.age
                 showLocation.text = user?.location?.toString() ?: "none location to show"
 
-                showInterest(user.interests)
+              //  showInterest(user.interests)
                 aboutMeEditText.setText(user.aboutMe)
 
                 aboutMeEditText.setOnEditorActionListener{ _, actionId, _ ->
@@ -113,7 +118,7 @@ class ProfileFragment : Fragment() {
                 showGender.text=" "
                 showAge.text=" "
                 showLocation.text=" "
-                showInterest(null)
+                //showInterest(null)
             }
         }
 
@@ -121,6 +126,12 @@ class ProfileFragment : Fragment() {
         return view
     }
 
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        showInterestsWithColor(CurrentUser.interests)
+    }
 
     //funktioner
 
@@ -215,11 +226,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showInterestsWithColor(interests: MutableList<Interest>?){
+        interests?.forEachIndexed { i, interest ->
+            interestTextViewList[i].text = interest.name
+            interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+        }
+    }
 
-
-
-
-
+    private fun startAddInterestDialog() {
+        val dialogFragment = AddInterestDialogFragment()
+        dialogFragment.show(parentFragmentManager, "AddInterestFragment")
     }
 
 private fun saveAboutMe(newAboutMe: String) {

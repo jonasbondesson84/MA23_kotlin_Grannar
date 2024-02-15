@@ -1,5 +1,7 @@
 package com.example.grannar
 
+import android.util.Log
+
 object CategoryManager {
 
 
@@ -27,6 +29,7 @@ object CategoryManager {
         return categoryNames
     }
     fun getCategoryFromName(name: String): Category? {
-        return categories.find { it.name == name }
+        val category = categories.find { it.name == name }
+        return category
     }
 }
