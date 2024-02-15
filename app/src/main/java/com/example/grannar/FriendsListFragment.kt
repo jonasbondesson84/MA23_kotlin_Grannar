@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -55,13 +56,22 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
         val displayMetrics: DisplayMetrics = resources.displayMetrics
         val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
         var deleteIcon = resources.getDrawable(R.drawable.baseline_delete_24, null)
-        Log.d("!!!", CurrentUser.friendsList?.size.toString())
+
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchListFriends)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
-        Log.d("!!!", CurrentUser.friendsList.toString())
+
 
         adapter = CurrentUser.friendsList?.let { SearchListAdapter(view.context, it, this) } ?: SearchListAdapter(view.context, mutableListOf(), this)
         rvSearchList.adapter = adapter
+        adapter.onUserClick = {
+            val uid = it.userID
+            if (uid != null) {
+                val action =
+                    FriendsListFragmentDirections.actionFriendsListFragmentToFriendProfileFragment(uid)
+                    //SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
+                findNavController().navigate(action)
+            }
+        }
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
             override fun onMove(
@@ -166,7 +176,7 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
             }
     }
 
-    override fun onItemClicked(user: User) {
+    override fun onAddFriendsListener(user: User) {
 
     }
 }

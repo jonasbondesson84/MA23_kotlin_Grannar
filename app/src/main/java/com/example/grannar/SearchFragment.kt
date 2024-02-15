@@ -131,7 +131,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
     }
 
-    override fun onItemClicked(user: User) {
+    override fun onAddFriendsListener(user: User) {
         openDialogFragment()
     }
 
