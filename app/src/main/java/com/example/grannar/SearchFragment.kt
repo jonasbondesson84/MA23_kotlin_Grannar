@@ -138,6 +138,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     override fun onSignUpPress() {
+
         Log.d("!!!", "SignUpPress")
+
     }
 }

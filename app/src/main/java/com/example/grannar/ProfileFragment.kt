@@ -10,8 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -72,7 +72,7 @@ class ProfileFragment : Fragment() {
         //val saveAboutMeButton =view.findViewById<Button>(R.id.saveAboutMeButton)
 
         //Anv ska kunna ladda upp en övrig bild
-        val chooseImageButton = view.findViewById<Button>(R.id.chooseImageButton)
+        val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
 
         chooseImageButton.setOnClickListener {
