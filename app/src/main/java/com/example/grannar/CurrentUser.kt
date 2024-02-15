@@ -1,6 +1,8 @@
 package com.example.grannar
 
+import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.type.LatLng
@@ -15,7 +17,7 @@ object CurrentUser {
     var email: String? = null
     var gender: String? = null
     var profileImageURL: String? = null
-    var interests: MutableList<Interests>? = mutableListOf()
+    var interests: MutableList<Interest>? = mutableListOf()
     var aboutMe: String? = null
     var imageURLs: MutableList<String>? = mutableListOf()
     var friendsList: MutableList<User>? = mutableListOf()
@@ -65,6 +67,17 @@ object CurrentUser {
                 }
 
             }
+    }
+
+    fun saveInterests(uid: String){
+        val db = Firebase.firestore
+        val docRef = db.collection("users").document(uid)
+        val updates = mapOf(
+            "interests" to interests
+        )
+        docRef.update(updates).addOnSuccessListener {
+            Log.d("!!!", "Updated")
+        }
     }
 
 }
