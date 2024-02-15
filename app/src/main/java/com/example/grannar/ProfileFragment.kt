@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,10 +46,10 @@ class ProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
 
-        val showName = view.findViewById<TextView>(R.id.nameTextView)
-        val showGender = view.findViewById<TextView>(R.id.genderTextView)
-        val showAge = view.findViewById<TextView>(R.id.ageTextView)
-        val showLocation = view.findViewById<TextView>(R.id.locationTextView)
+        val showName = view.findViewById<TextView>(R.id.friendProfileNameTextView)
+        val showGender = view.findViewById<TextView>(R.id.friendProfileGenderTextView)
+        val showAge = view.findViewById<TextView>(R.id.friendProfileAgeTextView)
+        val showLocation = view.findViewById<TextView>(R.id.friendProfileLocationTextView)
 
 
 
