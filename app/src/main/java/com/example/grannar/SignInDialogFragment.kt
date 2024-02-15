@@ -11,7 +11,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
 class SignInDialogFragment() : DialogFragment() {
 
@@ -61,17 +64,33 @@ class SignInDialogFragment() : DialogFragment() {
 
 
         val auth = FirebaseAuth.getInstance()
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                signInResultListener.onSignInSuccess()
-                CurrentUser.loadUserInfo(auth.uid.toString())
+        if(!email.isEmpty() && !password.isEmpty()) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    //Gets userInfo from database, needs to be done here to set with signInResultListener in addOnSuccessListener
+                    val db = Firebase.firestore
+                    db.collection("users").document(auth.uid.toString()).get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+                                val currentUser = document.toObject<User>()
+                                if (currentUser != null) {
+                                    CurrentUser.setUser(currentUser)
+                                }
+                            }
+                            signInResultListener.onSignInSuccess()
+                            dismiss()
 
-                dismiss()
-            }
-            .addOnFailureListener {
+                        }
+                    //urrentUser.loadUserInfo(auth.uid.toString())
 
-                Log.d("!!!", "Failure logging in!")
-            }
+//                signInResultListener.onSignInSuccess()
+//                dismiss()
+                }
+                .addOnFailureListener {
+
+                    Log.d("!!!", "Failure logging in!")
+                }
+        }
     }
 
 

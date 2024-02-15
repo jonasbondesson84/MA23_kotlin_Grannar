@@ -4,7 +4,6 @@ package com.example.grannar
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,8 +39,8 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, bundle ->
 
-            if (destination.id == R.id.profileFragment && !isLoggedIn()) {
-
+            if ((destination.id == R.id.profileFragment || destination.id == R.id.friendsListFragment) && !isLoggedIn()) {
+//                if (!isLoggedIn()) {
                 pendingDestination = destination
                 pendingBundle = bundle
 
