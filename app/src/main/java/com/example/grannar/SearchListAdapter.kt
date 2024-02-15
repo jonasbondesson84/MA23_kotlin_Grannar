@@ -14,11 +14,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 
-class SearchListAdapter(context: Context, private val searchList: MutableList<User>) : RecyclerView.Adapter<SearchListAdapter.ViewHolder>() {
+class SearchListAdapter(context: Context, private val searchList: MutableList<User>,private val listener: MyAdapterListener) : RecyclerView.Adapter<SearchListAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
     private val db = Firebase.firestore
 
+    interface MyAdapterListener {
+        fun onItemClicked(user: User)
+    }
 
     var onUserClick: ((User) -> Unit)? = null
 
@@ -55,12 +58,18 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
             onUserClick?.invoke(selectedUser)
         }
         holder.btnAddFriend.setOnClickListener {
+            if(CurrentUser.userID != null) {
             saveFriend(selectedUser, position)
+            } else {
+                listener.onItemClicked(selectedUser)
+            }
         }
         holder.addFriend.setOnClickListener {
-
-            saveFriend(selectedUser, position)
-
+            if(CurrentUser.userID != null) {
+                saveFriend(selectedUser, position)
+            } else {
+                listener.onItemClicked(selectedUser)
+            }
         }
 
     }

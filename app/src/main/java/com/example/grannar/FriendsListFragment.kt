@@ -27,7 +27,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FriendsListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FriendsListFragment : Fragment() {
+class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -55,13 +55,14 @@ class FriendsListFragment : Fragment() {
         val displayMetrics: DisplayMetrics = resources.displayMetrics
         val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
         var deleteIcon = resources.getDrawable(R.drawable.baseline_delete_24, null)
-
+        Log.d("!!!", CurrentUser.friendsList?.size.toString())
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchListFriends)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         Log.d("!!!", CurrentUser.friendsList.toString())
 
-        adapter = CurrentUser.friendsList?.let { SearchListAdapter(view.context, it) } ?: SearchListAdapter(view.context, mutableListOf())
+        adapter = CurrentUser.friendsList?.let { SearchListAdapter(view.context, it, this) } ?: SearchListAdapter(view.context, mutableListOf(), this)
         rvSearchList.adapter = adapter
+
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -163,5 +164,9 @@ class FriendsListFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onItemClicked(user: User) {
+
     }
 }

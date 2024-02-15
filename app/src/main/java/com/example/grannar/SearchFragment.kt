@@ -25,7 +25,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SearchFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInResultListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -40,7 +40,7 @@ class SearchFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         db = Firebase.firestore
-        adapter = SearchListAdapter(requireContext(), searchList)
+        adapter = SearchListAdapter(requireContext(), searchList, this)
         getUsersList()
 
 
@@ -90,11 +90,19 @@ class SearchFragment : Fragment() {
             val auth = Firebase.auth
             CurrentUser.clearUser()
             auth.signOut()
+            adapter.notifyDataSetChanged()
+            Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
 
 
         return view
     }
+
+    private fun openDialogFragment() {
+        val dialogFragment = SignInDialogFragment()
+        dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
+    }
+
 
     companion object {
         /**
@@ -114,5 +122,18 @@ class SearchFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onItemClicked(user: User) {
+        openDialogFragment()
+    }
+
+    override fun onSignInSuccess() {
+        adapter.notifyDataSetChanged()
+        Log.d("!!!", "onSigntInSuccess @ SearchFragment")
+    }
+
+    override fun onSignInFailure() {
+
     }
 }
