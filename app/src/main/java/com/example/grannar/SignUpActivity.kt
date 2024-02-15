@@ -1,5 +1,7 @@
 package com.example.grannar
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -99,6 +101,10 @@ class SignUpActivity : AppCompatActivity() {
                 )
                 newUser.userID?.let { uid ->
                     db.collection("users").document(uid).set(newUser).addOnSuccessListener {
+
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("signed_up", true)
+                        setResult(Activity.RESULT_OK, resultIntent)
                         finish()
                     }
                 }
