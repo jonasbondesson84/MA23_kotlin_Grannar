@@ -5,8 +5,8 @@ import com.google.firebase.firestore.DocumentId
 class Message(
     @DocumentId val docID: String?,
     //val timestamp: ServerTimestamp,
-    val fromUser: User,
-    val toUser: User,
+    val fromID: String,
+    val toID: String,
     val message: String
 
     ) {

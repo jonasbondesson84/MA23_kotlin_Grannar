@@ -1,10 +1,13 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -22,7 +25,7 @@ class MessagesFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val messages = mutableListOf<Message>()
+    private val chats = mutableListOf<Chats>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +36,49 @@ class MessagesFragment : Fragment() {
     }
 
     fun createDummyData() {
-        messages.add(Message(docID = "", fromUser = User(firstName = "JonasFrom"), toUser = User(firstName = "ElisabetTo"), message = "Hej min fina"))
-        messages.add(Message(docID = "", fromUser = User(firstName = "ElisabetFrom"), toUser = User(firstName = "JonasTO"), message = "Hej min fina"))
-        messages.add(Message(docID = "", fromUser = User(firstName = "ElisabetFrom"), toUser = User(firstName = "ElisabetTo"), message = "Hej min fina"))
-        messages.add(Message(docID = "", fromUser = User(firstName = "JonasFrom"), toUser = User(firstName = "ElisabetTo"), message = "Hej min fina"))
+//        val messages = mutableListOf<Message>()
+//        val user1 = User(firstName = "Jonas")
+//        val user2 = User(firstName = "Pelle")
+//        val user3 = User(firstName = "Elisabet")
+//        messages.add(Message("", user1, toID = user2, message = "hej hej"))
+//        messages.add(Message("", user2, toID = user1, message = "hej2"))
+//        messages.add(Message("", user1, toID = user2, message = "hej3"))
+//
+//        val participants = mutableListOf<User>()
+//        participants.add(user1)
+//        participants.add(user2)
+//        chats.add(Chats("", participants, true, messages))
+//        participants.clear()
+//        participants.add(user1)
+//        participants.add(user3)
+//        messages.clear()
+//        messages.add(Message("", user1, toID = user3, message = "hej hej"))
+//        messages.add(Message("", user3, toID = user1, message = "hej2"))
+//        messages.add(Message("", user1, toID = user3, message = "hej3"))
+//        chats.add(Chats("", participants, true, messages))
+//        participants.clear()
+//        participants.add(user2)
+//        participants.add(user3)
+//        messages.clear()
+//        messages.add(Message("", user2, toID = user3, message = "hej hej"))
+//        messages.add(Message("", user3, toID = user2, message = "hej2"))
+//        messages.add(Message("", user2, toID = user3, message = "hej3"))
+//        chats.add(Chats("", participants, true, messages))
+//        Log.d("!!!", chats.size.toString())
+//
+//
+//        getMessagesForUser()
+//        messages.add(Message(docID = "", fromUser = User(firstName = "ElisabetFrom"), toUser = User(firstName = "JonasTO"), message = "Hej min fina"))
+//        messages.add(Message(docID = "", fromUser = User(firstName = "ElisabetFrom"), toUser = User(firstName = "ElisabetTo"), message = "Hej min fina"))
+//        messages.add(Message(docID = "", fromUser = User(firstName = "JonasFrom"), toUser = User(firstName = "ElisabetTo"), message = "Hej min fina"))
+
+    }
+
+    private fun getMessagesForUser() {
+        val user = User(firstName = "Jonas")
+        Log.d("!!!", chats.size.toString())
+        val chat = chats.filter { chat -> chat.participants.any { it.firstName == user.firstName } }
+        Log.d("!!!", chat.toString())
 
     }
 
@@ -49,8 +91,13 @@ class MessagesFragment : Fragment() {
         val rvMessageList = view.findViewById<RecyclerView>(R.id.rvMessageList)
         createDummyData()
         rvMessageList.layoutManager = LinearLayoutManager(view.context)
-        val adapter = MessageAdapter(view.context, messages)
+        val adapter = MessageAdapter(view.context, chats)
         rvMessageList.adapter = adapter
+
+        val btnSearch: Button = view.findViewById(R.id.btnChatSearch)
+        btnSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_messagesFragment_to_chatFragment)
+        }
 
         return view
     }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MessageAdapter(context: Context, val messages: MutableList<Message>): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(context: Context, val messages: MutableList<Chats>): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -17,14 +17,15 @@ class MessageAdapter(context: Context, val messages: MutableList<Message>): Recy
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageAdapter.ViewHolder {
-        val itemView = layoutInflater.inflate(R.layout.item_message,parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_messages,parent, false)
 
         return ViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: MessageAdapter.ViewHolder, position: Int) {
-        val message = messages[position]
-        holder.tvName.text = message.fromUser.firstName
+        val message = messages[position].messages.last()
+        val fromUser = message.fromID
+        holder.tvName.text = fromUser
         holder.tvMessage.text = message.message
 
     }
