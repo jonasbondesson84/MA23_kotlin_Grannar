@@ -245,20 +245,25 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     }
 
     private fun showInterestsWithColor(interests: MutableList<Interest>?){
-        interests?.forEachIndexed { i, interest ->
-            interestTextViewList[i].text = interest.name
-            interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
-            interestConstraintList[i].visibility = View.VISIBLE
-            interestConstraintList[i].setOnClickListener {
-                deleteInterest(i)
-            }
-            if (i == MAX_INTERESTS -1){
-                lastInterestImageView.setImageResource(R.drawable.baseline_close_24)
-                lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_error))
+        if (interests != null){
+            interests?.forEachIndexed { i, interest ->
+                interestTextViewList[i].text = interest.name
+                interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+                interestConstraintList[i].visibility = View.VISIBLE
+                interestConstraintList[i].setOnClickListener {
+                    deleteInterest(i)
+                }
+                if (i == MAX_INTERESTS -1){
+                    lastInterestImageView.setImageResource(R.drawable.baseline_close_24)
+                    lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_error))
 
+                }
             }
+            interests?.size?.let { hideConstraints(it) }
+
+        }else{
+            hideConstraints(0)
         }
-        interests?.size?.let { hideConstraints(it) }
     }
 
     private fun hideConstraints(numberToBeVisible: Int){
