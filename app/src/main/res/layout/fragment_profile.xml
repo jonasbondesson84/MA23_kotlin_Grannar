@@ -244,10 +244,10 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
+            android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/interest2Constraint"
             app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView"
-            tools:visibility="invisible">
+            app:layout_constraintTop_toTopOf="@+id/squareTextView">
 
             <TextView
                 android:id="@+id/interest1TextView"
@@ -276,10 +276,10 @@
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_marginTop="10dp"
+            android:visibility="invisible"
             app:layout_constraintEnd_toStartOf="@+id/interest3Constraint"
             app:layout_constraintStart_toEndOf="@+id/interest1Constraint"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView"
-            tools:visibility="invisible">
+            app:layout_constraintTop_toTopOf="@+id/squareTextView">
 
             <TextView
                 android:id="@+id/interest2TextView"

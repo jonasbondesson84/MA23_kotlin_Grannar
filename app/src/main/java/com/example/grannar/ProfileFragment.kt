@@ -68,9 +68,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (CurrentUser == null){
-
-        }
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
