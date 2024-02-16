@@ -69,15 +69,4 @@ object CurrentUser {
             }
     }
 
-    fun saveInterests(uid: String){
-        val db = Firebase.firestore
-        val docRef = db.collection("users").document(uid)
-        val updates = mapOf(
-            "interests" to interests
-        )
-        docRef.update(updates).addOnSuccessListener {
-            Log.d("!!!", "Updated")
-        }
-    }
-
 }

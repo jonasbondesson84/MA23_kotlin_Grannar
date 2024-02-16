@@ -33,6 +33,7 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvGender: TextView
     private lateinit var tvLocation: TextView
     private lateinit var tvAboutMe: TextView
+    private var interestsTextViewList = mutableListOf<TextView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,14 @@ class FriendProfileFragment : Fragment() {
         tvAge = view.findViewById(R.id.friendProfileAgeTextView)
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
+
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest1TextView))
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest2TextView))
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest3TextView))
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest4TextView))
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest5TextView))
+        interestsTextViewList.add(view.findViewById(R.id.friendsInterest6TextView))
+
 
         val appBar = view.findViewById<MaterialToolbar>(R.id.topFriendProfile)
 
@@ -88,8 +97,18 @@ class FriendProfileFragment : Fragment() {
         tvAge.text = selectedUser.getAgeSpan()
         tvLocation.text = selectedUser.location.toString()
         tvAboutMe.text = selectedUser.aboutMe
+        showInterests(selectedUser.interests)
 
     }
+
+    private fun showInterests(interests: List<Interest>?){
+        interests?.forEachIndexed{ i, interest ->
+            interestsTextViewList[i].text = interest.name
+            interest.category?.colorID?.let { interestsTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+        }
+    }
+
+
 
     companion object {
         /**

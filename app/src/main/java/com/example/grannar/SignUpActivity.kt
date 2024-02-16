@@ -99,6 +99,7 @@ class SignUpActivity : AppCompatActivity() {
                     gender = gender,
                     age = birthDateString
                 )
+                CurrentUser.setUser(newUser)
                 newUser.userID?.let { uid ->
                     db.collection("users").document(uid).set(newUser).addOnSuccessListener {
 
