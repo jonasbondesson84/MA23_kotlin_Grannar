@@ -15,7 +15,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Constraints
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -44,6 +48,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     private var imageUri: Uri? = null
     private var personalImageView: ImageView? = null
     private var interestTextViewList = mutableListOf<TextView>()
+    private var interestConstraintList = mutableListOf<ConstraintLayout>()
+    private lateinit var lastInterestImageView: ImageView
+    val MAX_INTERESTS = 6
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +68,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        if (CurrentUser == null){
+
+        }
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
@@ -76,7 +86,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         //Anv ska kunna ladda upp en övrig bild
         val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
-
+        Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
+        Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
 
         interestTextViewList.add(view.findViewById(R.id.interest1TextView))
         interestTextViewList.add(view.findViewById(R.id.interest2TextView))
@@ -84,9 +95,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         interestTextViewList.add(view.findViewById(R.id.interest4TextView))
         interestTextViewList.add(view.findViewById(R.id.interest5TextView))
         interestTextViewList.add(view.findViewById(R.id.interest6TextView))
-        view.findViewById<TextView>(R.id.interest6TextView).setOnClickListener {
-            startAddInterestDialog()
-        }
+
+        interestConstraintList.add(view.findViewById(R.id.interest1Constraint))
+        interestConstraintList.add(view.findViewById(R.id.interest2Constraint))
+        interestConstraintList.add(view.findViewById(R.id.interest3Constraint))
+        interestConstraintList.add(view.findViewById(R.id.interest4Constraint))
+        interestConstraintList.add(view.findViewById(R.id.interest5Constraint))
+        interestConstraintList.add(view.findViewById(R.id.interest6Constraint))
+
+        lastInterestImageView = view.findViewById(R.id.deleteInterest6ImageView)
+
         Log.d("!!!", "${CurrentUser.interests?.size}")
 
 
@@ -230,7 +248,57 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         interests?.forEachIndexed { i, interest ->
             interestTextViewList[i].text = interest.name
             interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+            interestConstraintList[i].visibility = View.VISIBLE
+            interestConstraintList[i].setOnClickListener {
+                deleteInterest(i)
+            }
+            if (i == MAX_INTERESTS -1){
+                lastInterestImageView.setImageResource(R.drawable.baseline_close_24)
+                lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_error))
+
+            }
         }
+        interests?.size?.let { hideConstraints(it) }
+    }
+
+    private fun hideConstraints(numberToBeVisible: Int){
+        interestConstraintList.forEachIndexed() { i, constraintLayout ->
+            if (i >= numberToBeVisible){
+                if (i == MAX_INTERESTS -1){
+                    interestTextViewList[i].text = "Add Interest"
+                    constraintLayout.visibility = View.VISIBLE
+                    interestTextViewList[i].setTextColor(resources.getColor(R.color.md_theme_primary))
+                    lastInterestImageView.setImageResource(R.drawable.baseline_add_24)
+                    lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_primary))
+                    interestTextViewList[i].setBackgroundColor(0)
+                    constraintLayout.setOnClickListener {
+                        startAddInterestDialog()
+                    }
+
+                } else {
+                    constraintLayout.visibility = View.INVISIBLE
+
+                }
+            }
+        }
+
+    }
+
+    private fun deleteInterest(index: Int){
+        val db = com.google.firebase.Firebase.firestore
+        val uid = CurrentUser.userID
+        CurrentUser.interests?.removeAt(index)
+        if (uid != null){
+            val docRef = db.collection("users").document(uid)
+            val updates = mapOf(
+                "interests" to CurrentUser.interests
+            )
+            docRef.update(updates).addOnSuccessListener {
+                showInterestsWithColor(CurrentUser.interests)
+
+            }
+        }
+
     }
 
     private fun startAddInterestDialog() {
@@ -256,10 +324,6 @@ private fun saveAboutMe(newAboutMe: String) {
         }
 }
 
-
-
-
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -279,8 +343,4 @@ private fun saveAboutMe(newAboutMe: String) {
                 }
             }
     }
-
-
-
-
 }

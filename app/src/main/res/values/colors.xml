@@ -141,15 +141,15 @@
     <color name="md_theme_surfaceContainerHigh_highContrast">#E3EAE6</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#DEE4E1</color>
 
-    <color name="sportCategory">#FF0000</color> <!-- Röd -->
-    <color name="natureCategory">#00FF00</color> <!-- Grön -->
-    <color name="animalsCategory">#0000FF</color> <!-- Blå -->
-    <color name="musicCategory">#FFFF00</color> <!-- Gul -->
-    <color name="literatureCategory">#FF00FF</color> <!-- Lila -->
-    <color name="travelCategory">#00FFFF</color> <!-- Cyan -->
-    <color name="gamesCategory">#FFA500</color> <!-- Orange -->
-    <color name="exerciseCategory">#800080</color> <!-- Lila -->
-    <color name="otherCategory">#808080</color> <!-- Grå -->
+    <color name="sportCategory">#FFAAAA</color> <!-- Ljusrosa -->
+    <color name="natureCategory">#AAFFAA</color> <!-- Ljusgrön -->
+    <color name="animalsCategory">#AAAAFF</color> <!-- Ljusblå -->
+    <color name="musicCategory">#FFFFAA</color> <!-- Ljusgul -->
+    <color name="literatureCategory">#FFAAFF</color> <!-- Ljuslila -->
+    <color name="travelCategory">#AAFFFF</color> <!-- Ljuscyan -->
+    <color name="gamesCategory">#FFDCAA</color> <!-- Ljusorange -->
+    <color name="exerciseCategory">#DCAADF</color> <!-- Ljuslila -->
+    <color name="otherCategory">#DDDDDD</color> <!-- Ljusgrå -->
 
 
 
