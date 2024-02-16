@@ -23,10 +23,10 @@ class MessageAdapter(context: Context, val messages: MutableList<Chats>): Recycl
     }
 
     override fun onBindViewHolder(holder: MessageAdapter.ViewHolder, position: Int) {
-        val message = messages[position].messages.last()
-        val fromUser = message.fromID
+        val message = messages[position].messages?.last()
+        val fromUser = message?.fromID
         holder.tvName.text = fromUser
-        holder.tvMessage.text = message.message
+        holder.tvMessage.text = message?.message
 
     }
 

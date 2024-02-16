@@ -179,4 +179,8 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
     override fun onAddFriendsListener(user: User) {
 
     }
+
+    override fun onSendMessageListerner(user: User) {
+        TODO("Not yet implemented")
+    }
 }

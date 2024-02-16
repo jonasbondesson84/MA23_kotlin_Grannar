@@ -16,6 +16,17 @@
                 android:name="userID"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_searchFragment_self"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_chatFragment"
+            app:destination="@id/chatFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string"
+                 />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/friendsListFragment"
@@ -31,6 +42,14 @@
             <argument
                 android:name="userID"
                 app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_friendsListFragment_to_chatFragment"
+            app:destination="@id/chatFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string"
+                />
         </action>
     </fragment>
     <fragment
@@ -62,5 +81,11 @@
         android:id="@+id/chatFragment"
         android:name="com.example.grannar.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="userID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

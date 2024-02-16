@@ -135,7 +135,16 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         openDialogFragment()
     }
 
-    override fun onSignInSuccess() {
+    override fun onSendMessageListerner(user: User) {
+        val uid = user.userID
+        if(uid != null) {
+            val action =
+                SearchFragmentDirections.actionSearchFragmentToChatFragment(uid)
+            findNavController().navigate(action)
+        }
+    }
+
+    override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
         adapter.notifyDataSetChanged()
         Log.d("!!!", "onSigntInSuccess @ SearchFragment")
     }

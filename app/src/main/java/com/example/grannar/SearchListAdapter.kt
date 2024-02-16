@@ -21,6 +21,7 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
 
     interface MyAdapterListener {
         fun onAddFriendsListener(user: User)
+        fun onSendMessageListerner(user: User)
     }
 
     var onUserClick: ((User) -> Unit)? = null
@@ -30,6 +31,8 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         val tvAge: TextView = itemView.findViewById(R.id.age)
         val addFriend: LinearLayout = itemView.findViewById(R.id.addFriend_linearLayout)
         val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
+        val sendMessage: LinearLayout = itemView.findViewById(R.id.sendMessage)
+        val btnSendMessage: ImageButton = itemView.findViewById(R.id.message_icon)
 
     }
 
@@ -48,14 +51,26 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
 
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
-
         if(CurrentUser.friendsList?.any{it.userID == selectedUser.userID} == true) {
             holder.addFriend.visibility = View.INVISIBLE
+        }
 
+        holder.btnSendMessage.setOnClickListener {
+            if(CurrentUser.userID != null) {
+                listener.onSendMessageListerner(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
+        }
+        holder.sendMessage.setOnClickListener {
+            if(CurrentUser.userID != null) {
+                listener.onSendMessageListerner(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
         }
 
         holder.itemView.setOnClickListener {
-
             if(CurrentUser.userID != null) {
                 onUserClick?.invoke(selectedUser)
             } else {
@@ -78,7 +93,6 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         }
 
     }
-
 
 
     fun removeFriend( position: Int) {
