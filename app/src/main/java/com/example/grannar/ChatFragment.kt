@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObjects
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,13 +49,13 @@ class ChatFragment : Fragment() {
         //createMessages()
     }
 
-    private fun createMessages() {
-        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message from currentUser"))
-        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current User"))
-        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message FROM currentUser"))
-        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current user"))
-
-    }
+//    private fun createMessages() {
+//        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message from currentUser"))
+//        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current User"))
+//        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message FROM currentUser"))
+//        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current user"))
+//
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,11 +84,35 @@ class ChatFragment : Fragment() {
 
     private fun getMessages() {
 
+        db.collection("messages").document(CurrentUser.userID.toString()).collection(args.userID.toString())
+            .addSnapshotListener {snapshot, e ->
+                if(e != null) {
+                    Log.d("!!!", "error ", e)
+                    return@addSnapshotListener
+                }
+                if(snapshot != null) {
+                    messages.clear()
+                    val chatMessage = snapshot.toObjects<Message>()
+                    for ( message in chatMessage) {
+                        messages.add(message)
+                        adapter.notifyDataSetChanged()
+                    }
+
+                }
+                messages.sortBy { it.timeStamp }
+
+
+            }
     }
 
 
     private fun addNewMessage() {
-        val newMessage = Message("", CurrentUser.userID.toString(), args.userID.toString(), etvMessageText.text.toString())
+        val newMessage = Message(
+            docID = "",
+            fromID = CurrentUser.userID.toString(),
+            toID = args.userID.toString(),
+            message = etvMessageText.text.toString()
+        )
         messages.add(newMessage)
         etvMessageText.text?.clear()
         saveMessageToDataBase(newMessage)
@@ -95,25 +121,31 @@ class ChatFragment : Fragment() {
 
     private fun saveMessageToDataBase(newMessage: Message) {
 
-        val mapMessageFrom = hashMapOf(
-            "fromID" to newMessage.fromID,
-            "toID" to newMessage.toID,
+        val fromID = CurrentUser.userID.toString()
+        val toID = args.userID.toString()
+
+        val mapMessage = hashMapOf(
+            "fromID" to fromID,
+            "toID" to toID,
             "message" to newMessage.message,
-            "unread" to newMessage.unread
+            "unread" to true,
+            "timeStamp" to FieldValue.serverTimestamp()
         )
 
-        val messageFromDocumentRef = db.collection("messages").document(newMessage.fromID)
-        val chatMessagesFromCollectionRef = messageFromDocumentRef.collection(newMessage.toID)
-        chatMessagesFromCollectionRef.add(mapMessageFrom)
+        val messageFromDocumentRef = db.collection("messages").document(fromID)
+        val chatMessagesFromCollectionRef = messageFromDocumentRef.collection(toID)
+
+        chatMessagesFromCollectionRef.add(mapMessage)
             .addOnSuccessListener { documentReference ->
                 Log.d("!!!", "DocumentSnapshot written with ID: ${documentReference.id}")
             }
             .addOnFailureListener { e ->
                 Log.w("!!!", "Error adding document", e)
             }
-        val messageToDocumentRef = db.collection("messages").document(newMessage.toID)
-        val chatMessagesToCollectionRef = messageToDocumentRef.collection(newMessage.fromID)
-        chatMessagesToCollectionRef.add(mapMessageFrom)
+        val messageToDocumentRef =  db.collection("messages").document(toID)
+        val chatMessagesToCollectionRef = messageToDocumentRef.collection(fromID)
+
+        chatMessagesToCollectionRef.add(mapMessage)
             .addOnSuccessListener { documentReference ->
                 Log.d("!!!", "DocumentSnapshot written with ID: ${documentReference.id}")
             }
