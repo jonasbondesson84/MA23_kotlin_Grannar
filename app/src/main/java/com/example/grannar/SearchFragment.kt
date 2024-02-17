@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
@@ -47,6 +48,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     }
 
+
+
     private fun getUsersList() {
         searchList.clear()
         Log.d("!!!", db.toString())
@@ -80,6 +83,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         rvSearchList.adapter = adapter
         //getUsersList()
 
+        rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
 
         adapter.onUserClick = {
