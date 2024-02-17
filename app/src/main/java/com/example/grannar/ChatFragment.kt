@@ -8,15 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,7 +43,8 @@ class ChatFragment : Fragment() {
     private val args : FriendProfileFragmentArgs by navArgs()
     private lateinit var  adapter: ChatAdapter
     private lateinit var db: FirebaseFirestore
-    private var docExist: Boolean = false
+    private lateinit var tvName: TextView
+    private lateinit var imImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +70,11 @@ class ChatFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
         db = Firebase.firestore
-        Log.d("!!!", args.userID.toString())
+        tvName = view.findViewById(R.id.tvChatName)
+        imImage = view.findViewById(R.id.imChatImage)
+
         getMessages()
+        getUserInfo(args.userID.toString())
 
         val rvChatMessage = view.findViewById<RecyclerView>(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
@@ -78,8 +87,30 @@ class ChatFragment : Fragment() {
 
             hideKeyboard(view)
         }
+        val appBar = view.findViewById<MaterialToolbar>(R.id.topChat)
+
+        appBar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
 
         return view
+    }
+
+    private fun getUserInfo(friendUid: String) {
+        val db = Firebase.firestore
+        db.collection("users").document(friendUid).get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val selectedUser = document.toObject<User>()
+                    if (selectedUser != null) {
+                        showInfo(selectedUser)
+                    }
+                }
+            }
+    }
+
+    private fun showInfo(selectedUser: User) {
+        tvName.text = selectedUser.firstName
     }
 
     private fun getMessages() {
@@ -107,27 +138,29 @@ class ChatFragment : Fragment() {
 
 
     private fun addNewMessage() {
-        val newMessage = Message(
-            docID = "",
-            fromID = CurrentUser.userID.toString(),
-            toID = args.userID.toString(),
-            message = etvMessageText.text.toString()
-        )
-        messages.add(newMessage)
+//        val newMessage = Message(
+//            docID = "",
+//            fromID = CurrentUser.userID.toString(),
+//            toID = args.userID.toString(),
+//            message = etvMessageText.text.toString(),
+//
+//        )
+        //messages.add(newMessage)
+        saveMessageToDataBase()
         etvMessageText.text?.clear()
-        saveMessageToDataBase(newMessage)
     }
 
 
-    private fun saveMessageToDataBase(newMessage: Message) {
+    private fun saveMessageToDataBase() {
 
         val fromID = CurrentUser.userID.toString()
         val toID = args.userID.toString()
-
+        val message = etvMessageText.text.toString()
+        Log.d("!!!", message)
         val mapMessage = hashMapOf(
             "fromID" to fromID,
             "toID" to toID,
-            "message" to newMessage.message,
+            "message" to message,
             "unread" to true,
             "timeStamp" to FieldValue.serverTimestamp()
         )
@@ -152,88 +185,7 @@ class ChatFragment : Fragment() {
             .addOnFailureListener { e ->
                 Log.w("!!!", "Error adding document", e)
             }
-//
-//        val fromToCollectionRef = db.collection("message").document(newMessage.fromID)
-//        val toFromCollectionRef = db.collection("message").document(newMessage.toID).collection(newMessage.fromID)
-//
-//        fromToCollectionRef.get().addOnSuccessListener {documents->
-//            if(documents.exists()) {
-//                fromToCollectionRef.collection(newMessage.fromID).add(mapMessageFrom).addOnSuccessListener {
-//                    Log.d("!!!", "Success fromUser")
-//                }
-//                    .addOnFailureListener { e ->
-//                        Log.e("!!!", "Error fromUser", e)
-//                    }
-//            } else {
-//                Log.d("!!!", "here we go")
-//
-//                fromToCollectionRef.set(newMessage.fromID).addOnSuccessListener {
-//                    fromToCollectionRef.collection(newMessage.fromID).add(mapMessageFrom).addOnSuccessListener {
-//                        Log.d("!!!", "Success fromUser")
-//                    }
-//                        .addOnFailureListener { e ->
-//                            Log.e("!!!", "Error fromUser", e)
-//                        }
-//                }
-//            }
 
-//        }
-//
-//
-//        toFromCollectionRef.add(mapMessageFrom)
-//            .addOnSuccessListener {
-//                Log.d("!!!", "Success toUser")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("!!!", "Error toUser", e)
-//            }
-//
-//        db.collection("message").document(newMessage.fromID)
-//            .collection(newMessage.toID)
-//            .add(mapMessageFrom).addOnSuccessListener {
-//                Log.d("!!!", "success fromUser")
-//            }
-//        db.collection("message").document(newMessage.toID)
-//            .collection(newMessage.fromID)
-//            .add(mapMessageFrom).addOnSuccessListener {
-//                Log.d("!!!", "success fromUser")
-//            }
-
-
-
-//        val data = mapOf("messages" to FieldValue.arrayUnion(mapMessageFrom))
-//
-//
-//        val docFromRef = db.collection("messages").document(newMessage.fromID)
-//        docFromRef.get().addOnSuccessListener {
-//            if(it.data == null) {
-//                docFromRef.set(data)
-//                    .addOnSuccessListener {
-//                        Log.d("!!!", "saved in new CurrentUser")
-//                    }
-//            } else {
-//                docFromRef.update(data)
-//                    .addOnSuccessListener {
-//                        Log.d("!!!", "Saved in old currentuser ${newMessage.fromID}")
-//
-//                    }
-//            }
-//        }
-//        val docToRef = db.collection("messages").document(newMessage.toID)
-//        docToRef.get().addOnSuccessListener {
-//            if(it.data == null) {
-//                docToRef.set(data)
-//                    .addOnSuccessListener {
-//                        Log.d("!!!", "saved in new reciever")
-//                    }
-//            } else {
-//                docToRef.update(data)
-//                    .addOnSuccessListener {
-//                        Log.d("!!!", "Saved in old reciever ${newMessage.toID}")
-//
-//                    }
-//            }
-//        }
 
     }
 
