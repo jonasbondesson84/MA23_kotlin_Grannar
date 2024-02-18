@@ -32,6 +32,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private var param1: String? = null
     private var param2: String? = null
     private var searchList = mutableListOf<User>()
+    private var listInRecyclerView = mutableListOf<User>()
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
 
@@ -42,7 +43,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             param2 = it.getString(ARG_PARAM2)
         }
         db = Firebase.firestore
-        adapter = SearchListAdapter(requireContext(), searchList, this)
+        adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
         getUsersList()
 
 
@@ -61,6 +62,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 searchList.add(user)
                 adapter.notifyItemChanged(i)
             }
+            listInRecyclerView.addAll(searchList)
+           // filterListOnInterestCategory(listOf("Sport", "Animals"))
+            filterListOnInterestName("Fotboll")
+
         }
 
             .addOnFailureListener { exception ->
@@ -68,6 +73,32 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
     }
+
+    private fun filterListOnInterestCategory(categoryNames: List<String>){
+        val filteredList = searchList.filter { user ->
+            user.interests?.any {interest ->
+                interest.category?.name in categoryNames
+            } == true
+        }
+        setListInRecyclerView(filteredList)
+    }
+
+    private fun filterListOnInterestName(interestName: String){
+        val filteredList = searchList.filter { user ->
+            user.interests?.any {interest ->
+                interest?.name?.lowercase() == interestName.lowercase()
+            } == true
+        }
+        setListInRecyclerView(filteredList)
+    }
+
+    private fun setListInRecyclerView(users: List<User>){
+        listInRecyclerView.clear()
+        listInRecyclerView.addAll(users)
+        adapter.notifyDataSetChanged()
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
