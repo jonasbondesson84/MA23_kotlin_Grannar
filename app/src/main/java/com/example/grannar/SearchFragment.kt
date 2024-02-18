@@ -1,11 +1,14 @@
 package com.example.grannar
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -45,8 +48,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
         getUsersList()
-
-
     }
 
 
@@ -64,7 +65,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
             listInRecyclerView.addAll(searchList)
            // filterListOnInterestCategory(listOf("Sport", "Animals"))
-            filterListOnInterestName("Fotboll")
+           // filterListOnInterestName("Fotboll")
 
         }
 
@@ -110,13 +111,9 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
-
         rvSearchList.adapter = adapter
         //getUsersList()
-
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-
-
         adapter.onUserClick = {
             val uid = it.userID
             if(uid != null) {
@@ -135,9 +132,23 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             adapter.notifyDataSetChanged()
             Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
+        val etvSearch = view.findViewById<EditText>(R.id.etvSearchInterest)
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        view.findViewById<Button>(R.id.btnSearch).setOnClickListener {
+            val searchString = etvSearch.text.toString()
+            if (searchString.isNotEmpty()){
+                filterListOnInterestName(searchString)
 
 
-        return view
+            }
+            else{
+                setListInRecyclerView(searchList)
+            }
+            etvSearch.clearFocus()
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+            return view
     }
 
     private fun openDialogFragment() {
