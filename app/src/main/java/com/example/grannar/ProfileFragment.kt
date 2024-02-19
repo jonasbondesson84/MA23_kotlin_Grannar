@@ -48,6 +48,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
     private var personalImageView: ImageView? = null
+    private var profileImageView: ImageView? =null
     private var interestTextViewList = mutableListOf<TextView>()
     private var interestConstraintList = mutableListOf<ConstraintLayout>()
     private lateinit var lastInterestImageView: ImageView
@@ -72,8 +73,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-
-
         val profileBtn = view.findViewById<ImageButton>(R.id.profileImageButton)
         profileBtn.setOnClickListener{
             Intent(Intent.ACTION_GET_CONTENT).also {
@@ -81,19 +80,19 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                 startActivityForResult(it, 0)
             }
             }
-
+        profileImageView = view.findViewById(R.id.profileImageView)
 
         val showName = view.findViewById<TextView>(R.id.profileNameTextView)
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
         val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
-
+        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
 
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
 
         //Anv ska kunna ladda upp en övrig bild
         val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
-        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
 
@@ -168,24 +167,38 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && requestCode == 0){
-            val uri =data?.data
-            val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
-            return
-            image.setImageURI(uri)
+            val uri = data?.data
+            val profileImageView: ImageView = view?.findViewById(R.id.profileImageView) ?: return
+            profileImageView.setImageURI(uri)
+
+            imageUri = uri // spara för uppladdning
+
+            uploadImageToFirebase()
+            //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
+            //return
+            //image.setImageURI(uri)
         }
     }
 
     private fun uploadImageToFirebase(){
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("images/${userProfile.userID}/profileImage.jpg")
+            val imageRef = storageRef.child("images/${CurrentUser.userID}/profileImage.jpg")
+
 
             imageRef.putFile(imageUri!!)
                 .addOnSuccessListener {
+                    profileImageView?.setImageURI(imageUri)
+
+                    Toast.makeText(requireContext(),"Image upploaded successfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {e ->
+                    Log.d("!!!", "error uploading profile img: ${e.message}")
 
+                    Toast.makeText(requireContext(),"Failed to upload image", Toast.LENGTH_SHORT).show()
                 }
+        } else {
+            Log.d("!!!", "imageUri is null")
         }
     }
 
