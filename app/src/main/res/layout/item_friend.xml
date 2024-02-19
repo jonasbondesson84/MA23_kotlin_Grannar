@@ -1,101 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFFFF"
-    android:orientation="horizontal"
-
-    android:padding="8dp">
-
-    <ImageView
-        android:id="@+id/friend_image"
-        android:layout_width="95dp"
-        android:layout_height="95dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/friend_request"/>
+    android:background="#FFFFFFFF">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="#FFFFFFFF"
 
-        <TextView
-            android:id="@+id/friend_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="20sp" />
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/age"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Age"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Distance"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/addFriend_linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-
-        <ImageButton
-            android:id="@+id/friend_request_icon"
-            android:layout_width="49dp"
-            android:layout_height="49dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
+        <ImageView
+            android:id="@+id/friend_image"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/friend_request" />
 
-        <TextView
-            android:id="@+id/friend_request_text"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/friend_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/addFriend_linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Friend" />
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <ImageButton
+                android:id="@+id/friend_request_icon"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/friend_request" />
+
+            <TextView
+                android:id="@+id/friend_request_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Friend" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <ImageButton
+                android:id="@+id/message_icon"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/message_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Message" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
+<<<<<<< HEAD
     <LinearLayout
         android:id="@+id/sendMessage"
+=======
+    <TextView
+        android:id="@+id/interest1ListItemTextView"
+>>>>>>> main
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_marginBottom="5dp"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/interest2ListItemTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <TextView
+        android:id="@+id/interest2ListItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/interest3ListItemTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/interest1ListItemTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-        <ImageButton
-            android:id="@+id/message_icon"
-            android:layout_width="49dp"
-            android:layout_height="49dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:src="@drawable/message_icon" />
+    <TextView
+        android:id="@+id/interest3ListItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/interest4ListItemTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/interest2ListItemTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Message" />
+    <TextView
+        android:id="@+id/interest4ListItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/interest5ListItemTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/interest3ListItemTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <TextView
+        android:id="@+id/interest5ListItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/interest6ListItemTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/interest4ListItemTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/interest6ListItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/interest5ListItemTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

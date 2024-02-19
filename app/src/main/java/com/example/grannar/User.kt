@@ -22,7 +22,7 @@ data class User(
     var email: String? = null,
     var gender: String? = null,
     var profileImageURL: String? = null,
-    var interests: MutableList<Interests>? = null,
+    var interests: MutableList<Interest>? = mutableListOf(),
     var aboutMe: String? = null,
     var imageURLs: MutableList<String>? = null,
     var friendsList: MutableList<User>? = mutableListOf<User>()

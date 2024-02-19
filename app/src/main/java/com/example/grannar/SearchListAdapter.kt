@@ -9,15 +9,18 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 
-class SearchListAdapter(context: Context, private val searchList: MutableList<User>,private val listener: MyAdapterListener) : RecyclerView.Adapter<SearchListAdapter.ViewHolder>() {
+class SearchListAdapter(val context: Context, private val searchList: MutableList<User>,private val listener: MyAdapterListener) : RecyclerView.Adapter<SearchListAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
     private val db = Firebase.firestore
+
+
 
     interface MyAdapterListener {
         fun onAddFriendsListener(user: User)
@@ -34,6 +37,17 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
         val sendMessage: LinearLayout = itemView.findViewById(R.id.sendMessage)
         val btnSendMessage: ImageButton = itemView.findViewById(R.id.message_icon)
 
+        val interestsTextViewList = mutableListOf<TextView>(
+            itemView.findViewById(R.id.interest1ListItemTextView),
+            itemView.findViewById(R.id.interest2ListItemTextView),
+            itemView.findViewById(R.id.interest3ListItemTextView),
+            itemView.findViewById(R.id.interest4ListItemTextView),
+            itemView.findViewById(R.id.interest5ListItemTextView),
+            itemView.findViewById(R.id.interest6ListItemTextView),
+        )
+
+
+
     }
 
     override fun onCreateViewHolder(
@@ -47,6 +61,7 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
 
     override fun onBindViewHolder(holder: SearchListAdapter.ViewHolder, position: Int) {
         val selectedUser = searchList[position]
+        clearInterestsTextViews(holder.interestsTextViewList)
         holder.tvName.text = selectedUser.firstName
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
 
@@ -92,6 +107,28 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
             }
         }
 
+        val interests = selectedUser.interests
+        Log.d("!!!", "Interests ${interests?.size}")
+        if (interests != null){
+            addInterests(interests, holder.interestsTextViewList)
+        }
+
+
+
+    }
+
+    private fun addInterests(interests: List<Interest>, interestTextViewList: List<TextView> ){
+        interests.forEachIndexed{index, interest ->
+            interestTextViewList[index].text = interest.name
+            interest.category?.colorID?.let { interestTextViewList[index].setBackgroundColor(context.resources.getColor(it)) }
+        }
+    }
+
+    private fun clearInterestsTextViews(interestTextViewList: List<TextView>){
+        interestTextViewList.forEach{textView ->
+            textView.text = ""
+            textView.setBackgroundColor(0)
+        }
     }
 
 

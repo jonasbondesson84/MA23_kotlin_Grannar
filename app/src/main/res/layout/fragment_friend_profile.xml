@@ -114,11 +114,11 @@
             android:id="@+id/squareTextView"
             android:layout_width="344dp"
             android:layout_height="72dp"
-            android:layout_marginTop="29dp"
+            android:layout_marginTop="28dp"
             android:background="@drawable/box"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.54"
+            app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
@@ -195,66 +195,66 @@
             app:layout_constraintVertical_bias="0.553" />
 
         <TextView
-            android:id="@+id/interest1TextView"
+            android:id="@+id/friendsInterest1TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="10dp"
-            android:text="TextView"
             app:layout_constraintStart_toStartOf="@+id/squareTextView"
             app:layout_constraintTop_toTopOf="@+id/squareTextView" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/friendsInterest2TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/textView3"
+            android:paddingHorizontal="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/friendsInterest3TextView"
             app:layout_constraintHorizontal_bias="0.509"
-            app:layout_constraintStart_toEndOf="@+id/interest1TextView"
+            app:layout_constraintStart_toEndOf="@+id/friendsInterest1TextView"
             app:layout_constraintTop_toTopOf="@+id/squareTextView" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/friendsInterest3TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:paddingHorizontal="5dp"
             android:layout_marginEnd="40dp"
-            android:text="TextView"
             app:layout_constraintEnd_toEndOf="@+id/squareTextView"
             app:layout_constraintTop_toTopOf="@+id/squareTextView" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/friendsInterest4TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
+            android:paddingHorizontal="5dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
             app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toBottomOf="@+id/interest1TextView" />
+            app:layout_constraintTop_toBottomOf="@+id/friendsInterest1TextView" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/friendsInterest5TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"
+            android:paddingHorizontal="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/friendsInterest6TextView"
             app:layout_constraintHorizontal_bias="0.509"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintStart_toEndOf="@+id/friendsInterest4TextView"
+            app:layout_constraintTop_toBottomOf="@+id/friendsInterest2TextView" />
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/friendsInterest6TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:paddingHorizontal="5dp"
             android:layout_marginEnd="40dp"
-            android:text="TextView"
             app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/friendsInterest3TextView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

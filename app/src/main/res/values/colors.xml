@@ -140,4 +140,17 @@
     <color name="md_theme_surfaceContainer_highContrast">#E9EFEC</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#E3EAE6</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#DEE4E1</color>
+
+    <color name="sportCategory">#FFAAAA</color> <!-- Ljusrosa -->
+    <color name="natureCategory">#AAFFAA</color> <!-- Ljusgrön -->
+    <color name="animalsCategory">#AAAAFF</color> <!-- Ljusblå -->
+    <color name="musicCategory">#FFFFAA</color> <!-- Ljusgul -->
+    <color name="literatureCategory">#FFAAFF</color> <!-- Ljuslila -->
+    <color name="travelCategory">#AAFFFF</color> <!-- Ljuscyan -->
+    <color name="gamesCategory">#FFDCAA</color> <!-- Ljusorange -->
+    <color name="exerciseCategory">#DCAADF</color> <!-- Ljuslila -->
+    <color name="otherCategory">#DDDDDD</color> <!-- Ljusgrå -->
+
+
+
 </resources>

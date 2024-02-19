@@ -107,7 +107,7 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/imageButton4"
+                android:id="@+id/profileImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00FFFFFF"
@@ -197,67 +197,7 @@
             app:layout_constraintTop_toTopOf="@+id/frameImageView"
             app:layout_constraintVertical_bias="0.437" />
 
-        <TextView
-            android:id="@+id/interest1TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="10dp"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
 
-        <TextView
-            android:id="@+id/interest2TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/interest3TextView"
-            app:layout_constraintHorizontal_bias="0.509"
-            app:layout_constraintStart_toEndOf="@+id/interest1TextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
-
-        <TextView
-            android:id="@+id/interest3TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="40dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
-
-        <TextView
-            android:id="@+id/interest4TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="8dp"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toBottomOf="@+id/interest1TextView" />
-
-        <TextView
-            android:id="@+id/interest5TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/interest6TextView"
-            app:layout_constraintHorizontal_bias="0.509"
-            app:layout_constraintStart_toEndOf="@+id/interest4TextView"
-            app:layout_constraintTop_toBottomOf="@+id/interest2TextView" />
-
-        <TextView
-            android:id="@+id/interest6TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintTop_toBottomOf="@+id/interest3TextView" />
 
         <ImageButton
             android:id="@+id/chooseImageButton"
@@ -295,6 +235,214 @@
             app:layout_constraintHorizontal_bias="0.713"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest1Constraint"
+            android:layout_width="0dp"
+
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/interest2Constraint"
+            app:layout_constraintStart_toStartOf="@+id/squareTextView"
+            app:layout_constraintTop_toTopOf="@+id/squareTextView">
+
+            <TextView
+                android:id="@+id/interest1TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest1ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/deleteInterest1ImageView"
+                android:layout_width="14dp"
+                android:layout_height="0dp"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest2Constraint"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/interest3Constraint"
+            app:layout_constraintStart_toEndOf="@+id/interest1Constraint"
+            app:layout_constraintTop_toTopOf="@+id/squareTextView">
+
+            <TextView
+                android:id="@+id/interest2TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest2ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/deleteInterest2ImageView"
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="0dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest3Constraint"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
+            app:layout_constraintStart_toEndOf="@+id/interest2Constraint"
+            app:layout_constraintTop_toTopOf="@+id/squareTextView">
+
+            <ImageView
+                android:id="@+id/deleteInterest3ImageView"
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/interest3TextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest3ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest4Constraint"
+            android:layout_width="0dp"
+
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/interest5Constraint"
+            app:layout_constraintStart_toStartOf="@+id/squareTextView"
+            app:layout_constraintTop_toBottomOf="@+id/interest1Constraint">
+
+            <TextView
+                android:id="@+id/interest4TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest4ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/deleteInterest4ImageView"
+                android:layout_width="14dp"
+                android:layout_height="0dp"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest5Constraint"
+            android:layout_width="0dp"
+
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/interest6Constraint"
+            app:layout_constraintStart_toEndOf="@+id/interest4Constraint"
+            app:layout_constraintTop_toBottomOf="@+id/interest1Constraint">
+
+            <TextView
+                android:id="@+id/interest5TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest5ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/deleteInterest5ImageView"
+                android:layout_width="14dp"
+                android:layout_height="0dp"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/interest6Constraint"
+            android:layout_width="0dp"
+
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
+            app:layout_constraintStart_toEndOf="@+id/interest5Constraint"
+            app:layout_constraintTop_toBottomOf="@+id/interest2Constraint">
+
+            <TextView
+                android:id="@+id/interest6TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp"
+                android:text=""
+
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/deleteInterest6ImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/deleteInterest6ImageView"
+                android:layout_width="14dp"
+                android:layout_height="0dp"
+                android:background="@drawable/background_delete"
+                android:src="@drawable/baseline_close_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
