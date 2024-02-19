@@ -21,7 +21,7 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
 
     interface MyAdapterListener {
         fun onAddFriendsListener(user: User)
-        fun onSendMessageListerner(user: User)
+        fun onSendMessageListener(user: User)
     }
 
     var onUserClick: ((User) -> Unit)? = null
@@ -57,14 +57,14 @@ class SearchListAdapter(context: Context, private val searchList: MutableList<Us
 
         holder.btnSendMessage.setOnClickListener {
             if(CurrentUser.userID != null) {
-                listener.onSendMessageListerner(selectedUser)
+                listener.onSendMessageListener(selectedUser)
             } else {
                 listener.onAddFriendsListener(selectedUser)
             }
         }
         holder.sendMessage.setOnClickListener {
             if(CurrentUser.userID != null) {
-                listener.onSendMessageListerner(selectedUser)
+                listener.onSendMessageListener(selectedUser)
             } else {
                 listener.onAddFriendsListener(selectedUser)
             }

@@ -7,9 +7,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MessageAdapter(context: Context, val messages: MutableList<Chats>): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,private val listener: MessageAdapter.MyAdapterListener): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
+    interface MyAdapterListener {
+        fun goToMessage(user: User)
+
+    }
+    var onUserClick: ((User) -> Unit)? = null
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvMessageName)
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessageChatMessage)
@@ -23,14 +29,18 @@ class MessageAdapter(context: Context, val messages: MutableList<Chats>): Recycl
     }
 
     override fun onBindViewHolder(holder: MessageAdapter.ViewHolder, position: Int) {
-        val message = messages[position].messages?.last()
-        val fromUser = message?.fromID
-        holder.tvName.text = fromUser
-        holder.tvMessage.text = message?.message
+        val message = chatList[position].lastMessage.text
+        val fromUser = chatList[position].fromUser
+        holder.tvName.text = fromUser.firstName
+        holder.tvMessage.text = message
+
+        holder.itemView.setOnClickListener {
+            listener.goToMessage(fromUser)
+        }
 
     }
 
     override fun getItemCount(): Int {
-       return messages.size
+       return chatList.size
     }
 }

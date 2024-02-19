@@ -75,7 +75,12 @@
         tools:layout="@layout/fragment_messages" >
         <action
             android:id="@+id/action_messagesFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string"
+                />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

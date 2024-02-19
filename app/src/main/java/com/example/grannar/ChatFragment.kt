@@ -18,11 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,11 +38,13 @@ class ChatFragment : Fragment() {
     private var param2: String? = null
     private val messages = mutableListOf<Message>()
     private lateinit var etvMessageText: TextInputEditText
-    private val args : FriendProfileFragmentArgs by navArgs()
-    private lateinit var  adapter: ChatAdapter
+    private val args: FriendProfileFragmentArgs by navArgs()
+    private lateinit var adapter: ChatAdapter
     private lateinit var db: FirebaseFirestore
     private lateinit var tvName: TextView
     private lateinit var imImage: ImageView
+    private var docID: String? = null
+    private var docExist: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,16 +52,9 @@ class ChatFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        //createMessages()
+
     }
 
-//    private fun createMessages() {
-//        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message from currentUser"))
-//        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current User"))
-//        messages.add(Message("","KJOaLgBuHkW8YZcdmPA4qhifxED3", "toId", "this is the message FROM currentUser"))
-//        messages.add(Message("","fromID", "KJOaLgBuHkW8YZcdmPA4qhifxED3", "this is the message TO current user"))
-//
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,8 +65,9 @@ class ChatFragment : Fragment() {
         db = Firebase.firestore
         tvName = view.findViewById(R.id.tvChatName)
         imImage = view.findViewById(R.id.imChatImage)
+        
+        getDocID()
 
-        getMessages()
         getUserInfo(args.userID.toString())
 
         val rvChatMessage = view.findViewById<RecyclerView>(R.id.rvChatMessages)
@@ -113,84 +107,115 @@ class ChatFragment : Fragment() {
         tvName.text = selectedUser.firstName
     }
 
-    private fun getMessages() {
 
-        db.collection("messages").document(CurrentUser.userID.toString()).collection(args.userID.toString())
-            .addSnapshotListener {snapshot, e ->
-                if(e != null) {
-                    Log.d("!!!", "error ", e)
-                    return@addSnapshotListener
-                }
-                if(snapshot != null) {
-                    messages.clear()
-                    val chatMessage = snapshot.toObjects<Message>()
-                    for ( message in chatMessage) {
-                        messages.add(message)
-                        adapter.notifyDataSetChanged()
+    private fun getOldMessages() {
+        Log.d("!!!", docID.toString())
+        docID?.let {
+            db.collection("messages").document(it).collection("message")
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        return@addSnapshotListener
+                    } else {
+                        if (snapshot != null) {
+                            messages.clear()
+                            for (document in snapshot.documents) {
+                                val newMessage = document?.toObject<Message>()
+                                if (newMessage != null) {
+                                    messages.add(newMessage)
+                                }
+                            }
+                            messages.sortBy { it.timeStamp }
+                            adapter.notifyDataSetChanged()
+
+                        }
+
                     }
 
                 }
-                messages.sortBy { it.timeStamp }
 
+        }
 
-            }
     }
 
 
     private fun addNewMessage() {
-//        val newMessage = Message(
-//            docID = "",
-//            fromID = CurrentUser.userID.toString(),
-//            toID = args.userID.toString(),
-//            message = etvMessageText.text.toString(),
-//
-//        )
-        //messages.add(newMessage)
         saveMessageToDataBase()
-        etvMessageText.text?.clear()
+
+    }
+
+    private fun getDocID() {
+
+        db.collection("messages")
+            .document(CurrentUser.userID.toString() + "_" + args.userID.toString()).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    docExist = true
+                    docID = CurrentUser.userID.toString() + "_" + args.userID.toString()
+                    Log.d("!!!", "here")
+                    getOldMessages()
+                }
+                Log.d("!!!", "Doc exists: $docExist")
+            }
+        if (!docExist) {
+            db.collection("messages")
+                .document(args.userID.toString() + "_" + CurrentUser.userID.toString()).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        docExist = true
+                        docID = args.userID.toString() + "_" + CurrentUser.userID.toString()
+                        getOldMessages()
+                    }
+                }
+        }
+    }
+
+    private fun createDoc() {
+        val participants = listOf(CurrentUser.userID.toString(), args.userID.toString())
+        val data = mapOf(
+            "participants" to participants
+        )
+        db.collection("messages")
+            .document(CurrentUser.userID.toString() + "_" + args.userID.toString()).set(data)
+            .addOnSuccessListener {
+                docID = CurrentUser.userID.toString() + "_" + args.userID.toString()
+                saveMessage()
+
+            }
     }
 
 
     private fun saveMessageToDataBase() {
-
-        val fromID = CurrentUser.userID.toString()
-        val toID = args.userID.toString()
-        val message = etvMessageText.text.toString()
-        Log.d("!!!", message)
-        val mapMessage = hashMapOf(
-            "fromID" to fromID,
-            "toID" to toID,
-            "message" to message,
-            "unread" to true,
-            "timeStamp" to FieldValue.serverTimestamp()
-        )
-
-        val messageFromDocumentRef = db.collection("messages").document(fromID)
-        val chatMessagesFromCollectionRef = messageFromDocumentRef.collection(toID)
-
-        chatMessagesFromCollectionRef.add(mapMessage)
-            .addOnSuccessListener { documentReference ->
-                Log.d("!!!", "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("!!!", "Error adding document", e)
-            }
-        val messageToDocumentRef =  db.collection("messages").document(toID)
-        val chatMessagesToCollectionRef = messageToDocumentRef.collection(fromID)
-
-        chatMessagesToCollectionRef.add(mapMessage)
-            .addOnSuccessListener { documentReference ->
-                Log.d("!!!", "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("!!!", "Error adding document", e)
-            }
-
+        Log.d("!!!", "docexist : $docExist")
+        if (docExist) {
+            saveMessage()
+        } else {
+            createDoc()
+        }
 
     }
 
+    private fun saveMessage() {
+        Log.d("!!!", docID.toString())
+        docID?.let {
+            db.collection("messages").document(it).collection("message")
+                .add(
+                    Message(
+                        fromID = CurrentUser.userID.toString(),
+                        toID = args.userID.toString(),
+                        unread = true,
+                        text = etvMessageText.text.toString()
+                    )
+                ).addOnSuccessListener {
+                    docExist = true
+                    getOldMessages()
+                }
+        }
+    }
+
+
     fun hideKeyboard(view: View) {
-        val inputMethodManager = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 

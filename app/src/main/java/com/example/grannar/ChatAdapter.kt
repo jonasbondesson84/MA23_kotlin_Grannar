@@ -46,7 +46,7 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
 
         if(getItemViewType(position) == 1) {
             val fromHolder = holder as ViewHolderFromCurrentUser
-            fromHolder.tvMessageFrom.text = messages[position].message
+            fromHolder.tvMessageFrom.text = messages[position].text
 
             val timeStamp = messages[position].timeStamp
             //setTimeText(timeStamp)
@@ -56,11 +56,11 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
             } else {
                 timeText = "null"
             }
-            fromHolder.tvTimeStampFrom.text = timeText
+//            fromHolder.tvTimeStampFrom.text = timeText
 //            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
-            toHolder.tvMessageTo.text = messages[position].message
+            toHolder.tvMessageTo.text = messages[position].text
             val timeStamp = messages[position].timeStamp
             var timeText = ""
             if(timeStamp != null) {

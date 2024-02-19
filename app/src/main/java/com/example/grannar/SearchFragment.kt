@@ -135,7 +135,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         openDialogFragment()
     }
 
-    override fun onSendMessageListerner(user: User) {
+    override fun onSendMessageListener(user: User) {
         val uid = user.userID
         if(uid != null) {
             val action =
