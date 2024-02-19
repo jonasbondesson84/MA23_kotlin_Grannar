@@ -24,6 +24,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
     interface MyAdapterListener {
         fun onAddFriendsListener(user: User)
+        fun onSendMessageListener(user: User)
     }
 
     var onUserClick: ((User) -> Unit)? = null
@@ -33,6 +34,8 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         val tvAge: TextView = itemView.findViewById(R.id.age)
         val addFriend: LinearLayout = itemView.findViewById(R.id.addFriend_linearLayout)
         val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
+        val sendMessage: LinearLayout = itemView.findViewById(R.id.sendMessage)
+        val btnSendMessage: ImageButton = itemView.findViewById(R.id.message_icon)
 
         val interestsTextViewList = mutableListOf<TextView>(
             itemView.findViewById(R.id.interest1ListItemTextView),
@@ -63,14 +66,26 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
 
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
-
         if(CurrentUser.friendsList?.any{it.userID == selectedUser.userID} == true) {
             holder.addFriend.visibility = View.INVISIBLE
+        }
 
+        holder.btnSendMessage.setOnClickListener {
+            if(CurrentUser.userID != null) {
+                listener.onSendMessageListener(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
+        }
+        holder.sendMessage.setOnClickListener {
+            if(CurrentUser.userID != null) {
+                listener.onSendMessageListener(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
         }
 
         holder.itemView.setOnClickListener {
-
             if(CurrentUser.userID != null) {
                 onUserClick?.invoke(selectedUser)
             } else {
@@ -115,7 +130,6 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
             textView.setBackgroundColor(0)
         }
     }
-
 
 
     fun removeFriend( position: Int) {

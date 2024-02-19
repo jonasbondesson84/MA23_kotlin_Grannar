@@ -1,7 +1,10 @@
 package com.example.grannar
 
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import com.google.type.LatLng
 import java.time.LocalDate
 import java.time.Period
@@ -64,4 +67,6 @@ data class User(
         }
 
     }
+
+
 }

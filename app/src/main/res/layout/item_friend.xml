@@ -112,8 +112,13 @@
 
     </LinearLayout>
 
+<<<<<<< HEAD
+    <LinearLayout
+        android:id="@+id/sendMessage"
+=======
     <TextView
         android:id="@+id/interest1ListItemTextView"
+>>>>>>> main
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
