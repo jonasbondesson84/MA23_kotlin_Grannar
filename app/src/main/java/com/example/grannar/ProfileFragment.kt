@@ -169,7 +169,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
         if (resultCode == Activity.RESULT_OK && requestCode == 0){
             val uri =data?.data
-            val image : ImageView = view?.findViewById(R.id.personalImageView) ?:
+            val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
             return
             image.setImageURI(uri)
         }
@@ -196,7 +196,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
     private fun getUserInfo(callback: (User?) -> Unit) {
-        val docRef= db.collection("users").document("K2clKql2GHhX3ZKyErAiG3axf6r2")
+        val docRef= db.collection("users").document(CurrentUser.userID!!)
         //documentPath kommer behöva ändras sedan till den anv som är inloggad.
 
         docRef.addSnapshotListener { snapshot, e ->
@@ -314,9 +314,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     }
 
 private fun saveAboutMe(newAboutMe: String) {
-
-    val userId = "K2clKql2GHhX3ZKyErAiG3axf6r2"
-    val userRef = db.collection("users").document(userId)
+    val userRef = db.collection("users").document(CurrentUser.userID!!)
     userRef.update("aboutMe", newAboutMe)
         .addOnSuccessListener {
             Log.d("!!!", "success about me ${db}")
