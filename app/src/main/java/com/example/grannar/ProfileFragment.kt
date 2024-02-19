@@ -205,9 +205,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
 
-
-
-
     private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document(CurrentUser.userID!!)
         //documentPath kommer behöva ändras sedan till den anv som är inloggad.
