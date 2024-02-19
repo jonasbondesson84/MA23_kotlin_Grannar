@@ -45,6 +45,7 @@ class ChatFragment : Fragment() {
     private lateinit var imImage: ImageView
     private var docID: String? = null
     private var docExist: Boolean = false
+    private lateinit var rvChatMessage: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +71,7 @@ class ChatFragment : Fragment() {
 
         getUserInfo(args.userID.toString())
 
-        val rvChatMessage = view.findViewById<RecyclerView>(R.id.rvChatMessages)
+        rvChatMessage = view.findViewById(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
         adapter = ChatAdapter(view.context, messages)
         rvChatMessage.adapter = adapter
@@ -148,6 +149,8 @@ class ChatFragment : Fragment() {
                             }
                             messages.sortBy { it.timeStamp }
                             adapter.notifyDataSetChanged()
+                            rvChatMessage.scrollToPosition(messages.size -1 )
+
 
                         }
 
