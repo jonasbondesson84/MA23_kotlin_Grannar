@@ -102,14 +102,14 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
     }
 
-    fun addInterests(interests: List<Interest>, interestTextViewList: List<TextView> ){
+    private fun addInterests(interests: List<Interest>, interestTextViewList: List<TextView> ){
         interests.forEachIndexed{index, interest ->
             interestTextViewList[index].text = interest.name
             interest.category?.colorID?.let { interestTextViewList[index].setBackgroundColor(context.resources.getColor(it)) }
         }
     }
 
-    fun clearInterestsTextViews(interestTextViewList: List<TextView>){
+    private fun clearInterestsTextViews(interestTextViewList: List<TextView>){
         interestTextViewList.forEach{textView ->
             textView.text = ""
             textView.setBackgroundColor(0)
