@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, bundle ->
 
-            if ((destination.id == R.id.profileFragment || destination.id == R.id.friendsListFragment) && !isLoggedIn()) {
+            if ((destination.id == R.id.profileFragment || destination.id == R.id.friendsListFragment
+                        || destination.id == R.id.messagesFragment) && !isLoggedIn()) {
 //                if (!isLoggedIn()) {
                 pendingDestination = destination
                 pendingBundle = bundle
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
                 val dialogFragment = SignInDialogFragment()
                 dialogFragment.show(supportFragmentManager, "SignInDialogFragment")
             }
+
         }
     }
 

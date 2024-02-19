@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
@@ -33,6 +34,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
     private val chats = mutableListOf<Chats>()
     private lateinit var db: FirebaseFirestore
     private lateinit var adapter: MessageAdapter
+    private val args: FriendProfileFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +58,14 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
         rvMessageList.layoutManager = LinearLayoutManager(view.context)
         adapter = MessageAdapter(view.context, chats, this)
         rvMessageList.adapter = adapter
+
+//        if(args.userID != null) {
+//            val action =
+//                MessagesFragmentDirections.actionMessagesFragmentToChatFragment(args.userID.toString())
+//            findNavController().navigate(action)
+//        }
+
+
 
         val btnSearch: Button = view.findViewById(R.id.btnChatSearch)
         getMessagesForUser()

@@ -65,7 +65,7 @@ class ChatFragment : Fragment() {
         db = Firebase.firestore
         tvName = view.findViewById(R.id.tvChatName)
         imImage = view.findViewById(R.id.imChatImage)
-        
+
         getDocID()
 
         getUserInfo(args.userID.toString())
@@ -85,10 +85,32 @@ class ChatFragment : Fragment() {
 
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
+//            val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
+//            findNavController().navigate(action)
         }
 
         return view
     }
+
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        // Skapa en callback för hantering av bakåtknappen
+//        val callback = object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                // Lägg till argument och navigera tillbaka
+//                val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
+//                findNavController().navigate(action)
+//                //findNavController().popBackStack()
+//            }
+//        }
+//
+//        // Lägg till callbacken till FragmentActivity
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+//    }
+
+
+
 
     private fun getUserInfo(friendUid: String) {
         val db = Firebase.firestore
