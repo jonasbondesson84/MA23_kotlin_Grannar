@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
@@ -105,7 +104,9 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
     private fun addInterests(interests: List<Interest>, interestTextViewList: List<TextView> ){
         interests.forEachIndexed{index, interest ->
             interestTextViewList[index].text = interest.name
-            interest.category?.colorID?.let { interestTextViewList[index].setBackgroundColor(context.resources.getColor(it)) }
+            val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
+           // interest.category?.colorID?.let { interestTextViewList[index].setBackgroundColor(context.resources.getColor(it)) }
+            interestTextViewList[index].setBackgroundColor(context.resources.getColor(categoryColorID))
         }
     }
 

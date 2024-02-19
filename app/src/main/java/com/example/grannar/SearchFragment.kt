@@ -91,7 +91,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }else {
             val filteredList = listToFilter.filter { user ->
                 user.interests?.any {interest ->
-                    interest.category?.name in selectedCategories
+                    interest.category in selectedCategories
                 } == true
             }
             fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
@@ -182,28 +182,29 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     private fun openCategoryFilterDialog(){
-        val categories = listOf(
-         Category("Sport", R.color.sportCategory),
-         Category("Nature", R.color.natureCategory),
-         Category("Animals", R.color.animalsCategory),
-         Category("Music", R.color.musicCategory),
-         Category("Literature", R.color.literatureCategory),
-         Category("Travel", R.color.travelCategory),
-         Category("Games", R.color.gamesCategory),
-         Category("Exercise", R.color.exerciseCategory),
-         Category("Other", R.color.otherCategory),
-    )
+//        val categories = listOf(
+//         Category("Sport", R.color.sportCategory),
+//         Category("Nature", R.color.natureCategory),
+//         Category("Animals", R.color.animalsCategory),
+//         Category("Music", R.color.musicCategory),
+//         Category("Literature", R.color.literatureCategory),
+//         Category("Travel", R.color.travelCategory),
+//         Category("Games", R.color.gamesCategory),
+//         Category("Exercise", R.color.exerciseCategory),
+//         Category("Other", R.color.otherCategory),
+//    )
 
         val dialog = Dialog(requireContext())
          dialog.setContentView(R.layout.dialog_category_filter)
         val container = dialog.findViewById<LinearLayout>(R.id.categoryLinearLayout)
         val checkBoxes = mutableListOf<CheckBox>()
-        categories.forEach { category ->
+        CategoryManager.categories.forEach { (category, colorID) ->
+        //categories.forEach { category ->
             val checkBox = CheckBox(requireContext())
-            checkBox.text = category.name
-            category.colorID?.let { checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), it))}
+            checkBox.text = category
+            checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))
 
-            if (selectedCategories.contains(category.name)){
+            if (selectedCategories.contains(category)){
                 checkBox.isChecked = true
             }
             checkBoxes.add(checkBox)
