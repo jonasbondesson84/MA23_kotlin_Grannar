@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -72,13 +73,23 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
 
+
+        val profileBtn = view.findViewById<ImageButton>(R.id.profileImageButton)
+        profileBtn.setOnClickListener{
+            Intent(Intent.ACTION_GET_CONTENT).also {
+                it.type = "image/*" //För image/png bara
+                startActivityForResult(it, 0)
+            }
+            }
+
+
         val showName = view.findViewById<TextView>(R.id.profileNameTextView)
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
         val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
 
+
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
-        //val saveAboutMeButton =view.findViewById<Button>(R.id.saveAboutMeButton)
 
         //Anv ska kunna ladda upp en övrig bild
         val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
@@ -104,11 +115,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
         Log.d("!!!", "${CurrentUser.interests?.size}")
 
-
-
-        chooseImageButton.setOnClickListener {
-            openImageChooser()
-        }
 
 
         getUserInfo { user ->
@@ -158,19 +164,14 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
 
-    private fun openImageChooser() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, PICK_IMAGE_REQUEST)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
-            imageUri = data.data
-            personalImageView?.setImageURI(imageUri)
-
-            uploadImageToFirebase()
+        if (resultCode == Activity.RESULT_OK && requestCode == 0){
+            val uri =data?.data
+            val image : ImageView = view?.findViewById(R.id.personalImageView) ?:
+            return
+            image.setImageURI(uri)
         }
     }
 
