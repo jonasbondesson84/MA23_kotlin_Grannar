@@ -21,7 +21,7 @@
         />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etvSearchFriends"
+        android:id="@+id/tilSearch"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="Search"
@@ -42,9 +42,9 @@
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/etvSearchFriends"
-        app:layout_constraintBottom_toBottomOf="@id/etvSearchFriends"
-        app:layout_constraintStart_toEndOf="@id/etvSearchFriends"
+        app:layout_constraintTop_toTopOf="@+id/tilSearch"
+        app:layout_constraintBottom_toBottomOf="@id/tilSearch"
+        app:layout_constraintStart_toEndOf="@id/tilSearch"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Search"
         />
@@ -57,6 +57,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etvSearchFriends" />
+        app:layout_constraintTop_toBottomOf="@+id/tilSearch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

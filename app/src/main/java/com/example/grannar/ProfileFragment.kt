@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,9 +15,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.firestore
@@ -55,6 +54,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     private lateinit var lastInterestImageView: ImageView
     val MAX_INTERESTS = 6
 
+    private lateinit var selectedImageUri: Uri
+    private lateinit var getContent: ActivityResultLauncher<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -63,6 +65,13 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
             }
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri:
+                                                                                       Uri? -> uri?.let {
+            selectedImageUri = it
+        }
+        }
+
+
         }
 
 
@@ -115,6 +124,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
         Log.d("!!!", "${CurrentUser.interests?.size}")
 
+        val button: ImageButton = view.findViewById(R.id.chooseImageButton)
+        button.setOnClickListener{
+            openGallery()
+        }
+
 
 
             getUserInfo { user ->
@@ -145,7 +159,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                 showGender.text=" "
                 showAge.text=" "
                 showLocation.text=" "
-                //showInterest(null)
+
             }
         }
 
@@ -242,6 +256,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             } else {
                 callback(null)
             }
+
         }
     }
 
@@ -276,7 +291,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         if (interests != null){
             interests?.forEachIndexed { i, interest ->
                 interestTextViewList[i].text = interest.name
-                interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+                val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
+                interestTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
+               // interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
                 interestConstraintList[i].visibility = View.VISIBLE
                 interestConstraintList[i].setOnClickListener {
                     deleteInterest(i)
@@ -341,6 +358,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     }
     override fun interestAdded() {
         showInterestsWithColor(CurrentUser.interests)
+    }
+
+
+    fun openGallery() {
+        getContent.launch("image/*")
     }
 
 private fun saveAboutMe(newAboutMe: String) {

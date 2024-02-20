@@ -1,35 +1,23 @@
 package com.example.grannar
 
-import android.util.Log
+object CategoryManager {
 
-//object CategoryManager {
-//
-//
-//
-//
-//     val categories = listOf(
-//         Category("Sport", R.color.sportCategory),
-//         Category("Nature", R.color.natureCategory),
-//         Category("Animals", R.color.animalsCategory),
-//         Category("Music", R.color.musicCategory),
-//         Category("Literature", R.color.literatureCategory),
-//         Category("Travel", R.color.travelCategory),
-//         Category("Games", R.color.gamesCategory),
-//         Category("Exercise", R.color.exerciseCategory),
-//         Category("Other", R.color.otherCategory),
-//    )
-//
-//
-//
-//    fun getCategoryNames():List<String>{
-//        val categoryNames = mutableListOf<String>()
-//        for (category in categories){
-//            categoryNames.add(category.name.toString())
-//        }
-//        return categoryNames
-//    }
-//    fun getCategoryFromName(name: String): Category? {
-//        val category = categories.find { it.name == name }
-//        return category
-//    }
-//}
+     val categories = mapOf<String, Int>(
+         "Sport" to R.color.sportCategory,
+         "Nature" to R.color.natureCategory,
+         "Animals" to R.color.animalsCategory,
+         "Music" to R.color.musicCategory,
+         "Literature" to R.color.literatureCategory,
+         "Travel" to R.color.travelCategory,
+         "Games" to R.color.gamesCategory,
+         "Exercise" to R.color.exerciseCategory,
+         "Other" to R.color.otherCategory)
+
+
+    fun getCategoryNames():List<String>{
+        return categories.keys.toList()
+    }
+    fun getCategoryColorId(categoryName: String?): Int {
+        return categories[categoryName] ?: R.color.otherCategory
+    }
+}

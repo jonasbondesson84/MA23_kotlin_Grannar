@@ -1,6 +1,6 @@
 package com.example.grannar
 
 class Interest(
-    var category: Category? = null,
+    var category: String? = null,
     var name: String? = null
 )

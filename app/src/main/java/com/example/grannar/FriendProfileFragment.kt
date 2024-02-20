@@ -1,10 +1,15 @@
 package com.example.grannar
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -12,6 +17,10 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+
+//import android.net.Uri
+//import androidx.activity.result.ActivityResultLauncher
+//import androidx.activity.contract.ActivityResultContracts
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,12 +44,15 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvAboutMe: TextView
     private var interestsTextViewList = mutableListOf<TextView>()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
@@ -62,6 +74,8 @@ class FriendProfileFragment : Fragment() {
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest4TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest5TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest6TextView))
+
+
 
 
         val appBar = view.findViewById<MaterialToolbar>(R.id.topFriendProfile)
@@ -101,12 +115,18 @@ class FriendProfileFragment : Fragment() {
 
     }
 
+
     private fun showInterests(interests: List<Interest>?){
         interests?.forEachIndexed{ i, interest ->
+            val categoryColorID = interest.category?.let { CategoryManager.getCategoryColorId(it) }
             interestsTextViewList[i].text = interest.name
-            interest.category?.colorID?.let { interestsTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+            if (categoryColorID != null) {
+                interestsTextViewList[i].setBackgroundColor(categoryColorID)
+            }
+
         }
     }
+
 
 
 
