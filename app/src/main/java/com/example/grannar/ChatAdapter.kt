@@ -107,4 +107,6 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
     override fun getItemCount(): Int {
         return messages.size
     }
+
+
 }

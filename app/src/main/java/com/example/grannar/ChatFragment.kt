@@ -89,8 +89,39 @@ class ChatFragment : Fragment() {
 //            val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
 //            findNavController().navigate(action)
         }
+        val scrollListener = object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+
+                updateLastRead(firstVisibleItemPosition, lastVisibleItemPosition)
+            }
+        }
+
+        rvChatMessage.addOnScrollListener(scrollListener)
 
         return view
+    }
+    fun updateLastRead(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
+        // Uppdatera variabeln eller objektet baserat på de synliga positionerna i RecyclerView
+        // Exempelvis:
+        for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
+            // Uppdatera variabeln eller objektet för varje synligt objekt i listan
+            // Exempelvis:
+            var item = messages[i]
+            if(item.unread == true && item.toID == CurrentUser.userID.toString()) {
+                docID?.let { item.docID?.let { it1 ->
+                    db.collection("messages").document(it).collection("message").document(
+                        it1
+                    ).update("unread", false).addOnSuccessListener {
+                        Log.d("!!!", "doc unread: " +item.docID.toString())
+                        item.unread = false
+                    }
+                } }
+            }
+
+        }
     }
 
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -144,13 +175,14 @@ class ChatFragment : Fragment() {
                             for (document in snapshot.documents) {
                                 val newMessage = document?.toObject<Message>()
                                 if (newMessage != null) {
+                                    //set lastRead position
                                     messages.add(newMessage)
                                 }
                             }
                             messages.sortBy { it.timeStamp }
                             adapter.notifyDataSetChanged()
-                            rvChatMessage.scrollToPosition(messages.size -1 )
 
+                            rvChatMessage.scrollToPosition(getFirstUnread() - 1)
 
                         }
 
@@ -161,6 +193,17 @@ class ChatFragment : Fragment() {
         }
 
     }
+    private fun getFirstUnread(): Int {
+        for(message in messages) {
+            if(message.toID == CurrentUser.userID.toString() && message.unread) {
+                return messages.indexOf(message)
+            }
+
+        }
+        return messages.size
+
+    }
+
 
 
     private fun addNewMessage() {
@@ -233,6 +276,8 @@ class ChatFragment : Fragment() {
                 ).addOnSuccessListener {
                     docExist = true
                     getOldMessages()
+                    hideKeyboard(requireView())
+                    etvMessageText.text?.clear()
                 }
         }
     }
