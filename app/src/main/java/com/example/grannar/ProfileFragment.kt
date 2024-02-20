@@ -183,9 +183,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                 imageUri = uri // spara för uppladdning
 
                 uploadImageToFirebase()
-                //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
-                //return
-                //image.setImageURI(uri)
             }
         } else {
             Log.d("&&&", "OnActivityResult(), imageUri is null")
@@ -212,8 +209,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                         Log.d("&&&", "${downloadUri}")
                         db.collection("users").document(CurrentUser.userID!!).update("profileImageURL",downloadUri.toString())
                     } else {
-                        // Handle failures
-                        // ...
+
                     }
                 }
                 .addOnSuccessListener {
@@ -230,8 +226,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             Log.d("&&&", "imageUri is null")
         }
     }
-
-
 
 
     private fun getUserInfo(callback: (User?) -> Unit) {
