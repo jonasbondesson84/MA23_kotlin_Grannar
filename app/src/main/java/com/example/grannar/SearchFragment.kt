@@ -57,9 +57,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
-
+        getUsersList()
     }
 
 
@@ -137,7 +138,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
-        getUsersList()
+        //getUsersList()
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         adapter.onUserClick = {
             val uid = it.userID
