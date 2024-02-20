@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -130,16 +131,21 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
 
-        getUserInfo { user ->
+            getUserInfo { user ->
             if (user != null) {
                 showName.text = user?.firstName
                 showGender.text = user?.gender
                 showAge.text = user?.age
                 showLocation.text = user?.location?.toString() ?: "none location to show"
+                Glide.with(requireActivity())
+                    .load(user.profileImageURL)
+                    .into(profileImageView!!)
+                Log.d("&&&", "Glide ${Glide.with(requireActivity())}")
+                Log.d("&&&", "load user img ${(user.profileImageURL)}")
+                Log.d("&&&", "into profile image view${(profileImageView!!)}")
 
               //  showInterest(user.interests)
                 aboutMeEditText.setText(user.aboutMe)
-
                 aboutMeEditText.setOnEditorActionListener{ _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         Log.d("!!!", "savebutton")
@@ -180,17 +186,20 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == 0){
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
             val uri = data?.data
-            val profileImageView: ImageView = view?.findViewById(R.id.profileImageView) ?: return
-            profileImageView.setImageURI(uri)
+            if (uri != null) {
+                val profileImageView: ImageView =
+                    view?.findViewById(R.id.profileImageView) ?: return
+                profileImageView.setImageURI(uri)
 
-            imageUri = uri // spara för uppladdning
+                imageUri = uri // spara för uppladdning
 
-            uploadImageToFirebase()
-            //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
-            //return
-            //image.setImageURI(uri)
+                uploadImageToFirebase()
+            }
+        } else {
+            Log.d("&&&", "OnActivityResult(), imageUri is null")
         }
     }
 
@@ -201,28 +210,40 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
             imageRef.putFile(imageUri!!)
+                .continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    imageRef.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUri = task.result
+                        Log.d("&&&", "${downloadUri}")
+                        db.collection("users").document(CurrentUser.userID!!).update("profileImageURL",downloadUri.toString())
+                    } else {
+
+                    }
+                }
                 .addOnSuccessListener {
                     profileImageView?.setImageURI(imageUri)
 
                     Toast.makeText(requireContext(),"Image upploaded successfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {e ->
-                    Log.d("!!!", "error uploading profile img: ${e.message}")
+                    Log.d("&&&", "error uploading profile img: ${e.message}")
 
                     Toast.makeText(requireContext(),"Failed to upload image", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Log.d("!!!", "imageUri is null")
+            Log.d("&&&", "imageUri is null")
         }
     }
 
 
-
-
     private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document(CurrentUser.userID!!)
-        //documentPath kommer behöva ändras sedan till den anv som är inloggad.
-
         docRef.addSnapshotListener { snapshot, e ->
 
             if (e != null) {
