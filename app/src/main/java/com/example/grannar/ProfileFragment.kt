@@ -172,15 +172,23 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == 0){
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
             val uri = data?.data
-            val profileImageView: ImageView = view?.findViewById(R.id.profileImageView) ?: return
-            profileImageView.setImageURI(uri)
+            if (uri != null) {
+                val profileImageView: ImageView =
+                    view?.findViewById(R.id.profileImageView) ?: return
+                profileImageView.setImageURI(uri)
 
-            imageUri = uri // spara för uppladdning
+                imageUri = uri // spara för uppladdning
 
-            uploadImageToFirebase()
-
+                uploadImageToFirebase()
+                //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
+                //return
+                //image.setImageURI(uri)
+            }
+        } else {
+            Log.d("&&&", "OnActivityResult(), imageUri is null")
         }
     }
 
@@ -191,20 +199,38 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
             imageRef.putFile(imageUri!!)
+                .continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    imageRef.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUri = task.result
+                        Log.d("&&&", "${downloadUri}")
+                        db.collection("users").document(CurrentUser.userID!!).update("profileImageURL",downloadUri.toString())
+                    } else {
+                        // Handle failures
+                        // ...
+                    }
+                }
                 .addOnSuccessListener {
                     profileImageView?.setImageURI(imageUri)
 
                     Toast.makeText(requireContext(),"Image upploaded successfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {e ->
-                    Log.d("!!!", "error uploading profile img: ${e.message}")
+                    Log.d("&&&", "error uploading profile img: ${e.message}")
 
                     Toast.makeText(requireContext(),"Failed to upload image", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Log.d("!!!", "imageUri is null")
+            Log.d("&&&", "imageUri is null")
         }
     }
+
 
 
 
