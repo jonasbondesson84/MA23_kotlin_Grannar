@@ -43,8 +43,7 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvLocation: TextView
     private lateinit var tvAboutMe: TextView
     private var interestsTextViewList = mutableListOf<TextView>()
-    private lateinit var selectedImageUri: Uri
-    private lateinit var getContent: ActivityResultLauncher<String>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,11 +52,7 @@ class FriendProfileFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-      getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri:
-        Uri? -> uri?.let {
-            selectedImageUri = it
-        }
-        }
+
     }
 
     override fun onCreateView(
@@ -80,10 +75,7 @@ class FriendProfileFragment : Fragment() {
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest5TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest6TextView))
 
-        val button: Button = view.findViewById(R.id.personalImageView)
-        button.setOnClickListener{
-            openGallery()
-        }
+
 
 
         val appBar = view.findViewById<MaterialToolbar>(R.id.topFriendProfile)
@@ -136,9 +128,6 @@ class FriendProfileFragment : Fragment() {
     }
 
 
-    fun openGallery() {
-     getContent.launch("image/*")
-     }
 
 
     companion object {
