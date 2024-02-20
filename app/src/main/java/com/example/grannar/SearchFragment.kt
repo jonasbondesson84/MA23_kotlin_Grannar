@@ -138,7 +138,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
-        //getUsersList()
+
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         adapter.onUserClick = {
             val uid = it.userID
@@ -183,24 +183,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     private fun openCategoryFilterDialog(){
-//        val categories = listOf(
-//         Category("Sport", R.color.sportCategory),
-//         Category("Nature", R.color.natureCategory),
-//         Category("Animals", R.color.animalsCategory),
-//         Category("Music", R.color.musicCategory),
-//         Category("Literature", R.color.literatureCategory),
-//         Category("Travel", R.color.travelCategory),
-//         Category("Games", R.color.gamesCategory),
-//         Category("Exercise", R.color.exerciseCategory),
-//         Category("Other", R.color.otherCategory),
-//    )
 
         val dialog = Dialog(requireContext())
          dialog.setContentView(R.layout.dialog_category_filter)
         val container = dialog.findViewById<LinearLayout>(R.id.categoryLinearLayout)
         val checkBoxes = mutableListOf<CheckBox>()
         CategoryManager.categories.forEach { (category, colorID) ->
-        //categories.forEach { category ->
+
             val checkBox = CheckBox(requireContext())
             checkBox.text = category
             checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))

@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
     override fun onSignUpPress() {
         val intent = Intent(this, SignUpActivity::class.java)
         signUpLauncher.launch(intent)
-        //startActivity(intent)
+
     }
 
 
