@@ -103,8 +103,12 @@ class FriendProfileFragment : Fragment() {
 
     private fun showInterests(interests: List<Interest>?){
         interests?.forEachIndexed{ i, interest ->
+            val categoryColorID = interest.category?.let { CategoryManager.getCategoryColorId(it) }
             interestsTextViewList[i].text = interest.name
-            interest.category?.colorID?.let { interestsTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+            if (categoryColorID != null) {
+                interestsTextViewList[i].setBackgroundColor(categoryColorID)
+            }
+     //       interest.category?.colorID?.let { interestsTextViewList[i].setBackgroundColor(resources.getColor(it)) }
         }
     }
 

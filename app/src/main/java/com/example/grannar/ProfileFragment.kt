@@ -4,21 +4,17 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
@@ -256,7 +252,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         if (interests != null){
             interests?.forEachIndexed { i, interest ->
                 interestTextViewList[i].text = interest.name
-                interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+                val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
+                interestTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
+               // interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
                 interestConstraintList[i].visibility = View.VISIBLE
                 interestConstraintList[i].setOnClickListener {
                     deleteInterest(i)
