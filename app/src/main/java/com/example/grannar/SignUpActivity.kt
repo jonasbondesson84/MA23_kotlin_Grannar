@@ -3,8 +3,10 @@ package com.example.grannar
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
     lateinit var genderRadioGroup: RadioGroup
     lateinit var birthdayEditText: EditText
     var birthDate: Date? = null
-
+    var mapFragment: MapFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +43,9 @@ class SignUpActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         genderRadioGroup = findViewById(R.id.genderRadioGroup)
 
+        mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as MapFragment?
+
+
         birthdayEditText = findViewById(R.id.birthDateEditText)
         birthdayEditText.apply {
             setOnClickListener {
@@ -48,6 +53,13 @@ class SignUpActivity : AppCompatActivity() {
             }
             isFocusable = false
             isFocusableInTouchMode = false
+        }
+
+        findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener{
+            Log.d("!!!", "Button clicked")
+            mapFragment?.let {
+                it.showMapForLocationSelection()
+            }
         }
 
         findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener {
@@ -77,6 +89,11 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
+
+
 
     private fun signUp() {
         val db = FirebaseFirestore.getInstance()
