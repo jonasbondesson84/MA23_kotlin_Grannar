@@ -16,7 +16,6 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.text.FieldPosition
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -51,7 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_map, container, false)
-        mapView = view.findViewById(R.id.mapFragment)
+        mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 

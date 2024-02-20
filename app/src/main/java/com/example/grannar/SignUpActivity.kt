@@ -43,7 +43,7 @@ class SignUpActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         genderRadioGroup = findViewById(R.id.genderRadioGroup)
 
-        mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as MapFragment?
+        mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as MapFragment?
 
 
         birthdayEditText = findViewById(R.id.birthDateEditText)

@@ -13,6 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Grannar"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCoC2BnVAO9EaQ35jbAN4moMm_JL2Bd0Oc" />
+
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
