@@ -1,8 +1,6 @@
 package com.example.grannar
 
-import android.util.Log
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.type.LatLng
@@ -21,6 +19,9 @@ object CurrentUser {
     var aboutMe: String? = null
     var imageURLs: MutableList<String>? = mutableListOf()
     var friendsList: MutableList<User>? = mutableListOf()
+
+
+
 
 
     fun setUser(user: User) {

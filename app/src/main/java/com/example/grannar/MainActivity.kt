@@ -74,7 +74,9 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
             }
 
         }
+
     }
+
 
     private fun isLoggedIn(): Boolean {
         val auth = FirebaseAuth.getInstance()

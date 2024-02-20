@@ -181,6 +181,11 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
     }
 
     override fun onSendMessageListener(user: User) {
-        TODO("Not yet implemented")
+        val uid = user.userID
+        if(uid != null) {
+            val action =
+                FriendsListFragmentDirections.actionFriendsListFragmentToChatFragment(uid)
+            findNavController().navigate(action)
+        }
     }
 }
