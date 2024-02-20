@@ -120,7 +120,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         interests.forEachIndexed{index, interest ->
             interestTextViewList[index].text = interest.name
             val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
-           // interest.category?.colorID?.let { interestTextViewList[index].setBackgroundColor(context.resources.getColor(it)) }
+
             interestTextViewList[index].setBackgroundColor(context.resources.getColor(categoryColorID))
         }
     }

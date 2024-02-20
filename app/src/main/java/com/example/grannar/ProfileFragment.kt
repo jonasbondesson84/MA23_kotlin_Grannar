@@ -135,7 +135,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                 showGender.text=" "
                 showAge.text=" "
                 showLocation.text=" "
-                //showInterest(null)
+
             }
         }
 
@@ -217,7 +217,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             } else {
                 callback(null)
             }
-            //val user = documentSnapshot.toObject<User>()
+
         }
     }
 

@@ -27,17 +27,6 @@ class AddInterestDialogFragment(): DialogFragment() {
     lateinit var tvInterestName: TextView
     lateinit var autoCompleteTextView: AutoCompleteTextView
     private var interestCallback: AddedInterestCallback? = null
-//    private      val categories = listOf(
-//         Category("Sport", R.color.sportCategory),
-//         Category("Nature", R.color.natureCategory),
-//         Category("Animals", R.color.animalsCategory),
-//         Category("Music", R.color.musicCategory),
-//         Category("Literature", R.color.literatureCategory),
-//         Category("Travel", R.color.travelCategory),
-//         Category("Games", R.color.gamesCategory),
-//         Category("Exercise", R.color.exerciseCategory),
-//         Category("Other", R.color.otherCategory),
-//    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
@@ -64,22 +53,10 @@ class AddInterestDialogFragment(): DialogFragment() {
 
     }
 
-//    fun getCategoryNames():List<String>{
-//        val categoryNames = mutableListOf<String>()
-//        for (category in categories){
-//            categoryNames.add(category.name.toString())
-//        }
-//        return categoryNames
-//    }
-//    fun getCategoryFromName(name: String): Category? {
-//        val category = categories.find { it.name == name }
-//        return category
-//    }
-
     private fun saveInterest() {
         Log.d("!!!", "${autoCompleteTextView.text.toString()}")
         val categoryName =autoCompleteTextView.text.toString()
-        //val categoryName = CategoryManager.getCategoryNames(autoCompleteTextView.text.toString())
+
 
         val interestName = tvInterestName.text.toString()
         if (interestName.isNotEmpty()) {

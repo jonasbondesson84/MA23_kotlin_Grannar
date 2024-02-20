@@ -108,7 +108,6 @@ class FriendProfileFragment : Fragment() {
             if (categoryColorID != null) {
                 interestsTextViewList[i].setBackgroundColor(categoryColorID)
             }
-     //       interest.category?.colorID?.let { interestsTextViewList[i].setBackgroundColor(resources.getColor(it)) }
         }
     }
 
