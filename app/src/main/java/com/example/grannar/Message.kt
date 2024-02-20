@@ -11,7 +11,7 @@ class Message(
     val fromID: String? = null,
     val toID: String? = null,
     val text: String? = null,
-    val unread: Boolean = true
+    var unread: Boolean = true
 
     ) {
 

@@ -8,6 +8,6 @@ class Chats(
 //    var message: MutableList<HashMap<String, Any>>? = null
     val fromUser: User,
 //    var message: MutableList<Message>? = null
-    val lastMessage: Message
+    var lastMessage: Message
 ) {
 }

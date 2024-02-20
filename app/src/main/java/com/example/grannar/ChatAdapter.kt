@@ -56,7 +56,7 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
             } else {
                 timeText = "null"
             }
-//            fromHolder.tvTimeStampFrom.text = timeText
+            fromHolder.tvTimeStampFrom.text = timeText
 //            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
@@ -107,4 +107,6 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
     override fun getItemCount(): Int {
         return messages.size
     }
+
+
 }
