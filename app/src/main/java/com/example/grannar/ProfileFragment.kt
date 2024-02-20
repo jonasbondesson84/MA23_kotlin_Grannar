@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -116,16 +117,21 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
 
-        getUserInfo { user ->
+            getUserInfo { user ->
             if (user != null) {
                 showName.text = user?.firstName
                 showGender.text = user?.gender
                 showAge.text = user?.age
                 showLocation.text = user?.location?.toString() ?: "none location to show"
+                Glide.with(requireActivity())
+                    .load(user.profileImageURL)
+                    .into(profileImageView!!)
+                Log.d("&&&", "Glide ${Glide.with(requireActivity())}")
+                Log.d("&&&", "load user img ${(user.profileImageURL)}")
+                Log.d("&&&", "into profile image view${(profileImageView!!)}")
 
               //  showInterest(user.interests)
                 aboutMeEditText.setText(user.aboutMe)
-
                 aboutMeEditText.setOnEditorActionListener{ _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         Log.d("!!!", "savebutton")
@@ -174,9 +180,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             imageUri = uri // spara för uppladdning
 
             uploadImageToFirebase()
-            //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
-            //return
-            //image.setImageURI(uri)
+
         }
     }
 
@@ -204,11 +208,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
 
-
     private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document(CurrentUser.userID!!)
-        //documentPath kommer behöva ändras sedan till den anv som är inloggad.
-
         docRef.addSnapshotListener { snapshot, e ->
 
             if (e != null) {
@@ -221,7 +222,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             } else {
                 callback(null)
             }
-            //val user = documentSnapshot.toObject<User>()
         }
     }
 
