@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +15,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -54,6 +54,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     private lateinit var lastInterestImageView: ImageView
     val MAX_INTERESTS = 6
 
+    private lateinit var selectedImageUri: Uri
+    private lateinit var getContent: ActivityResultLauncher<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -62,6 +65,13 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
             }
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri:
+                                                                                       Uri? -> uri?.let {
+            selectedImageUri = it
+        }
+        }
+
+
         }
 
 
@@ -114,18 +124,28 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
         Log.d("!!!", "${CurrentUser.interests?.size}")
 
+        val button: ImageButton = view.findViewById(R.id.chooseImageButton)
+        button.setOnClickListener{
+            openGallery()
+        }
 
 
-        getUserInfo { user ->
+
+            getUserInfo { user ->
             if (user != null) {
                 showName.text = user?.firstName
                 showGender.text = user?.gender
                 showAge.text = user?.age
                 showLocation.text = user?.location?.toString() ?: "none location to show"
+                Glide.with(requireActivity())
+                    .load(user.profileImageURL)
+                    .into(profileImageView!!)
+                Log.d("&&&", "Glide ${Glide.with(requireActivity())}")
+                Log.d("&&&", "load user img ${(user.profileImageURL)}")
+                Log.d("&&&", "into profile image view${(profileImageView!!)}")
 
               //  showInterest(user.interests)
                 aboutMeEditText.setText(user.aboutMe)
-
                 aboutMeEditText.setOnEditorActionListener{ _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         Log.d("!!!", "savebutton")
@@ -139,7 +159,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
                 showGender.text=" "
                 showAge.text=" "
                 showLocation.text=" "
-                //showInterest(null)
+
             }
         }
 
@@ -166,17 +186,20 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == 0){
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
             val uri = data?.data
-            val profileImageView: ImageView = view?.findViewById(R.id.profileImageView) ?: return
-            profileImageView.setImageURI(uri)
+            if (uri != null) {
+                val profileImageView: ImageView =
+                    view?.findViewById(R.id.profileImageView) ?: return
+                profileImageView.setImageURI(uri)
 
-            imageUri = uri // spara för uppladdning
+                imageUri = uri // spara för uppladdning
 
-            uploadImageToFirebase()
-            //val image : ImageView = view?.findViewById(R.id.profileImageView) ?:
-            //return
-            //image.setImageURI(uri)
+                uploadImageToFirebase()
+            }
+        } else {
+            Log.d("&&&", "OnActivityResult(), imageUri is null")
         }
     }
 
@@ -187,28 +210,40 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
 
 
             imageRef.putFile(imageUri!!)
+                .continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    imageRef.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUri = task.result
+                        Log.d("&&&", "${downloadUri}")
+                        db.collection("users").document(CurrentUser.userID!!).update("profileImageURL",downloadUri.toString())
+                    } else {
+
+                    }
+                }
                 .addOnSuccessListener {
                     profileImageView?.setImageURI(imageUri)
 
                     Toast.makeText(requireContext(),"Image upploaded successfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {e ->
-                    Log.d("!!!", "error uploading profile img: ${e.message}")
+                    Log.d("&&&", "error uploading profile img: ${e.message}")
 
                     Toast.makeText(requireContext(),"Failed to upload image", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Log.d("!!!", "imageUri is null")
+            Log.d("&&&", "imageUri is null")
         }
     }
 
 
-
-
     private fun getUserInfo(callback: (User?) -> Unit) {
         val docRef= db.collection("users").document(CurrentUser.userID!!)
-        //documentPath kommer behöva ändras sedan till den anv som är inloggad.
-
         docRef.addSnapshotListener { snapshot, e ->
 
             if (e != null) {
@@ -221,7 +256,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
             } else {
                 callback(null)
             }
-            //val user = documentSnapshot.toObject<User>()
+
         }
     }
 
@@ -256,7 +291,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
         if (interests != null){
             interests?.forEachIndexed { i, interest ->
                 interestTextViewList[i].text = interest.name
-                interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
+                val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
+                interestTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
+               // interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
                 interestConstraintList[i].visibility = View.VISIBLE
                 interestConstraintList[i].setOnClickListener {
                     deleteInterest(i)
@@ -321,6 +358,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback{
     }
     override fun interestAdded() {
         showInterestsWithColor(CurrentUser.interests)
+    }
+
+
+    fun openGallery() {
+        getContent.launch("image/*")
     }
 
 private fun saveAboutMe(newAboutMe: String) {
