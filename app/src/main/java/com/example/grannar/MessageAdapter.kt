@@ -5,8 +5,10 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
@@ -27,6 +29,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         val tvName: TextView = itemView.findViewById(R.id.tvMessageName)
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessageChatMessage)
         val tvTimeStamp : TextView = itemView.findViewById(R.id.tvMessageTimeStamp)
+        val imProfileImage: ImageView = itemView.findViewById(R.id.imMesssageImage)
 
     }
 
@@ -51,6 +54,12 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         if(message.unread && message.toID == CurrentUser.userID.toString()) {
             showAsUnread(holder)
         }
+        Glide
+            .with(holder.itemView.context)
+            .load(fromUser.profileImageURL)
+            .centerCrop()
+            .placeholder(R.drawable.avatar)
+            .into(holder.imProfileImage)
 
         holder.itemView.setOnClickListener {
             listener.goToMessage(fromUser)

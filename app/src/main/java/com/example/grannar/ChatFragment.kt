@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
@@ -46,6 +47,7 @@ class ChatFragment : Fragment() {
     private var docID: String? = null
     private var docExist: Boolean = false
     private lateinit var rvChatMessage: RecyclerView
+    private var fromProfileImageURL = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +71,12 @@ class ChatFragment : Fragment() {
 
         getDocID()
 
-        getUserInfo(args.userID.toString())
+        getUserInfo(args.userID.toString(), view)
 
         rvChatMessage = view.findViewById(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
-        adapter = ChatAdapter(view.context, messages)
-        rvChatMessage.adapter = adapter
+//        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+//        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
         val btnSend: Button = view.findViewById(R.id.btnSendMessage)
         btnSend.setOnClickListener {
@@ -83,6 +85,14 @@ class ChatFragment : Fragment() {
             hideKeyboard(view)
         }
         val appBar = view.findViewById<MaterialToolbar>(R.id.topChat)
+
+        tvName.setOnClickListener {
+            goToProfile()
+
+        }
+        imImage.setOnClickListener {
+            goToProfile()
+        }
 
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -103,19 +113,22 @@ class ChatFragment : Fragment() {
 
         return view
     }
+
+    private fun goToProfile() {
+        val action = ChatFragmentDirections.actionChatFragmentToFriendProfileFragment(args.userID.toString())
+        findNavController().navigate(action)
+    }
+
     fun updateLastRead(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
-        // Uppdatera variabeln eller objektet baserat på de synliga positionerna i RecyclerView
-        // Exempelvis:
+
         for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
-            // Uppdatera variabeln eller objektet för varje synligt objekt i listan
-            // Exempelvis:
+
             var item = messages[i]
             if(item.unread == true && item.toID == CurrentUser.userID.toString()) {
                 docID?.let { item.docID?.let { it1 ->
                     db.collection("messages").document(it).collection("message").document(
                         it1
                     ).update("unread", false).addOnSuccessListener {
-                        Log.d("!!!", "doc unread: " +item.docID.toString())
                         item.unread = false
                     }
                 } }
@@ -123,6 +136,7 @@ class ChatFragment : Fragment() {
 
         }
     }
+
 
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)
@@ -144,7 +158,7 @@ class ChatFragment : Fragment() {
 
 
 
-    private fun getUserInfo(friendUid: String) {
+    private fun getUserInfo(friendUid: String, view: View) {
         val db = Firebase.firestore
         db.collection("users").document(friendUid).get()
             .addOnSuccessListener { document ->
@@ -152,13 +166,27 @@ class ChatFragment : Fragment() {
                     val selectedUser = document.toObject<User>()
                     if (selectedUser != null) {
                         showInfo(selectedUser)
+                        fromProfileImageURL = selectedUser.profileImageURL.toString()
+                        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+                        rvChatMessage.adapter = adapter
                     }
                 }
+            }
+            .addOnFailureListener {
+                adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+                rvChatMessage.adapter = adapter
             }
     }
 
     private fun showInfo(selectedUser: User) {
         tvName.text = selectedUser.firstName
+        Glide
+            .with(requireContext())
+            .load(selectedUser?.profileImageURL)
+            .centerCrop()
+            .placeholder(R.drawable.baseline_add_a_photo_24)
+            .error(R.drawable.baseline_close_24)
+            .into(imImage)
     }
 
 
@@ -288,6 +316,8 @@ class ChatFragment : Fragment() {
             view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+
 
     companion object {
         /**
