@@ -3,7 +3,6 @@ package com.example.grannar
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import com.google.type.LatLng
 
 object CurrentUser {
 
@@ -11,7 +10,9 @@ object CurrentUser {
     var firstName: String? = null
     var surname: String? = null
     var age: String? = null
-    var location: LatLng? = null
+    var location: com.google.android.gms.maps.model.LatLng? = null
+    var locLat: Double? = null
+    var locLng: Double? = null
     var email: String? = null
     var gender: String? = null
     var profileImageURL: String? = null
@@ -31,6 +32,8 @@ object CurrentUser {
         this.surname = user.surname
         this.age = user.age
         this.location = user.location
+        this.locLat= user.locLat
+        this.locLng= user.locLng
         this.email = user.email
         this.gender = user.gender
         this.profileImageURL = user.profileImageURL
@@ -47,6 +50,8 @@ object CurrentUser {
         this.surname = null
         this.age = null
         this.location = null
+        this.locLat = null
+        this.locLng = null
         this.email = null
         this.gender = null
         this.profileImageURL = null
