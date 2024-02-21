@@ -21,33 +21,25 @@
         />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etvMessageSearchFriends"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/ilMessageSearchFriends"
+        android:layout_width="0dp"
+        android:layout_height="63dp"
+        android:layout_marginEnd="32dp"
         android:hint="Search"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvMessageFindFriend"
+
         app:layout_constraintTop_toBottomOf="@id/tvMessageFindFriend"
         app:startIconContentDescription="Search"
-
         app:startIconDrawable="@drawable/baseline_search_24">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etvMessageSearchFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnChatSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/etvMessageSearchFriends"
-        app:layout_constraintBottom_toBottomOf="@id/etvMessageSearchFriends"
-        app:layout_constraintStart_toEndOf="@id/etvMessageSearchFriends"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Search"
-        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessageList"
@@ -57,6 +49,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etvMessageSearchFriends" />
+        app:layout_constraintTop_toBottomOf="@+id/ilMessageSearchFriends" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
