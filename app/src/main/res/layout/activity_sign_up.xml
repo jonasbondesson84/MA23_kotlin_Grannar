@@ -27,6 +27,22 @@
             android:hint="Birthdate"
 
             />
+
+        <ImageButton
+            android:id="@+id/locationImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="#056E5D"
+            android:tint="#00FFFFFF"
+            app:srcCompat="@drawable/baseline_add_location_alt_24" />
+
+        <fragment
+            android:id="@+id/mapView"
+            android:name="com.example.grannar.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
