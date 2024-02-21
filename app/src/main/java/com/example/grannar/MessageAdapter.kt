@@ -53,6 +53,8 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvTimeStamp.text = setTimeText(message.timeStamp)
         if(message.unread && message.toID == CurrentUser.userID.toString()) {
             showAsUnread(holder)
+        } else {
+            showAsRead(holder)
         }
         Glide
             .with(holder.itemView.context)
@@ -72,6 +74,13 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvName.setTypeface(null, Typeface.BOLD)
         holder.tvTimeStamp.setTypeface(null, Typeface.BOLD)
     }
+
+    private fun showAsRead(holder: ViewHolder){
+        holder.tvMessage.setTypeface(null, Typeface.NORMAL)
+        holder.tvName.setTypeface(null, Typeface.NORMAL)
+        holder.tvTimeStamp.setTypeface(null, Typeface.NORMAL)
+    }
+
 
 
     private fun setTimeText(timeStamp: Date?): String {
