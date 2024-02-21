@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -20,8 +21,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
-class SignUpActivity : AppCompatActivity() {
+interface OnDataPassListener{
+    fun onDataPassed(data: LatLng)
+}
+class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     lateinit var firstNameEditText: EditText
     lateinit var surNameEditText: EditText
     lateinit var passwordEditText: EditText
@@ -31,6 +34,11 @@ class SignUpActivity : AppCompatActivity() {
     lateinit var birthdayEditText: EditText
     var birthDate: Date? = null
     var mapFragment: MapFragment? = null
+    private var location: LatLng? = null
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +65,13 @@ class SignUpActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener{
             Log.d("!!!", "Button clicked")
-            mapFragment?.let {
-                it.showMapForLocationSelection()
-            }
+//            mapFragment?.let {
+//                it.showMapForLocationSelection()
+//            }
+            //open mapdialog
+            val dialogFragment = MapDialogFragment()
+            dialogFragment.show(supportFragmentManager, "MapDialogFragment")
+
         }
 
         findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener {
@@ -109,6 +121,9 @@ class SignUpActivity : AppCompatActivity() {
                 val newUser = User(
                     docID = "",
                     userID = auth.currentUser?.uid,
+                    //location = location,
+                    locLat = location?.latitude,
+                    locLng = location?.longitude,
 
                     firstName = firstNameEditText.text.toString(),
                     surname = surNameEditText.text.toString(),
@@ -161,6 +176,7 @@ class SignUpActivity : AppCompatActivity() {
 
     }
 
+
     private fun getGender(): String {
         val pickedRadioButtonID = genderRadioGroup.checkedRadioButtonId
         return findViewById<RadioButton>(pickedRadioButtonID).text.toString()
@@ -174,7 +190,9 @@ class SignUpActivity : AppCompatActivity() {
             confirmPasswordEditText.text.isEmpty() ||
             emailEditText.text.isEmpty() ||
             genderRadioGroup.checkedRadioButtonId == -1 ||
-            birthDate == null
+            birthDate == null ||
+            location == null
+
         ) {
             return false
         }
@@ -184,4 +202,11 @@ class SignUpActivity : AppCompatActivity() {
     private fun checkPassword(password: String, confirmationPassword: String): Boolean {
         return password == confirmationPassword
     }
+
+    override fun onDataPassed(data: LatLng) {
+        location = data
+        Log.d("!!!","Data från dialogfragment ${location}")
+    }
+
+
 }
