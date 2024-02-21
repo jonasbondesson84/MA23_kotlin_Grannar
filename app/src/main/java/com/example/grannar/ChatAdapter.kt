@@ -16,9 +16,10 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
-class ChatAdapter(context: Context, private val messages: MutableList<Message>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(context: Context, private val messages: MutableList<Message>, private val profileURL: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
+    private var loadedUser: User? = null
     inner class ViewHolderFromCurrentUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMessageFrom: TextView = itemView.findViewById(R.id.tvChatFromMessage)
         val tvTimeStampFrom: TextView = itemView.findViewById(R.id.tvChatFromTimeStamp)
@@ -61,6 +62,16 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>):
                 "null"
             }
             fromHolder.tvTimeStampFrom.text = timeText
+            Log.d("!!!", "profileURL : $profileURL")
+            Glide
+                .with(fromHolder.itemView.context)
+                .load(profileURL)
+                .centerCrop()
+                .placeholder(R.drawable.baseline_add_a_photo_24)
+                .error(R.drawable.baseline_close_24)
+                .into(fromHolder.imImageFrom)
+
+
 //            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
@@ -87,6 +98,16 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>):
         }
 
 
+    }
+
+    private fun showImage(loadedUser: User, fromHolder: ChatAdapter.ViewHolderFromCurrentUser) {
+        Glide
+            .with(fromHolder.itemView.context)
+            .load(loadedUser)
+            .centerCrop()
+            .placeholder(R.drawable.baseline_add_a_photo_24)
+            .error(R.drawable.baseline_close_24)
+            .into(fromHolder.imImageFrom)
     }
 
     private fun setTimeText(timeStamp: Date?): String {
@@ -121,7 +142,6 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>):
     override fun getItemCount(): Int {
         return messages.size
     }
-
 
 
 

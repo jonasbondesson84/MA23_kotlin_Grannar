@@ -47,6 +47,7 @@ class ChatFragment : Fragment() {
     private var docID: String? = null
     private var docExist: Boolean = false
     private lateinit var rvChatMessage: RecyclerView
+    private var fromProfileImageURL = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,12 +71,12 @@ class ChatFragment : Fragment() {
 
         getDocID()
 
-        getUserInfo(args.userID.toString())
+        getUserInfo(args.userID.toString(), view)
 
         rvChatMessage = view.findViewById(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
-        adapter = ChatAdapter(view.context, messages)
-        rvChatMessage.adapter = adapter
+//        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+//        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
         val btnSend: Button = view.findViewById(R.id.btnSendMessage)
         btnSend.setOnClickListener {
@@ -143,7 +144,7 @@ class ChatFragment : Fragment() {
 
 
 
-    private fun getUserInfo(friendUid: String) {
+    private fun getUserInfo(friendUid: String, view: View) {
         val db = Firebase.firestore
         db.collection("users").document(friendUid).get()
             .addOnSuccessListener { document ->
@@ -151,8 +152,15 @@ class ChatFragment : Fragment() {
                     val selectedUser = document.toObject<User>()
                     if (selectedUser != null) {
                         showInfo(selectedUser)
+                        fromProfileImageURL = selectedUser.profileImageURL.toString()
+                        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+                        rvChatMessage.adapter = adapter
                     }
                 }
+            }
+            .addOnFailureListener {
+                adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+                rvChatMessage.adapter = adapter
             }
     }
 
