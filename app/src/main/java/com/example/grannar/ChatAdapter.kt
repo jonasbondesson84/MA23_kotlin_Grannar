@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +61,6 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
                 "null"
             }
             fromHolder.tvTimeStampFrom.text = timeText
-            Log.d("!!!", "profileURL : $profileURL")
             Glide
                 .with(fromHolder.itemView.context)
                 .load(profileURL)
@@ -75,7 +73,6 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
 //            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
-            Log.d("!!!", CurrentUser.profileImageURL.toString())
             Glide
                 .with(toHolder.itemView.context)
                 .load(CurrentUser.profileImageURL)

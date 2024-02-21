@@ -86,6 +86,14 @@ class ChatFragment : Fragment() {
         }
         val appBar = view.findViewById<MaterialToolbar>(R.id.topChat)
 
+        tvName.setOnClickListener {
+            goToProfile()
+
+        }
+        imImage.setOnClickListener {
+            goToProfile()
+        }
+
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
 //            val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
@@ -105,6 +113,12 @@ class ChatFragment : Fragment() {
 
         return view
     }
+
+    private fun goToProfile() {
+        val action = ChatFragmentDirections.actionChatFragmentToFriendProfileFragment(args.userID.toString())
+        findNavController().navigate(action)
+    }
+
     fun updateLastRead(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
 
         for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
@@ -115,7 +129,6 @@ class ChatFragment : Fragment() {
                     db.collection("messages").document(it).collection("message").document(
                         it1
                     ).update("unread", false).addOnSuccessListener {
-                        Log.d("!!!", "doc unread: " +item.docID.toString())
                         item.unread = false
                     }
                 } }
@@ -123,6 +136,7 @@ class ChatFragment : Fragment() {
 
         }
     }
+
 
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)
