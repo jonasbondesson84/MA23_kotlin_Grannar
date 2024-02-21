@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
@@ -104,11 +105,9 @@ class ChatFragment : Fragment() {
         return view
     }
     fun updateLastRead(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
-        // Uppdatera variabeln eller objektet baserat på de synliga positionerna i RecyclerView
-        // Exempelvis:
+
         for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
-            // Uppdatera variabeln eller objektet för varje synligt objekt i listan
-            // Exempelvis:
+
             var item = messages[i]
             if(item.unread == true && item.toID == CurrentUser.userID.toString()) {
                 docID?.let { item.docID?.let { it1 ->
@@ -159,6 +158,13 @@ class ChatFragment : Fragment() {
 
     private fun showInfo(selectedUser: User) {
         tvName.text = selectedUser.firstName
+        Glide
+            .with(requireContext())
+            .load(selectedUser?.profileImageURL)
+            .centerCrop()
+            .placeholder(R.drawable.baseline_add_a_photo_24)
+            .error(R.drawable.baseline_close_24)
+            .into(imImage)
     }
 
 
@@ -288,6 +294,8 @@ class ChatFragment : Fragment() {
             view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+
 
     companion object {
         /**

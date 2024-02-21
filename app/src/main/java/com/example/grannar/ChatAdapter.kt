@@ -1,11 +1,14 @@
 package com.example.grannar
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
@@ -13,17 +16,19 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
-class ChatAdapter(context: Context, val messages: MutableList<Message>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(context: Context, private val messages: MutableList<Message>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
     inner class ViewHolderFromCurrentUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMessageFrom: TextView = itemView.findViewById(R.id.tvChatFromMessage)
         val tvTimeStampFrom: TextView = itemView.findViewById(R.id.tvChatFromTimeStamp)
+        val imImageFrom: ImageView = itemView.findViewById(R.id.imChatFromImage)
 
     }
     inner class ViewHolderToCurrentUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMessageTo: TextView = itemView.findViewById(R.id.tvChatToMessage)
         val tvTimeStampTo: TextView = itemView.findViewById(R.id.tvChatToTimeStamp)
+        val imImageTo: ImageView = itemView.findViewById(R.id.imChatToImage)
 
     }
 
@@ -50,23 +55,32 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
 
             val timeStamp = messages[position].timeStamp
             //setTimeText(timeStamp)
-            var timeText = ""
-            if(timeStamp != null) {
-                 timeText = setTimeText(timeStamp)
+            val timeText: String = if(timeStamp != null) {
+                setTimeText(timeStamp)
             } else {
-                timeText = "null"
+                "null"
             }
             fromHolder.tvTimeStampFrom.text = timeText
 //            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
+            Log.d("!!!", CurrentUser.profileImageURL.toString())
+            Glide
+                .with(toHolder.itemView.context)
+                .load(CurrentUser.profileImageURL)
+                .centerCrop()
+                .placeholder(R.drawable.baseline_add_a_photo_24)
+                .error(R.drawable.baseline_close_24)
+                .into(toHolder.imImageTo)
+
             toHolder.tvMessageTo.text = messages[position].text
+
             val timeStamp = messages[position].timeStamp
-            var timeText = ""
-            if(timeStamp != null) {
-                timeText = setTimeText(timeStamp)
+
+            val timeText = if(timeStamp != null) {
+                setTimeText(timeStamp)
             } else {
-                timeText = "null"
+                "null"
             }
 
             toHolder.tvTimeStampTo.text = timeText
@@ -107,6 +121,8 @@ class ChatAdapter(context: Context, val messages: MutableList<Message>): Recycle
     override fun getItemCount(): Int {
         return messages.size
     }
+
+
 
 
 }
