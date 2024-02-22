@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +47,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private var param2: String? = null
     private var searchList = mutableListOf<User>()
     private var listInRecyclerView = mutableListOf<User>()
+    private var listAfterCategoryFilter = mutableListOf<User>()
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
@@ -110,7 +113,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         else {
             val filteredList = listToFilter.filter { user ->
                 user.interests?.any {interest ->
-                    interest?.name?.lowercase() == interestName.lowercase()
+                    interest?.name?.lowercase()?.contains(interestName.lowercase()) ?: false
                 } == true
             }
             return filteredList
@@ -157,13 +160,14 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             adapter.notifyDataSetChanged()
             Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
-        etvSearch = view.findViewById<EditText>(R.id.etvSearchInterest)
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        view.findViewById<Button>(R.id.btnSearch).setOnClickListener {
-            setListInRecyclerView(searchList)
-            etvSearch.clearFocus()
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
+        etvSearch = view.findViewById(R.id.etvSearchInterest)
+        addTextChangeListener()
+//        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        view.findViewById<Button>(R.id.btnSearch).setOnClickListener {
+//            setListInRecyclerView(searchList)
+//            etvSearch.clearFocus()
+//            imm.hideSoftInputFromWindow(view.windowToken, 0)
+//        }
 
         fabFilter = view.findViewById(R.id.fabFilter)
         fabFilter.setOnClickListener {
@@ -174,6 +178,22 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
         return view
+    }
+    private fun addTextChangeListener(){
+        etvSearch.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not using
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not using
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                setListInRecyclerView(searchList)
+            }
+
+        })
     }
 
 
