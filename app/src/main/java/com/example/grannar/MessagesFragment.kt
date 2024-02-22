@@ -1,11 +1,14 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -33,9 +36,11 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
     private var param1: String? = null
     private var param2: String? = null
     private var chats = mutableListOf<Chats>()
+    private var chatsInRecyclerView = mutableListOf<Chats>()
     private lateinit var db: FirebaseFirestore
     private lateinit var adapter: MessageAdapter
     private val args: FriendProfileFragmentArgs by navArgs()
+    private lateinit var etvSearchMessage: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +66,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
             )
         )
-        adapter = MessageAdapter(view.context, chats, this)
+        adapter = MessageAdapter(view.context, chatsInRecyclerView, this)
         rvMessageList.adapter = adapter
 
 //        if(args.userID != null) {
@@ -72,13 +77,16 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
 
 
-        val btnSearch: Button = view.findViewById(R.id.btnChatSearch)
+
         getMessagesForUser()
 
         adapter.onUserClick = {
 
 
         }
+
+        etvSearchMessage = view.findViewById(R.id.etvMessageSearchFriends)
+        addTextChangeListener()
 
 
 
@@ -127,10 +135,12 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
                                         }
                                         }
                                     chats.sortByDescending { it.lastMessage.timeStamp  }
-                                    adapter.notifyDataSetChanged()
+                                    addChatsToRecycler(chats)
+                                   // adapter.notifyDataSetChanged()
                                             Log.d("!!!", document?.documentChanges.toString())
                                     }
                                 }
+
 
                     }
 
@@ -193,6 +203,41 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
                 }
             }
 
+    }
+
+    private fun addChatsToRecycler(listToAdd: List<Chats>){
+        chatsInRecyclerView.clear()
+        chatsInRecyclerView.addAll(listToAdd)
+        adapter.notifyDataSetChanged()
+
+    }
+    private fun filterList(textToSearchFor: String){
+        val filteredList = chats.filter { chat ->
+            chat.fromUser.firstName?.lowercase()?.contains(textToSearchFor) ?: false
+        }
+        Log.d("!!!", "In Filter List: ${filteredList.toString()}")
+        addChatsToRecycler(filteredList)
+    }
+
+
+    private fun addTextChangeListener(){
+        etvSearchMessage.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not using this
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not using this
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textInSearchField = s.toString().lowercase().trim()
+                Log.d("!!!", textInSearchField)
+                filterList(textInSearchField)
+
+            }
+
+        })
     }
 
     companion object {

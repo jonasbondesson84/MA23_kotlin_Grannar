@@ -5,8 +5,10 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
@@ -27,6 +29,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         val tvName: TextView = itemView.findViewById(R.id.tvMessageName)
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessageChatMessage)
         val tvTimeStamp : TextView = itemView.findViewById(R.id.tvMessageTimeStamp)
+        val imProfileImage: ImageView = itemView.findViewById(R.id.imMesssageImage)
 
     }
 
@@ -50,7 +53,15 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvTimeStamp.text = setTimeText(message.timeStamp)
         if(message.unread && message.toID == CurrentUser.userID.toString()) {
             showAsUnread(holder)
+        } else {
+            showAsRead(holder)
         }
+        Glide
+            .with(holder.itemView.context)
+            .load(fromUser.profileImageURL)
+            .centerCrop()
+            .placeholder(R.drawable.avatar)
+            .into(holder.imProfileImage)
 
         holder.itemView.setOnClickListener {
             listener.goToMessage(fromUser)
@@ -63,6 +74,13 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvName.setTypeface(null, Typeface.BOLD)
         holder.tvTimeStamp.setTypeface(null, Typeface.BOLD)
     }
+
+    private fun showAsRead(holder: ViewHolder){
+        holder.tvMessage.setTypeface(null, Typeface.NORMAL)
+        holder.tvName.setTypeface(null, Typeface.NORMAL)
+        holder.tvTimeStamp.setTypeface(null, Typeface.NORMAL)
+    }
+
 
 
     private fun setTimeText(timeStamp: Date?): String {

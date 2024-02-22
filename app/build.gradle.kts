@@ -54,7 +54,10 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("de.hdodenhof:circleimageview:3.1.0") //för att kunna skapa en cirkel
 
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.github.bumptech.glide:glide:4.12.0") //För profilbilden
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0") //för profilbilden
+
+    implementation ("com.google.android.gms:play-services-location:21.1.0") // för kartan
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
 
 }

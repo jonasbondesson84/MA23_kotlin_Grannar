@@ -3,11 +3,14 @@ package com.example.grannar
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -18,8 +21,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
-class SignUpActivity : AppCompatActivity() {
+interface OnDataPassListener{
+    fun onDataPassed(data: LatLng)
+}
+class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     lateinit var firstNameEditText: EditText
     lateinit var surNameEditText: EditText
     lateinit var passwordEditText: EditText
@@ -28,6 +33,11 @@ class SignUpActivity : AppCompatActivity() {
     lateinit var genderRadioGroup: RadioGroup
     lateinit var birthdayEditText: EditText
     var birthDate: Date? = null
+    var mapFragment: MapFragment? = null
+    private var location: LatLng? = null
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +51,9 @@ class SignUpActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         genderRadioGroup = findViewById(R.id.genderRadioGroup)
 
+        mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as MapFragment?
+
+
         birthdayEditText = findViewById(R.id.birthDateEditText)
         birthdayEditText.apply {
             setOnClickListener {
@@ -48,6 +61,17 @@ class SignUpActivity : AppCompatActivity() {
             }
             isFocusable = false
             isFocusableInTouchMode = false
+        }
+
+        findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener{
+            Log.d("!!!", "Button clicked")
+//            mapFragment?.let {
+//                it.showMapForLocationSelection()
+//            }
+            //open mapdialog
+            val dialogFragment = MapDialogFragment()
+            dialogFragment.show(supportFragmentManager, "MapDialogFragment")
+
         }
 
         findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener {
@@ -78,6 +102,11 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+
+
+
+
+
     private fun signUp() {
         val db = FirebaseFirestore.getInstance()
         val auth = FirebaseAuth.getInstance()
@@ -92,6 +121,9 @@ class SignUpActivity : AppCompatActivity() {
                 val newUser = User(
                     docID = "",
                     userID = auth.currentUser?.uid,
+                    //location = location,
+                    locLat = location?.latitude,
+                    locLng = location?.longitude,
 
                     firstName = firstNameEditText.text.toString(),
                     surname = surNameEditText.text.toString(),
@@ -144,6 +176,7 @@ class SignUpActivity : AppCompatActivity() {
 
     }
 
+
     private fun getGender(): String {
         val pickedRadioButtonID = genderRadioGroup.checkedRadioButtonId
         return findViewById<RadioButton>(pickedRadioButtonID).text.toString()
@@ -157,7 +190,9 @@ class SignUpActivity : AppCompatActivity() {
             confirmPasswordEditText.text.isEmpty() ||
             emailEditText.text.isEmpty() ||
             genderRadioGroup.checkedRadioButtonId == -1 ||
-            birthDate == null
+            birthDate == null ||
+            location == null
+
         ) {
             return false
         }
@@ -167,4 +202,11 @@ class SignUpActivity : AppCompatActivity() {
     private fun checkPassword(password: String, confirmationPassword: String): Boolean {
         return password == confirmationPassword
     }
+
+    override fun onDataPassed(data: LatLng) {
+        location = data
+        Log.d("!!!","Data från dialogfragment ${location}")
+    }
+
+
 }
