@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
@@ -17,11 +18,19 @@ class MapDialogFragment: DialogFragment() {
     private var onDataPassListener: OnDataPassListener? = null
 
     private var setLocation: LatLng? = null
+    private var userLocation: LatLng? = null
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.dialog_fragment_map, null)
+
+        val userLocationLat = arguments?.getDouble("lat")
+        val userLocationLng = arguments?.getDouble("lng")
+
+        userLocation = userLocationLat?.let { userLocationLng?.let { it1 -> LatLng(it, it1) } }
+        Log.d("!!!",userLocation.toString())
+
 
 
 
@@ -45,12 +54,12 @@ class MapDialogFragment: DialogFragment() {
         val map = view.findViewById<MapView>(R.id.dialogMapView)
         map.onCreate(savedInstanceState)
         map.getMapAsync { googleMap ->
-            getUserLocation()
+
             val latLng = com.google.android.gms.maps.model.LatLng(
                 59.334591,
                 18.063240
             )
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                val cameraUpdate = userLocation?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) } ?: CameraUpdateFactory.newLatLngZoom(latLng, 15f)
             googleMap.moveCamera(cameraUpdate)
             var marker: Marker? = null
 

@@ -1,7 +1,10 @@
 package com.example.grannar
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -10,6 +13,9 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -33,8 +39,10 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     lateinit var genderRadioGroup: RadioGroup
     lateinit var birthdayEditText: EditText
     var birthDate: Date? = null
-    var mapFragment: MapFragment? = null
+    //var mapFragment: MapFragment? = null
     private var location: LatLng? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var userLocation: LatLng? = null
 
 
 
@@ -44,6 +52,8 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         firstNameEditText = findViewById(R.id.firstNameEditText)
         surNameEditText = findViewById(R.id.surnameEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
@@ -51,7 +61,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         emailEditText = findViewById(R.id.emailEditText)
         genderRadioGroup = findViewById(R.id.genderRadioGroup)
 
-        mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as MapFragment?
+        //mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as MapFragment?
 
 
         birthdayEditText = findViewById(R.id.birthDateEditText)
@@ -69,8 +79,9 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
 //                it.showMapForLocationSelection()
 //            }
             //open mapdialog
-            val dialogFragment = MapDialogFragment()
-            dialogFragment.show(supportFragmentManager, "MapDialogFragment")
+            //check for lastLocation()
+            getPermission()
+
 
         }
 
@@ -102,7 +113,64 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         }
     }
 
+    private fun getPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            getLastLocation()
 
+        } else {
+
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1
+            )
+        }
+
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener {location->
+            userLocation = LatLng(location.latitude, location.longitude)
+            openMapFragment()
+            
+        }
+    }
+
+    private fun openMapFragment() {
+
+        val dialogFragment = MapDialogFragment()
+        val args = Bundle()
+        userLocation?.let { args.putDouble("lat", it.latitude) }
+        userLocation?.let { args.putDouble("lng", it.longitude) }
+        dialogFragment.arguments = args
+
+        dialogFragment.show(supportFragmentManager, "MapDialogFragment")
+    }
 
 
 
