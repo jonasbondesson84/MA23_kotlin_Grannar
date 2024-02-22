@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -68,6 +69,8 @@ class ChatFragment : Fragment() {
         db = Firebase.firestore
         tvName = view.findViewById(R.id.tvChatName)
         imImage = view.findViewById(R.id.imChatImage)
+        val bottomNavigationView: BottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+        bottomNavigationView.menu.findItem(R.id.messagesFragment).isChecked = true
 
         getDocID()
 

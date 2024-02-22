@@ -37,7 +37,11 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
         val sendMessage: LinearLayout = itemView.findViewById(R.id.sendMessage)
         val btnSendMessage: ImageButton = itemView.findViewById(R.id.message_icon)
+
         val profileImageView: ImageView = itemView.findViewById(R.id.friend_image)
+
+        val tvDistance: TextView = itemView.findViewById(R.id.distance)
+
 
         val interestsTextViewList = mutableListOf<TextView>(
             itemView.findViewById(R.id.interest1ListItemTextView),
@@ -66,6 +70,8 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         clearInterestsTextViews(holder.interestsTextViewList)
         holder.tvName.text = selectedUser.firstName
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
+        holder.tvDistance.text = "${selectedUser.showDistanceSpan()} away"
+
 
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
         if(CurrentUser.friendsList?.any{it.userID == selectedUser.userID} == true) {
