@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
@@ -35,7 +37,11 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         val btnAddFriend: ImageButton = itemView.findViewById(R.id.friend_request_icon)
         val sendMessage: LinearLayout = itemView.findViewById(R.id.sendMessage)
         val btnSendMessage: ImageButton = itemView.findViewById(R.id.message_icon)
+
+        val profileImageView: ImageView = itemView.findViewById(R.id.friend_image)
+
         val tvDistance: TextView = itemView.findViewById(R.id.distance)
+
 
         val interestsTextViewList = mutableListOf<TextView>(
             itemView.findViewById(R.id.interest1ListItemTextView),
@@ -113,6 +119,17 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         Log.d("!!!", "Interests ${interests?.size}")
         if (interests != null){
             addInterests(interests, holder.interestsTextViewList)
+        }
+
+
+        if (selectedUser.profileImageURL != null){
+            Glide.with(context)
+                .load(selectedUser.profileImageURL)
+                
+                .centerCrop()
+                .into(holder.profileImageView)
+        }else{
+            holder.profileImageView.setImageResource(R.drawable.avatar)
         }
 
 
