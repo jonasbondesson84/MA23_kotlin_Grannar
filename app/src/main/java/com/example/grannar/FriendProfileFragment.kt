@@ -116,7 +116,7 @@ class FriendProfileFragment : Fragment() {
             val categoryColorID = interest.category?.let { CategoryManager.getCategoryColorId(it) }
             interestsTextViewList[i].text = interest.name
             if (categoryColorID != null) {
-                interestsTextViewList[i].setBackgroundColor(categoryColorID)
+                interestsTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
             }
 
         }
