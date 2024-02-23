@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import android.widget.Filter
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -45,10 +48,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private var param2: String? = null
     private var searchList = mutableListOf<User>()
     private var listInRecyclerView = mutableListOf<User>()
+    private var listAfterCategoryFilter = mutableListOf<User>()
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
     private lateinit var fabFilter: FloatingActionButton
+    private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +81,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 searchList.add(user)
             }
 
-            setListInRecyclerView(searchList)
+            setListInRecyclerView(true)
         }
             .addOnFailureListener { exception ->
                 Log.d("!!!", "Error getting documents: ", exception)
@@ -110,20 +115,22 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         else {
             val filteredList = listToFilter.filter { user ->
                 user.interests?.any {interest ->
-                    interest?.name?.lowercase() == interestName.lowercase()
+                    interest?.name?.lowercase()?.contains(interestName.lowercase()) ?: false
                 } == true
             }
             return filteredList
         }
     }
 
-    private fun setListInRecyclerView(users: MutableList<User>){
+    private fun setListInRecyclerView(categoryFilterChanged: Boolean){
         listInRecyclerView.clear()
-
-        val categoryFilteredList = filterListOnInterestCategory(users)
-        val nameFilteredList = filterListOnInterestName(categoryFilteredList)
-
+        if (categoryFilterChanged){
+            listAfterCategoryFilter.clear()
+            listAfterCategoryFilter = filterListOnInterestCategory(searchList).toMutableList()
+        }
+        val nameFilteredList = filterListOnInterestName(listAfterCategoryFilter.toList())
         listInRecyclerView.addAll(nameFilteredList)
+        tvNoSearchResult.isVisible = listInRecyclerView.isEmpty()
         adapter.notifyDataSetChanged()
     }
 
@@ -157,23 +164,45 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             adapter.notifyDataSetChanged()
             Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
-        etvSearch = view.findViewById<EditText>(R.id.etvSearchInterest)
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        view.findViewById<Button>(R.id.btnSearch).setOnClickListener {
-            setListInRecyclerView(searchList)
-            etvSearch.clearFocus()
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
+        etvSearch = view.findViewById(R.id.etvSearchInterest)
+        addTextChangeListener()
+        tvNoSearchResult = view.findViewById(R.id.tvEmptySearchList)
+
 
         fabFilter = view.findViewById(R.id.fabFilter)
-        fabFilter.setOnClickListener {
 
+        if (selectedCategories.isEmpty()){
+            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
+            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
+
+        }else{
+            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
+            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
+        }
+
+        fabFilter.setOnClickListener {
             openCategoryFilterDialog()
         }
 
 
 
         return view
+    }
+    private fun addTextChangeListener(){
+        etvSearch.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not using
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not using
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                setListInRecyclerView(false)
+            }
+
+        })
     }
 
 
@@ -213,7 +242,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             checkBoxes.forEach { checkBox ->
                 checkBox.isChecked = false
             }
-            setListInRecyclerView(searchList)
+            setListInRecyclerView(true)
             dialog.dismiss()
         }
 
@@ -228,7 +257,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 selectedCategories.add(checkBox.text.toString())
         }
         Log.d("!!!", selectedCategories.toString())
-        setListInRecyclerView(searchList)
+        setListInRecyclerView(true)
 
         dialog.dismiss()
 

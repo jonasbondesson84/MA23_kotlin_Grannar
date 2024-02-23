@@ -21,33 +21,25 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearchInterest"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="57dp"
+
+        android:layout_marginEnd="32dp"
         android:hint="Search Interest"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvFindFriends"
         app:layout_constraintTop_toBottomOf="@id/tvFindFriends"
         app:startIconContentDescription="Search"
-
         app:startIconDrawable="@drawable/baseline_search_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etvSearchInterest"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/tilSearchInterest"
-        app:layout_constraintBottom_toBottomOf="@id/tilSearchInterest"
-        app:layout_constraintStart_toEndOf="@id/tilSearchInterest"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Search"
-        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearchList"
@@ -77,6 +69,19 @@
         android:src="@drawable/baseline_filter_alt_off_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvEmptySearchList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="No search results!"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rvSearchList" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
