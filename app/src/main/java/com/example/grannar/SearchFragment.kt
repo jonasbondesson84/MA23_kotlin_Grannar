@@ -19,6 +19,7 @@ import android.widget.Filter
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -52,6 +53,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
     private lateinit var fabFilter: FloatingActionButton
+    private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,6 +130,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
         val nameFilteredList = filterListOnInterestName(listAfterCategoryFilter.toList())
         listInRecyclerView.addAll(nameFilteredList)
+        tvNoSearchResult.isVisible = listInRecyclerView.isEmpty()
         adapter.notifyDataSetChanged()
     }
 
@@ -163,12 +166,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
         etvSearch = view.findViewById(R.id.etvSearchInterest)
         addTextChangeListener()
-//        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//        view.findViewById<Button>(R.id.btnSearch).setOnClickListener {
-//            setListInRecyclerView(searchList)
-//            etvSearch.clearFocus()
-//            imm.hideSoftInputFromWindow(view.windowToken, 0)
-//        }
+        tvNoSearchResult = view.findViewById(R.id.tvEmptySearchList)
+
 
         fabFilter = view.findViewById(R.id.fabFilter)
 
@@ -179,14 +178,9 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }else{
             fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
             fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
-
         }
 
-
-
-
         fabFilter.setOnClickListener {
-
             openCategoryFilterDialog()
         }
 
