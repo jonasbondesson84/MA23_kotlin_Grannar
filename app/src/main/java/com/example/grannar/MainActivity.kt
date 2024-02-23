@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
@@ -94,8 +95,16 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
 
     override fun onSignInSuccess() {
         val navController = findNavController(R.id.nav_host_fragment)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+            ?.childFragmentManager?.fragments?.firstOrNull { it.isVisible } as? Fragment
+        if (currentFragment is SearchFragment){
+            currentFragment.getUsersList()
+            Log.d("!!!", "SearchFragment in onSignInMain: $currentFragment")
+        }
         pendingDestination?.id?.let {id -> navController.navigate(id, pendingBundle) }
         clearPendingDestination()
+
+
     }
 
     override fun onSignInFailure() {

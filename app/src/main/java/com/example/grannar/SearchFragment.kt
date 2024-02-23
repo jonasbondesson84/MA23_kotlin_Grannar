@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -70,15 +71,28 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
 
-    private fun getUsersList() {
+    fun getUsersList() {
+        val auth = FirebaseAuth.getInstance()
+        val userIdToRemove = auth.currentUser?.uid
+
+        Log.d("!!!","Current-User: ${CurrentUser.userID}")
         searchList.clear()
         Log.d("!!!", db.toString())
 
-        db.collection("users").get().addOnSuccessListener { result ->
+        val query = if (userIdToRemove != null){
+            db.collection("users").whereNotEqualTo("userID", userIdToRemove)
+        }else{
+            db.collection("users")
+        }
+
+        query.get().addOnSuccessListener { result ->
             for ((i, document) in result.withIndex()) {
                 Log.d("!!!", "${document.id} => ${document.data}")
                 val user = document.toObject<User>()
+                Log.d("!!!", "UserID: ${CurrentUser.userID}")
                 searchList.add(user)
+
+
             }
 
             setListInRecyclerView(true)
@@ -301,7 +315,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
-        adapter.notifyDataSetChanged()
+        //adapter.notifyDataSetChanged()
+        getUsersList()
         Log.d("!!!", "onSigntInSuccess @ SearchFragment")
     }
 
