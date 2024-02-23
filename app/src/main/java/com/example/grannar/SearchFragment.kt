@@ -79,7 +79,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 searchList.add(user)
             }
 
-            setListInRecyclerView(searchList)
+            setListInRecyclerView(true)
         }
             .addOnFailureListener { exception ->
                 Log.d("!!!", "Error getting documents: ", exception)
@@ -120,12 +120,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
-    private fun setListInRecyclerView(users: MutableList<User>){
+    private fun setListInRecyclerView(categoryFilterChanged: Boolean){
         listInRecyclerView.clear()
-
-        val categoryFilteredList = filterListOnInterestCategory(users)
-        val nameFilteredList = filterListOnInterestName(categoryFilteredList)
-
+        if (categoryFilterChanged){
+            listAfterCategoryFilter.clear()
+            listAfterCategoryFilter = filterListOnInterestCategory(searchList).toMutableList()
+        }
+        val nameFilteredList = filterListOnInterestName(listAfterCategoryFilter.toList())
         listInRecyclerView.addAll(nameFilteredList)
         adapter.notifyDataSetChanged()
     }
@@ -170,6 +171,20 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 //        }
 
         fabFilter = view.findViewById(R.id.fabFilter)
+
+        if (selectedCategories.isEmpty()){
+            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
+            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
+
+        }else{
+            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
+            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
+
+        }
+
+
+
+
         fabFilter.setOnClickListener {
 
             openCategoryFilterDialog()
@@ -190,7 +205,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
             override fun afterTextChanged(s: Editable?) {
-                setListInRecyclerView(searchList)
+                setListInRecyclerView(false)
             }
 
         })
@@ -233,7 +248,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             checkBoxes.forEach { checkBox ->
                 checkBox.isChecked = false
             }
-            setListInRecyclerView(searchList)
+            setListInRecyclerView(true)
             dialog.dismiss()
         }
 
@@ -248,7 +263,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 selectedCategories.add(checkBox.text.toString())
         }
         Log.d("!!!", selectedCategories.toString())
-        setListInRecyclerView(searchList)
+        setListInRecyclerView(true)
 
         dialog.dismiss()
 
