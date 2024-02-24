@@ -25,12 +25,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlin.math.cos
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -66,6 +74,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
         getUsersList()
+
     }
 
 
@@ -87,6 +96,67 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 Log.d("!!!", "Error getting documents: ", exception)
             }
 
+    }
+
+    private fun getUsersWithinDistance(distanceInKilometers: Int){
+        val lat = CurrentUser.locLat
+        val lng = CurrentUser.locLng
+        val loggedInUserID = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (lat != null && lng != null){
+            val center = GeoLocation(lat, lng)
+            val radiusInM = distanceInKilometers * 1000
+
+            // Get all surrounding geo hashes within radius
+            val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM.toDouble())
+            val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
+            // Query for all users with the same hash as in the list
+            for (b in bounds){
+                val query = db.collection("users")
+                    .orderBy("geoHash")
+                    .startAt(b.startHash)
+                    .endAt(b.endHash)
+                tasks.add(query.get())
+            }
+            // Loop through all results from all querys
+            Tasks.whenAllComplete(tasks)
+                .addOnSuccessListener {
+                    val matchingDocuments: MutableList<DocumentSnapshot> = ArrayList()
+                    for (task in tasks){
+                        val snapshot = task.result
+                        for (doc in snapshot.documents){
+                            val docLat = doc.getDouble("locLat")
+                            val docLng = doc.getDouble("locLng")
+                            if (docLat != null && docLng != null){
+                                val docLoc = GeoLocation(docLat, docLng)
+                                Log.d("!!!", "${doc.getDouble("locLat")}")
+                                Log.d("!!!", "${doc.getString("firstName")}")
+                                Log.d("!!!", "Distance M: ${GeoFireUtils.getDistanceBetween(docLoc, center)}")
+                                // Remove the false positive, that has the same hash but is still outside of the radius
+                                val distanceToUserInM = GeoFireUtils.getDistanceBetween(docLoc, center)
+                                if (distanceToUserInM <= radiusInM){
+                                    matchingDocuments.add(doc)
+                                    Log.d("!!!", "Matching documents: ${matchingDocuments.size}")
+                                }else{
+                                    Log.d("!!!", "False Positive Document!!!")
+                                }
+                            }
+                        }
+                    }
+                    searchList.clear()
+                    for (document in matchingDocuments){
+
+                        val user = document.toObject<User>()
+                        if (user != null && user.userID != loggedInUserID) {
+                            searchList.add(user)
+
+                            Log.d("!!!", "User with Name added: ${user.firstName}")
+                        }
+                    }
+                    Log.d("!!!", "SearchList: ${searchList.size}")
+                    setListInRecyclerView(true)
+                }
+        }
     }
 
     private fun filterListOnInterestCategory(listToFilter: MutableList<User>):List<User>{
@@ -157,12 +227,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         }
         btnGetuser.setOnClickListener {
-
-            val auth = Firebase.auth
-            CurrentUser.clearUser()
-            auth.signOut()
-            adapter.notifyDataSetChanged()
-            Log.d("!!!", CurrentUser.friendsList?.size.toString())
+            getUsersWithinDistance(2)
+//            val auth = Firebase.auth
+//            CurrentUser.clearUser()
+//            auth.signOut()
+//            adapter.notifyDataSetChanged()
+//            Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
         etvSearch = view.findViewById(R.id.etvSearchInterest)
         addTextChangeListener()
