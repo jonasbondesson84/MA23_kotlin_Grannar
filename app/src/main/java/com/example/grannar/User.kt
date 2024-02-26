@@ -23,6 +23,7 @@ data class User(
     var location: com.google.android.gms.maps.model.LatLng? = null,
     var locLat: Double? = null,
     var locLng: Double? = null,
+    var geoHash: String? = null,
     var email: String? = null,
     var gender: String? = null,
     var profileImageURL: String? = null,
