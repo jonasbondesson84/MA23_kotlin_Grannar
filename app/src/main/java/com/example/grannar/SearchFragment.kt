@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.app.Dialog
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -11,11 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.Filter
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -31,7 +28,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.slider.Slider
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -40,7 +36,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import kotlin.math.cos
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -325,13 +320,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         }
         btnGetuser.setOnClickListener {
-           getUsersWithinDistance(2)
+//           getUsersWithinDistance(2)
 
-//            val auth = Firebase.auth
-//            CurrentUser.clearUser()
-//            auth.signOut()
-//            adapter.notifyDataSetChanged()
-//            Log.d("!!!", CurrentUser.friendsList?.size.toString())
+            val auth = Firebase.auth
+            CurrentUser.clearUser()
+            auth.signOut()
+            adapter.notifyDataSetChanged()
+            Log.d("!!!", CurrentUser.friendsList?.size.toString())
         }
         etvSearch = view.findViewById(R.id.etvSearchInterest)
         addTextChangeListener()
@@ -359,6 +354,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         distanceChip.setOnClickListener {
             Log.d("!!!", "Chip chip")
+
+            //Fråga om permission
             val dialogFragment = DistanceMapDialogFragment(distanceSet)
             dialogFragment.setDistanceSliderListener(this)
             dialogFragment.show(parentFragmentManager, "distanceDialogFragment")

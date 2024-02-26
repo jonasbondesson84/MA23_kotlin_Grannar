@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -124,6 +123,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+
             getLastLocation()
 
         } else {
@@ -150,21 +150,30 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         if(requestCode == 1) {
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastLocation()
+            }else {
+                userLocation = LatLng(
+                    59.334591,
+                    18.063240
+                )
+                showMapDialogFragment()
             }
         }
     }
 
-    @SuppressLint("MissingPermission")
+
     private fun getLastLocation() {
-        fusedLocationClient.lastLocation.addOnSuccessListener {location->
+    if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED) {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             userLocation = LatLng(location.latitude, location.longitude)
             showMapDialogFragment()
-            
+
         }
+    }
     }
 
     private fun showMapDialogFragment() {
-
+Log.d("!!!", "the")
         val dialogFragment = MapDialogFragment()
         val args = Bundle()
         userLocation?.let { args.putDouble("lat", it.latitude) }
