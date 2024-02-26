@@ -1,6 +1,8 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -32,8 +35,10 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
     private var param2: String? = null
     private lateinit var rvEvents: RecyclerView
     private var eventList = mutableListOf<Event>()
+    private var eventsInRecyclerView = mutableListOf<Event>()
     private lateinit var db: FirebaseFirestore
     private lateinit var adapter: EventAdapter
+    private lateinit var etvFilterEvent: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,16 +56,19 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
         val view = inflater.inflate(R.layout.fragment_event, container, false)
         db = Firebase.firestore
 
-
+        etvFilterEvent = view.findViewById(R.id.etvSearchEvent)
         rvEvents = view.findViewById(R.id.rvEventsList)
         rvEvents.layoutManager = LinearLayoutManager(view.context)
         rvEvents.addItemDecoration(
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
             )
         )
-        adapter = EventAdapter(view.context, eventList, this)
+        adapter = EventAdapter(view.context, eventsInRecyclerView, this)
         rvEvents.adapter = adapter
         getEvents()
+
+        addTextChangeListener()
+
 
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
 
@@ -78,9 +86,49 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
 
 
 
-
         return view
     }
+
+
+    private fun addEventsToRecycler(listToAdd: List<Event>){
+        eventsInRecyclerView.clear()
+        eventsInRecyclerView.addAll(listToAdd)
+        adapter.notifyDataSetChanged()
+
+    }
+    private fun filterList(textToSearchFor: String){
+        if (textToSearchFor.isNotBlank()){
+            val filteredList = eventList.filter { event ->
+                event.name?.lowercase()?.contains(textToSearchFor) ?: false
+            }
+
+            addEventsToRecycler(filteredList)
+        }else{
+            addEventsToRecycler(eventList)
+        }
+    }
+
+
+    private fun addTextChangeListener(){
+        etvFilterEvent.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not using this
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not using this
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textInSearchField = s.toString().lowercase().trim()
+                Log.d("!!!", textInSearchField)
+                filterList(textInSearchField)
+
+            }
+
+        })
+    }
+
     private fun openLogInFragment() {
         val dialogFragment = SignInDialogFragment()
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
@@ -98,7 +146,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
                     }
                 }
                 eventList.sortBy { it.startDateTime }
-                adapter.notifyDataSetChanged()
+                filterList(etvFilterEvent.text.toString())
+
             }
         }
     }

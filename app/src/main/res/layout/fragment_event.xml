@@ -24,7 +24,7 @@
         android:id="@+id/tilSearchEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Search Interest"
+        android:hint="Search Event"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:layout_constraintStart_toStartOf="@+id/tvFindEvents"
