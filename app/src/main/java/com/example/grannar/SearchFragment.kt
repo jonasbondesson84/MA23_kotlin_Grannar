@@ -29,7 +29,9 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.slider.Slider
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -50,7 +52,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SearchFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInResultListener {
+class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInResultListener, DistanceSliderListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -63,6 +65,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var fabFilter: FloatingActionButton
     private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
+    private lateinit var distanceChip: Chip
+    private var distanceSet: Float = 5f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,8 +174,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             queryForUsersByGeoHash(tasks, center, radiusInM)
 
         }
-
-
     }
 
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
@@ -339,6 +341,17 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
 
 
+        distanceChip = view.findViewById<Chip>(R.id.distancseChip)
+        distanceChip.text = "Distance: ${distanceSet.toInt()} km"
+
+        distanceChip.setOnClickListener {
+            Log.d("!!!", "Chip chip")
+            val dialogFragment = DistanceMapDialogFragment(distanceSet)
+            dialogFragment.setDistanceSliderListener(this)
+            dialogFragment.show(parentFragmentManager, "distanceDialogFragment")
+        }
+
+
 
         return view
     }
@@ -466,6 +479,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     override fun onSignUpPress() {
 
         Log.d("!!!", "SignUpPress")
+
+    }
+
+    override fun onDistanceSet(distance: Double) {
+        distanceSet = distance.toFloat()
+        getUsersWithinDistance(distance.toInt())
+        distanceChip.text = "Distance: $distanceSet km"
 
     }
 }
