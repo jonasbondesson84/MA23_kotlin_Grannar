@@ -10,6 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
@@ -30,6 +35,8 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class EventInfoFragment : Fragment() {
+
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -42,6 +49,8 @@ class EventInfoFragment : Fragment() {
     private lateinit var topBar: MaterialToolbar
     private var selectedEvent: Event? = null
     private lateinit var storage: FirebaseStorage
+    private lateinit var locationMap: MapView
+    private lateinit var googleMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +74,11 @@ class EventInfoFragment : Fragment() {
         imEventImage = view.findViewById(R.id.imEventInfoImage)
         topBar = view.findViewById(R.id.topEventInfo)
         storage = Firebase.storage
+        locationMap = view.findViewById(R.id.eventInfoMapView)
+
+        locationMap.onCreate(savedInstanceState)
+
+
 
         topBar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -157,6 +171,23 @@ class EventInfoFragment : Fragment() {
 
         if(event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false
+        }
+        locationMap.getMapAsync { googleMap ->
+            setMap(googleMap, event)
+        }
+
+    }
+
+    private fun setMap(googleMap: GoogleMap, event: Event) {
+        this.googleMap = googleMap
+        val lat = event.location?.get("lat").toString().toDouble()
+        val lng = event.location?.get("lng").toString().toDouble()
+        val latLng = LatLng(lat, lng)
+
+        val cameraUpdate = latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) }
+        if (cameraUpdate != null) {
+            googleMap.moveCamera(cameraUpdate)
+            googleMap.addMarker(MarkerOptions().position(latLng))
         }
     }
 

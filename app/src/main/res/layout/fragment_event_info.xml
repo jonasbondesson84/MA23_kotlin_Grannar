@@ -115,4 +115,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
+    <com.google.android.gms.maps.MapView
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:id="@+id/eventInfoMapView"
+        app:layout_constraintTop_toBottomOf="@+id/tvEventInfoDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/box"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

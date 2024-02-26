@@ -165,7 +165,7 @@ class AddEventDialogFragment: DialogFragment() {
             if (imageUri != null) { //If you have selected an image, if first saves the image to firebase.storage, then saves the post in firebase
                 val fileName = "image_${System.currentTimeMillis()}.jpg"
                 val filePath = imageUri
-                val storageRef = storage.reference.child("images").child(fileName)
+                val storageRef = storage.reference.child("images/events").child(fileName)
 
                 filePath?.let { storageRef.putFile(it) }?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
