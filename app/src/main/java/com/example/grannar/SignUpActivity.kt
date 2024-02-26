@@ -156,12 +156,12 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     private fun getLastLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener {location->
             userLocation = LatLng(location.latitude, location.longitude)
-            openMapFragment()
+            showMapDialogFragment()
             
         }
     }
 
-    private fun openMapFragment() {
+    private fun showMapDialogFragment() {
 
         val dialogFragment = MapDialogFragment()
         val args = Bundle()

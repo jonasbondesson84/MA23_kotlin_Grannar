@@ -119,4 +119,9 @@
                 />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/eventFragment"
+        android:name="com.example.grannar.EventFragment"
+        android:label="fragment_event"
+        tools:layout="@layout/fragment_event" />
 </navigation>
