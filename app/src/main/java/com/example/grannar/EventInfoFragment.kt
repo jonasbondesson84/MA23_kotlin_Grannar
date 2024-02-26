@@ -151,7 +151,7 @@ class EventInfoFragment : Fragment() {
             .with(requireContext())
             .load(event.imageURL)
             .centerCrop()
-            .placeholder(R.drawable.baseline_add_a_photo_24)
+            .placeholder(R.drawable.img_album)
             .error(R.drawable.img_album)
             .into(imEventImage)
 

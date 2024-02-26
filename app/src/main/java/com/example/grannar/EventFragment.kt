@@ -68,9 +68,12 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
 
 
         fabAddEvent.setOnClickListener {
-            val dialogFragment = AddEventDialogFragment()
-
-            dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+            if(CurrentUser.userID != null) {
+                val dialogFragment = AddEventDialogFragment()
+                dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+            } else {
+                openLogInFragment()
+            }
         }
 
 
@@ -78,7 +81,10 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
 
         return view
     }
-
+    private fun openLogInFragment() {
+        val dialogFragment = SignInDialogFragment()
+        dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
+    }
     private fun getEvents() {
 
         db.collection("Events").addSnapshotListener { snapshot, error ->
