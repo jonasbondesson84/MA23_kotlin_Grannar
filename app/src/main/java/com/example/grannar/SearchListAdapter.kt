@@ -116,7 +116,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         }
 
         val interests = selectedUser.interests
-        Log.d("!!!", "Interests ${interests?.size}")
+
         if (interests != null){
             addInterests(interests, holder.interestsTextViewList)
         }

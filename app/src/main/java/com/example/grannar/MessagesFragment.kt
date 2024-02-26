@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -40,6 +42,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
     private lateinit var adapter: MessageAdapter
     private val args: FriendProfileFragmentArgs by navArgs()
     private lateinit var etvSearchMessage: EditText
+    private lateinit var tvNoSearchResult: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +82,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
         getMessagesForUser()
 
+
         adapter.onUserClick = {
 
 
@@ -90,7 +94,13 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
 
 
+
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        tvNoSearchResult = view.findViewById(R.id.tvNoSearchResult)
     }
 
     private fun getMessagesForUser() {
@@ -134,7 +144,9 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
                                         }
                                         }
                                     chats.sortByDescending { it.lastMessage.timeStamp  }
-                                    addChatsToRecycler(chats)
+                                    //addChatsToRecycler(chats)
+                                    filterList(etvSearchMessage.text.toString())
+                                    Log.d("!!!", "New Chats sett in add chats!!!!")
                                    // adapter.notifyDataSetChanged()
                                             Log.d("!!!", document?.documentChanges.toString())
                                     }
@@ -208,14 +220,19 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
         chatsInRecyclerView.clear()
         chatsInRecyclerView.addAll(listToAdd)
         adapter.notifyDataSetChanged()
+        tvNoSearchResult.isVisible = listToAdd.isEmpty()
 
     }
-    private fun filterList(textToSearchFor: String){
-        val filteredList = chats.filter { chat ->
-            chat.fromUser.firstName?.lowercase()?.contains(textToSearchFor) ?: false
+    private fun filterList(textToSearchFor: String?){
+        if (textToSearchFor != null){
+            val filteredList = chats.filter { chat ->
+                chat.fromUser.firstName?.lowercase()?.contains(textToSearchFor) ?: false
+            }
+
+            addChatsToRecycler(filteredList)
+        }else{
+            addChatsToRecycler(chats)
         }
-        Log.d("!!!", "In Filter List: ${filteredList.toString()}")
-        addChatsToRecycler(filteredList)
     }
 
 
@@ -231,7 +248,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
             override fun afterTextChanged(s: Editable?) {
                 val textInSearchField = s.toString().lowercase().trim()
-                Log.d("!!!", textInSearchField)
+
                 filterList(textInSearchField)
 
             }

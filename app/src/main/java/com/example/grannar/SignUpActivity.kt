@@ -14,6 +14,8 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -183,6 +185,12 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         val email = emailEditText.text.toString()
         val gender = getGender()
         val birthDateString = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(birthDate)
+        val lat = location?.latitude
+        val lng = location?.longitude
+        var geoHash: String? =  null
+        if (lat != null && lng != null){
+            geoHash = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
+        }
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { signUp ->
             if (signUp.isSuccessful) {
@@ -192,7 +200,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
                     //location = location,
                     locLat = location?.latitude,
                     locLng = location?.longitude,
-
+                    geoHash = geoHash,
                     firstName = firstNameEditText.text.toString(),
                     surname = surNameEditText.text.toString(),
                     email = email,
