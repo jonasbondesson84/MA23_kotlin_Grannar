@@ -84,6 +84,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:id="@+id/imEventAddImage"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialogEventMapView"
+        android:src="@drawable/baseline_add_photo_alternate_24"
+        />
+
     <Button
         android:id="@+id/eventAddButton"
         android:layout_width="wrap_content"
@@ -95,7 +107,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/eventCancelButton"
-        app:layout_constraintTop_toBottomOf="@+id/dialogEventMapView"
+        app:layout_constraintTop_toBottomOf="@+id/imEventAddImage"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button

@@ -123,5 +123,30 @@
         android:id="@+id/eventFragment"
         android:name="com.example.grannar.EventFragment"
         android:label="fragment_event"
-        tools:layout="@layout/fragment_event" />
+        tools:layout="@layout/fragment_event" >
+        <argument
+            android:name="eventID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_eventFragment_to_eventInfoFragment"
+            app:destination="@id/eventInfoFragment">
+            <argument
+                android:name="eventID"
+                app:argType="string"
+                />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/eventInfoFragment"
+        android:name="com.example.grannar.EventInfoFragment"
+        android:label="fragment_event_info"
+        tools:layout="@layout/fragment_event_info" >
+        <argument
+            android:name="eventID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

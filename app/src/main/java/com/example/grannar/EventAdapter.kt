@@ -7,11 +7,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class EventAdapter(context: Context, private val eventList: MutableList<Event>): RecyclerView.Adapter<EventAdapter.ViewHolder>() {
+class EventAdapter(val context: Context, private val eventList: MutableList<Event>, private val listener: EventAdapter.MyAdapterListener): RecyclerView.Adapter<EventAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
+    interface MyAdapterListener {
+        fun goToEvent(event: Event)
 
-    var onUserClick: ((User) -> Unit)? = null
+    }
+
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvEventName)
@@ -31,6 +35,9 @@ class EventAdapter(context: Context, private val eventList: MutableList<Event>):
 
         holder.tvName.text = event.name
         holder.tvDate.text = event.startDateTime.toString()
+        holder.itemView.setOnClickListener {
+            listener.goToEvent(event)
+        }
 
     }
 

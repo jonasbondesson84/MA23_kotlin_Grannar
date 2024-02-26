@@ -1,11 +1,17 @@
 package com.example.grannar
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
@@ -15,7 +21,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -24,6 +30,8 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -35,22 +43,27 @@ class AddEventDialogFragment: DialogFragment() {
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
     private lateinit var db: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
     private lateinit var etvDate: TextInputEditText
     private lateinit var tilDate: TextInputLayout
     private lateinit var etvName: TextInputEditText
     private lateinit var etvDesc: TextInputEditText
+    private lateinit var imAddImage: ImageView
     private var dateTime: Date? = null
     private var location = mutableMapOf<String, Any>()
+    private var imageUri: Uri? = null
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.dialog_fragment_add_event, null)
         db = Firebase.firestore
+        storage = Firebase.storage
         etvDate = view.findViewById(R.id.etvEventDate)
         tilDate = view.findViewById(R.id.tilEventDate)
         etvName = view.findViewById(R.id.etvEventName)
         etvDesc = view.findViewById(R.id.etvEventDescription)
+        imAddImage = view.findViewById(R.id.imEventAddImage)
         etvDate.apply {
             setOnClickListener {
                 showDatePickerDialog()
@@ -59,6 +72,12 @@ class AddEventDialogFragment: DialogFragment() {
             isFocusableInTouchMode = false
         }
 
+        imAddImage.setOnClickListener {
+            Intent(Intent.ACTION_GET_CONTENT).also {
+                it.type = "image/*" //För image/png bara
+                startActivityForResult(it, 0)
+            }
+        }
 //        val userLocationLat = arguments?.getDouble("lat")
 //        val userLocationLng = arguments?.getDouble("lng")
 //
@@ -77,8 +96,7 @@ class AddEventDialogFragment: DialogFragment() {
 //            if(setLocation != null) {
 //                onDataPassListener?.onDataPassed(setLocation!!)
                 if( !etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && location.isNotEmpty() && dateTime != null) {
-
-                    saveEvent()
+                   savePhoto()
                }
                 //dismiss()
 
@@ -125,18 +143,62 @@ class AddEventDialogFragment: DialogFragment() {
 
 
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+
+            val uri = data?.data
+            if (uri != null) {
+
+                imAddImage.setImageURI(uri)
+
+                imageUri = uri // spara för uppladdning
+
+            }
+        } else {
+            Log.d("&&&", "OnActivityResult(), imageUri is null")
+        }
+    }
+
+    private fun savePhoto() {
+            if (imageUri != null) { //If you have selected an image, if first saves the image to firebase.storage, then saves the post in firebase
+                val fileName = "image_${System.currentTimeMillis()}.jpg"
+                val filePath = imageUri
+                val storageRef = storage.reference.child("images").child(fileName)
+
+                filePath?.let { storageRef.putFile(it) }?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        storageRef.downloadUrl.addOnSuccessListener { uri ->
+                            val downloadUrl = uri.toString()
+                            saveEvent(downloadUrl)
+
+                        }
+                    } else {
+                        // Image upload failed
+                        Toast.makeText(requireContext(),"Error uploading file", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            } else { //if you haven't selected an image you just saves the place to firebase
+                saveEvent(null)
+            }
+
+    }
 
 
-    private fun saveEvent() {
+    private fun saveEvent(imageURL: String?) {
         val event = Event(
             name = etvName.text.toString(),
             description = etvDesc.text.toString(),
             location = location,
             startDateTime = dateTime,
-            createdByUID = CurrentUser.userID.toString()
+            createdByUID = CurrentUser.userID.toString(),
+            imageURL = imageURL
         )
         db.collection("Events").add(event).addOnSuccessListener {
             dismiss()
+
         }
     }
     private fun showDatePickerDialog() {
@@ -146,7 +208,7 @@ class AddEventDialogFragment: DialogFragment() {
         val defaultDateTimestamp = calendar.timeInMillis
 
         val calenderConstraints = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointBackward.now())
+            .setValidator(DateValidatorPointForward.now())
 
 
         val datePicker =

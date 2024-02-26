@@ -1,13 +1,20 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,12 +26,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventFragment : Fragment() {
+class EventFragment : Fragment(), EventAdapter.MyAdapterListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var rvEvents: RecyclerView
     private var eventList = mutableListOf<Event>()
+    private lateinit var db: FirebaseFirestore
+    private lateinit var adapter: EventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +49,23 @@ class EventFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_event, container, false)
+        db = Firebase.firestore
 
-        eventList.add(Event(
-            name = "Event 1",
-            description = "This is the first event",
-            //startDateTime = LocalDateTime.now()
-        ))
-        eventList.add(Event(
-            name = "Event 2",
-            description = "This is the second event",
-            //startDateTime = LocalDateTime.now()
-        ))
 
         rvEvents = view.findViewById(R.id.rvEventsList)
         rvEvents.layoutManager = LinearLayoutManager(view.context)
-        val adapter = EventAdapter(view.context, eventList)
+        rvEvents.addItemDecoration(
+            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
+            )
+        )
+        adapter = EventAdapter(view.context, eventList, this)
         rvEvents.adapter = adapter
+        getEvents()
 
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
+
+
+
 
         fabAddEvent.setOnClickListener {
             val dialogFragment = AddEventDialogFragment()
@@ -69,6 +77,24 @@ class EventFragment : Fragment() {
 
 
         return view
+    }
+
+    private fun getEvents() {
+
+        db.collection("Events").addSnapshotListener { snapshot, error ->
+            if (snapshot != null) {
+                eventList.clear()
+                for (document in snapshot.documents) {
+                    val event = document?.toObject<Event>()
+                    if (event != null) {
+                        //set lastRead position
+                        eventList.add(event)
+                    }
+                }
+                eventList.sortBy { it.startDateTime }
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
     companion object {
@@ -89,5 +115,15 @@ class EventFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun goToEvent(event: Event) {
+        val eventID = event.docID
+        Log.d("!!!", eventID.toString())
+        if(eventID != null) {
+            val action =
+                EventFragmentDirections.actionEventFragmentToEventInfoFragment(event.docID!!)
+            findNavController().navigate(action)
+        }
     }
 }
