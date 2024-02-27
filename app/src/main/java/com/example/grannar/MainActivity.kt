@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -41,6 +42,17 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = findNavController(R.id.nav_host_fragment)
 
+        val unreadObserver = Observer<Int> {unread->
+            var badge = bottomNav.getOrCreateBadge(R.id.messagesFragment)
+            badge.isVisible = (unread > 0)
+// An icon only badge will be displayed unless a number or text is set:
+            badge.number = CurrentUser.unreadMessageNumber.value!!  // or badge.text = "New"
+
+
+
+        }
+
+        CurrentUser.unreadMessageNumber.observe(this, unreadObserver)
         signUpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK){
                 val data: Intent? = result.data
