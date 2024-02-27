@@ -160,7 +160,7 @@ class EventInfoFragment : Fragment() {
         val formattedDate =
             SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(event.startDateTime)
         tvDate.text = formattedDate
-        tvLocation.text = event.location?.get("geohash").toString()
+        tvLocation.text = event.geoHash
         Glide
             .with(requireContext())
             .load(event.imageURL)
@@ -180,8 +180,8 @@ class EventInfoFragment : Fragment() {
 
     private fun setMap(googleMap: GoogleMap, event: Event) {
         this.googleMap = googleMap
-        val lat = event.location?.get("lat").toString().toDouble()
-        val lng = event.location?.get("lng").toString().toDouble()
+        val lat = event.locLat ?: 0.0
+        val lng = event.locLng ?: 0.0
         val latLng = LatLng(lat, lng)
 
         val cameraUpdate = latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) }

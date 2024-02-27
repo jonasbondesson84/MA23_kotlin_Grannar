@@ -51,6 +51,9 @@ class AddEventDialogFragment: DialogFragment() {
     private lateinit var imAddImage: ImageView
     private var dateTime: Date? = null
     private var location = mutableMapOf<String, Any>()
+    private var lat: Double? = null
+    private var lng: Double? = null
+    private var geohash: String? = null
     private var imageUri: Uri? = null
 
 
@@ -95,7 +98,7 @@ class AddEventDialogFragment: DialogFragment() {
         view.findViewById<Button>(R.id.eventAddButton).setOnClickListener {
 //            if(setLocation != null) {
 //                onDataPassListener?.onDataPassed(setLocation!!)
-                if( !etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && location.isNotEmpty() && dateTime != null) {
+                if( !etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && lat != null && dateTime != null) {
                    savePhoto()
                }
                 //dismiss()
@@ -126,15 +129,15 @@ class AddEventDialogFragment: DialogFragment() {
                 marker?.remove()
                 marker = googleMap.addMarker(MarkerOptions().position(latLng))
 //                setLocation = latLng
-                val lat = latLng.latitude
-                val lng = latLng.longitude
-                val hash = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
-
-                location = mutableMapOf(
-                    "geohash" to hash,
-                    "lat" to lat,
-                    "lng" to lng
-                )
+                 lat = latLng.latitude
+                 lng = latLng.longitude
+                 geohash = GeoFireUtils.getGeoHashForLocation(GeoLocation(latLng.latitude, latLng.longitude))
+//
+//                location = mutableMapOf(
+//                    "geohash" to hash,
+//                    "lat" to lat,
+//                    "lng" to lng
+//                )
 
             }
         }
@@ -192,6 +195,9 @@ class AddEventDialogFragment: DialogFragment() {
             name = etvName.text.toString(),
             description = etvDesc.text.toString(),
             location = location,
+            geoHash = geohash,
+            locLng = lng,
+            locLat = lat,
             startDateTime = dateTime,
             createdByUID = CurrentUser.userID.toString(),
             imageURL = imageURL

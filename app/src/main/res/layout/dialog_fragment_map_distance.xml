@@ -69,5 +69,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/distanceMapSetButton" />
 
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="5 km"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/mapDistanceSlider"
+        app:layout_constraintStart_toEndOf="@+id/mapDistanceSlider"
+        app:layout_constraintTop_toTopOf="@+id/mapDistanceSlider" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

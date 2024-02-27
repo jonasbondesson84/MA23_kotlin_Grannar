@@ -110,7 +110,8 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
             ?.childFragmentManager?.fragments?.firstOrNull { it.isVisible } as? Fragment
         if (currentFragment is SearchFragment){
-            currentFragment.getUsersList()
+            //currentFragment.getUsersWithinDistance(5)
+            currentFragment.onSignInSuccess()
             Log.d("!!!", "SearchFragment in onSignInMain: $currentFragment")
         }
         pendingDestination?.id?.let {id -> navController.navigate(id, pendingBundle) }
