@@ -2,6 +2,7 @@ package com.example.grannar
 
 import android.app.AlertDialog
 import android.app.Dialog
+
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +12,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import android.util.Log
+import android.widget.Button
+import android.widget.TextView
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.slider.Slider
+
 
 interface DistanceSliderListener{
     fun onDistanceSet(distance: Double)
@@ -24,6 +29,7 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
     private lateinit var mapView: MapView
     private lateinit var circle: Circle
     private lateinit var map: GoogleMap
+    private lateinit var tvDistance: TextView
     private var distanceSliderListener: DistanceSliderListener? = null
     private var currentZoomLevel = 10.75f
     private val STARTING_ZOOM = 10.75f
@@ -34,13 +40,17 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
         mapView = view.findViewById(R.id.distanceDialogMapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+        tvDistance = view.findViewById(R.id.tvDistance)
+
 
         val distanceSlider = view.findViewById<Slider>(R.id.mapDistanceSlider)
 
-        distanceSlider.value = distance ?: 5.0f
-        setCameraZoom(distance ?: 5.0f)
+        distanceSlider.value = distance
+        tvDistance.text = "${distance.toInt()} km"
+        setCameraZoom(distance)
 
         distanceSlider.addOnChangeListener { slider, value, fromUser ->
+            tvDistance.text = "${value.toInt()} km"
             updateCircleRadius(value.toDouble()*1000)
             setCameraZoom(value)
             updateCamera()
@@ -63,6 +73,10 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+
+        // KODEN LIGGER KVAR för att om vi ska använda användarens plats senare. Måst fixa en callback eller hantera om användaren svara på permissions
+
+
 //        if (ActivityCompat.checkSelfPermission(
 //                requireContext(),
 //                Manifest.permission.ACCESS_FINE_LOCATION
@@ -136,8 +150,11 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
         distanceSliderListener = listener
     }
 
-    private fun setCameraZoom(radiusInMeters: Float) {
-         currentZoomLevel = (STARTING_ZOOM - (radiusInMeters / 20)).toFloat()
+    private fun setCameraZoom(radiusInKM: Float) {
+        // Set to dived by 13 because zoom looks good over Stockholm. Needs to change if we target areas closer to the equator.
+         currentZoomLevel = (STARTING_ZOOM - (radiusInKM / 13))
+
+
     }
 
     private fun updateCamera(){
