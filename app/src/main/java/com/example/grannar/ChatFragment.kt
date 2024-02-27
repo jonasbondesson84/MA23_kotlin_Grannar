@@ -309,8 +309,23 @@ class ChatFragment : Fragment() {
                     getOldMessages()
                     hideKeyboard(requireView())
                     etvMessageText.text?.clear()
+                    addToUnreadMessage()
                 }
         }
+    }
+
+    private fun addToUnreadMessage() {
+        val updates = hashMapOf<String, Any>(
+            "unreadMessages.${CurrentUser.userID}" to 1
+        )
+        Log.d("!!!", updates.toString())
+            db.collection("messages").document(args.userID.toString())
+                .update(updates).addOnSuccessListener {
+                    Log.d("!!!", "added unread")
+                }
+                .addOnFailureListener {
+                    Log.d("!!!", "error")
+                }
     }
 
 
