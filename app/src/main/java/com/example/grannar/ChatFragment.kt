@@ -136,7 +136,11 @@ class ChatFragment : Fragment() {
                     ).update("unread", false).addOnSuccessListener {
                         item.unread = false
                     }
+
                 } }
+            }
+            if(i == messages.size-1) {
+                markAsRead()
             }
 
         }
@@ -204,20 +208,38 @@ class ChatFragment : Fragment() {
                         return@addSnapshotListener
                     } else {
                         if (snapshot != null) {
-                            messages.clear()
-                            for (document in snapshot.documents) {
-                                val newMessage = document?.toObject<Message>()
-                                if (newMessage != null) {
-                                    //set lastRead position
-                                    messages.add(newMessage)
+//                            for(document in snapshot.documentChanges) {
+//                                if(document.type == DocumentChange.Type.ADDED) {
+//                                    val newMessage = document.document.toObject<Message>()
+//                                    Log.d("!!!", newMessage.toString())
+////                                    if(newMessage != null) {
+//
+//                                    messages.add(newMessage)
+//                                    messages.sortBy { it.timeStamp }
+//                                        Log.d("!!!", "new message added")
+//                                        adapter.notifyItemInserted(messages.size-1)
+//                                        rvChatMessage.scrollToPosition(messages.size-1)
+//                                //rvChatMessage.scrollToPosition(getFirstUnread()-1)
+//                                        markAsRead()
+////                                    }
+//                                }
+//                            }
+                            for(document in snapshot) {
+                                messages.clear()
+                                for (document in snapshot.documents) {
+                                    val newMessage = document?.toObject<Message>()
+                                    if (newMessage != null) {
+                                        //set lastRead position
+                                        messages.add(newMessage)
+                                    }
+
                                 }
                             }
                             messages.sortBy { it.timeStamp }
                             adapter.notifyDataSetChanged()
-
-                            rvChatMessage.scrollToPosition(getFirstUnread() - 1)
-                            markAsRead()
-
+                            Log.d("!!!", "new message")
+                            rvChatMessage.scrollToPosition(messages.size - 1)
+                            //markAsRead()
                         }
 
                     }
