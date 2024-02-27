@@ -13,7 +13,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
