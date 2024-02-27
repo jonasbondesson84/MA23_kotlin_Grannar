@@ -78,6 +78,8 @@ class ChatFragment : Fragment() {
 
         rvChatMessage = view.findViewById(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
+        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+        rvChatMessage.adapter = adapter
 //        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
 //        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
@@ -214,6 +216,7 @@ class ChatFragment : Fragment() {
                             adapter.notifyDataSetChanged()
 
                             rvChatMessage.scrollToPosition(getFirstUnread() - 1)
+                            markAsRead()
 
                         }
 
@@ -224,6 +227,22 @@ class ChatFragment : Fragment() {
         }
 
     }
+
+    private fun markAsRead() {
+        var newHashMap = mutableMapOf<String, Int>()
+        for(unreadMessage in CurrentUser.unreadMessageIDs) {
+            if(unreadMessage.key != args.userID.toString()) {
+                newHashMap[unreadMessage.key] = unreadMessage.value
+            }
+
+        }
+        db.collection("users").document(CurrentUser.userID.toString())
+            .update("unreadMessages", newHashMap).addOnSuccessListener {
+                Log.d("!!!", "hurra")
+            }
+        Log.d("!!!", newHashMap.toString())
+    }
+
     private fun getFirstUnread(): Int {
         for(message in messages) {
             if(message.toID == CurrentUser.userID.toString() && message.unread) {
@@ -319,12 +338,12 @@ class ChatFragment : Fragment() {
             "unreadMessages.${CurrentUser.userID}" to 1
         )
         Log.d("!!!", updates.toString())
-            db.collection("messages").document(args.userID.toString())
+            db.collection("users").document(args.userID.toString())
                 .update(updates).addOnSuccessListener {
                     Log.d("!!!", "added unread")
                 }
                 .addOnFailureListener {
-                    Log.d("!!!", "error")
+                    Log.d("!!!", it.toString())
                 }
     }
 
