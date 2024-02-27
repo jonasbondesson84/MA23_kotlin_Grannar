@@ -36,6 +36,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlin.math.cos
+import kotlin.math.ln
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,6 +75,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
+        //getUsersWithinDistance(5)
         getUsersList()
 
     }
@@ -110,78 +114,20 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     }
 
-//    private fun getUsersWithinDistance(distanceInKilometers: Int){
-//        val lat = CurrentUser.locLat
-//        val lng = CurrentUser.locLng
-//        val loggedInUserID = FirebaseAuth.getInstance().currentUser?.uid
-//
-//        if (lat != null && lng != null){
-//            val center = GeoLocation(lat, lng)
-//            val radiusInM = distanceInKilometers * 1000
-//
-//            // Get all surrounding geo hashes within radius
-//            val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM.toDouble())
-//            val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
-//            // Query for all users with the same hash as in the list
-//            for (b in bounds){
-//                val query = db.collection("users")
-//                    .orderBy("geoHash")
-//                    .startAt(b.startHash)
-//                    .endAt(b.endHash)
-//                tasks.add(query.get())
-//            }
-//            // Loop through all results from all querys
-//            Tasks.whenAllComplete(tasks)
-//                .addOnSuccessListener {
-//                    val matchingDocuments: MutableList<DocumentSnapshot> = ArrayList()
-//                    for (task in tasks){
-//                        val snapshot = task.result
-//                        for (doc in snapshot.documents){
-//                            val docLat = doc.getDouble("locLat")
-//                            val docLng = doc.getDouble("locLng")
-//                            if (docLat != null && docLng != null){
-//                                val docLoc = GeoLocation(docLat, docLng)
-//                                Log.d("!!!", "${doc.getDouble("locLat")}")
-//                                Log.d("!!!", "${doc.getString("firstName")}")
-//                                Log.d("!!!", "Distance M: ${GeoFireUtils.getDistanceBetween(docLoc, center)}")
-//                                // Remove the false positive, that has the same hash but is still outside of the radius
-//                                val distanceToUserInM = GeoFireUtils.getDistanceBetween(docLoc, center)
-//                                if (distanceToUserInM <= radiusInM){
-//                                    matchingDocuments.add(doc)
-//                                    Log.d("!!!", "Matching documents: ${matchingDocuments.size}")
-//                                }else{
-//                                    Log.d("!!!", "False Positive Document!!!")
-//                                }
-//                            }
-//                        }
-//                    }
-//                    searchList.clear()
-//                    for (document in matchingDocuments){
-//
-//                        val user = document.toObject<User>()
-//                        if (user != null && user.userID != loggedInUserID) {
-//                            searchList.add(user)
-//                            Log.d("!!!", "User with Name added: ${user.firstName}")
-//                        }
-//                    }
-//                    Log.d("!!!", "SearchList: ${searchList.size}")
-//                    setListInRecyclerView(true)
-//                }
-//        }
-//    }
-
-    private fun getUsersWithinDistance(distanceInKilometers: Int){
+    fun getUsersWithinDistance(distanceInKilometers: Int){
         val lat = CurrentUser.locLat
         val lng = CurrentUser.locLng
 
+        val center = GeoLocation(lat ?: 59.334591, lng ?: 18.063240)
 
-        if (lat != null && lng != null) {
-            val center = GeoLocation(lat, lng)
+
+       // if (lat != null && lng != null) {
+          //  val center = GeoLocation(lat, lng)
             val radiusInM = distanceInKilometers * 1000
             val tasks = getListOfDbQueries(radiusInM, center)
             queryForUsersByGeoHash(tasks, center, radiusInM)
 
-        }
+      //  }
     }
 
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
@@ -320,7 +266,9 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         }
         btnGetuser.setOnClickListener {
+
 //           getUsersWithinDistance(2)
+
 
             val auth = Firebase.auth
             CurrentUser.clearUser()
@@ -349,7 +297,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
 
 
-        distanceChip = view.findViewById<Chip>(R.id.distancseChip)
+        distanceChip = view.findViewById(R.id.distancseChip)
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
         distanceChip.setOnClickListener {
@@ -479,7 +427,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
         //adapter.notifyDataSetChanged()
-        getUsersList()
+        getUsersWithinDistance(distanceSet.toInt())
         Log.d("!!!", "onSigntInSuccess @ SearchFragment")
     }
 
@@ -496,7 +444,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     override fun onDistanceSet(distance: Double) {
         distanceSet = distance.toFloat()
         getUsersWithinDistance(distance.toInt())
-        distanceChip.text = "Distance: $distanceSet km"
+        distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
     }
 }
