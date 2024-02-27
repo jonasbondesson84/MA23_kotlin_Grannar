@@ -2,22 +2,23 @@ package com.example.grannar
 
 import android.app.AlertDialog
 import android.app.Dialog
+
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.Button
 import androidx.fragment.app.DialogFragment
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import android.graphics.Color
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.slider.Slider
-import kotlin.math.ln
 
 
 interface DistanceSliderListener{
@@ -72,7 +73,9 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+
         // KODEN LIGGER KVAR för att om vi ska använda användarens plats senare. Måst fixa en callback eller hantera om användaren svara på permissions
+
 
 //        if (ActivityCompat.checkSelfPermission(
 //                requireContext(),
