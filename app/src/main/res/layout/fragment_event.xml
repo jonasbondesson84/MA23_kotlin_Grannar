@@ -39,6 +39,16 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.chip.Chip
+        android:id="@+id/distanceEventChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"
+        android:text="Distance: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilSearchEvent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEventsList"
         android:layout_width="match_parent"
@@ -47,7 +57,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilSearchEvent" />
+        app:layout_constraintTop_toBottomOf="@+id/distanceEventChip" />
+
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"

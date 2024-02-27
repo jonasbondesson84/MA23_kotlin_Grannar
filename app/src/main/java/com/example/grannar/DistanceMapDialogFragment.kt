@@ -2,25 +2,19 @@ package com.example.grannar
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.core.content.ContextCompat
+import android.widget.Button
 import androidx.fragment.app.DialogFragment
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import android.Manifest
-import android.graphics.Color
-import android.util.Log
-import android.widget.Button
-import androidx.core.app.ActivityCompat
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.slider.Slider
-import kotlin.math.ln
 
 interface DistanceSliderListener{
     fun onDistanceSet(distance: Double)
@@ -69,24 +63,24 @@ class DistanceMapDialogFragment(val distance: Float): DialogFragment(), OnMapRea
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                1
-            )
-            return
-        }
+//        if (ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION
+//                ),
+//                1
+//            )
+//            return
+//        }
             map = googleMap
            // googleMap.isMyLocationEnabled = true
 

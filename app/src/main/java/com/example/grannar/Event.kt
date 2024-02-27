@@ -12,6 +12,10 @@ class Event(
     var startDateTime: Date? = null,
     var description: String? = null,
     var imageURL: String? = null,
-    val createdByUID: String? = null
+    val createdByUID: String? = null,
+    val geoHash: String? = null,
+    val locLat: Double? = null,
+    val locLng: Double? = null
+
 ) {
 }
