@@ -46,7 +46,6 @@
                 app:contentInsetStart="0dp"
                 >
 
-
             <ImageButton
                 android:id="@+id/signoutButton"
                 android:layout_width="wrap_content"
@@ -65,98 +64,75 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            android:layout_width="382dp"
-            android:layout_height="204dp"
-            android:layout_marginTop="52dp"
+            android:layout_width="360dp"
+            android:layout_height="94dp"
+            android:layout_marginTop="180dp"
             android:background="@drawable/box"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.568"
+            app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImageView"
-                android:layout_width="112dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/avatar"
-                app:civ_border_color="#00201B"
-                app:civ_border_width="2dp"
-                tools:src="@tools:sample/avatars" />
-
             <LinearLayout
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_alignTop="@+id/profileImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/relativeLayout"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="-12dp"
-                android:layout_toEndOf="@+id/profileImageView"
-                android:orientation="vertical">
-
-                <EditText
-                    android:id="@+id/profileNameEditText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="40dp"
-                    android:text="Name"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/profileGenderEditText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:text="gender"
-                    app:layout_constraintStart_toEndOf="@+id/profileImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/profileNameTextView" />
+                android:layout_marginTop="1dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/profileAgeEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
-                    android:layout_marginTop="8dp"
-                    android:text="age"
-                    app:layout_constraintStart_toEndOf="@+id/profileImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/profileGenderTextView" />
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="1"
+                    android:text="age" />
+
+                <EditText
+                    android:id="@+id/profileGenderEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="1"
+                    android:text="gender" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="351dp"
+                android:layout_height="47dp"
+                android:layout_below="@+id/relativeLayout"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/profileLocationEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
-                    android:layout_marginTop="8dp"
-                    android:text="location"
-
-                    app:layout_constraintStart_toEndOf="@+id/profileImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/ageTextView" />
-
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="location" />
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/profileImageButton"
-                android:layout_width="31dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#00FFFFFF"
-                android:src="@drawable/baseline_add_a_photo_24" />
 
         </RelativeLayout>
 
         <TextView
             android:id="@+id/squareTextView"
-            android:layout_width="382dp"
+            android:layout_width="360dp"
             android:layout_height="72dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/box"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -166,7 +142,7 @@
 
         <EditText
             android:id="@+id/profileAbout_meEditText"
-            android:layout_width="382dp"
+            android:layout_width="360dp"
             android:layout_height="117dp"
             android:layout_marginTop="29dp"
             android:background="@drawable/box"
@@ -209,7 +185,7 @@
 
         <ImageView
             android:id="@+id/frameImageView"
-            android:layout_width="382dp"
+            android:layout_width="360dp"
             android:layout_height="206dp"
             android:layout_marginTop="12dp"
             android:background="@drawable/box"
@@ -456,6 +432,59 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="152dp"
+            android:layout_height="128dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/avatar"
+            app:civ_border_color="#00201B"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.625"
+            tools:src="@tools:sample/avatars" />
+
+        <ImageButton
+            android:id="@+id/profileImageButton"
+            android:layout_width="31dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/baseline_add_a_photo_24"
+            android:tint="#A8313435"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
+            app:layout_constraintEnd_toStartOf="@+id/profileImageView" />
+
+        <EditText
+            android:id="@+id/profileNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="92dp"
+            android:layout_weight="1"
+            android:text="Name"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/profileImageView" />
+
+        <ImageButton
+            android:id="@+id/editImageButton"
+            android:layout_width="47dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/baseline_edit_24"
+            app:layout_constraintBottom_toTopOf="@+id/squareTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.975"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

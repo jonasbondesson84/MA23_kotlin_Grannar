@@ -121,6 +121,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
 
+
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
 
@@ -145,6 +146,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val button: ImageButton = view.findViewById(R.id.chooseImageButton)
         button.setOnClickListener {
             openGallery()
+        }
+
+        val editProfileTextBtn: ImageButton = view.findViewById(R.id.editImageButton)
+        editProfileTextBtn.setOnClickListener{
+
         }
 
         signoutButton.setOnClickListener {
