@@ -112,24 +112,13 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
         profileImageView = view.findViewById(R.id.profileImageView)
 
-        val showName = view.findViewById<TextView>(R.id.profileNameTextView)
-        val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
-        val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
-        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
+        val showName = view.findViewById<TextView>(R.id.profileNameEditText)
+        val showGender = view.findViewById<TextView>(R.id.profileGenderEditText)
+        val showAge = view.findViewById<TextView>(R.id.profileAgeEditText)
+        val showLocation = view.findViewById<TextView>(R.id.profileLocationEditText)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
-
-
-        val toolbar: MaterialToolbar = view.findViewById(R.id.topProfile)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
-
-        val layoutParams = Toolbar.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.gravity = Gravity.END
-        signoutButton.layoutParams = layoutParams
-
 
 
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
