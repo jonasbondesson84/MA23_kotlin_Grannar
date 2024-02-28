@@ -2,7 +2,6 @@ package com.example.grannar
 
 import android.app.Dialog
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,7 +26,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -281,7 +279,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         filterChip = view.findViewById(R.id.filterChip)
         filterChip.setOnClickListener {
-            openCategoryFilterDialog()
+            openFilterDialog()
         }
 
         distanceChip = view.findViewById(R.id.distanceChip)
@@ -323,7 +321,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
     }
 
-    private fun openCategoryFilterDialog(){
+    private fun openFilterDialog(){
 
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_category_filter)
@@ -333,6 +331,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         val categoryChipGroup = dialog.findViewById<ChipGroup>(R.id.categoryChipGroup)
         val categoryChips = createCategoryChips(categoryChipGroup)
+
         val genderChipGroup = dialog.findViewById<ChipGroup>(R.id.genderChipGroup)
         val genderChips = createGenderChips(genderChipGroup)
 
@@ -345,26 +344,28 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             setCategoryFilter(categoryChips, genderChips, dialog)
         }
         dialog.findViewById<TextView>(R.id.tvClearFilter).setOnClickListener {
-            selectedCategories.clear()
-            categoryChips.forEach { checkBox ->
-                checkBox.isChecked = false
-            }
-            selectedGenders.clear()
-            genderChips.forEach { chip ->
-                chip.isChecked = false
-            }
+            clearFilterChips(categoryChips, genderChips)
             setListInRecyclerView(true)
             dialog.dismiss()
         }
 
         val window = dialog.window
-
         window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
-
         dialog.show()
+    }
+
+    private fun clearFilterChips(categoryChips: MutableList<Chip>, genderChips: List<Chip>){
+        selectedCategories.clear()
+        categoryChips.forEach { checkBox ->
+            checkBox.isChecked = false
+        }
+        selectedGenders.clear()
+        genderChips.forEach { chip ->
+            chip.isChecked = false
+        }
     }
 
 
@@ -396,12 +397,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
         return genderChips
     }
-
-
-
-
-
-
 
     private fun setCategoryFilter(categoryChips: List<Chip>, genderChips: List<Chip>, dialog: Dialog){
         selectedCategories.clear()
