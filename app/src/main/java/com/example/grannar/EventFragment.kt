@@ -1,5 +1,6 @@
 package com.example.grannar
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,10 +15,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
@@ -36,7 +45,10 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener {
+//interface OnSavedEventListener{
+//    fun onDataPassed(event: Event)
+//}
+class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener{
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -47,7 +59,14 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private lateinit var adapter: EventAdapter
     private lateinit var etvFilterEvent: TextInputEditText
     private lateinit var distanceChip: Chip
+    private lateinit var eventMap: MapView
     private var distanceSet: Float = 5f
+    private lateinit var googleMap: GoogleMap
+    private lateinit var circle: Circle
+    private var currentZoomLevel = 10.75f
+    private val STARTING_ZOOM = 10.75f
+    private var savedEvents = mutableListOf<Event>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +88,53 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         etvFilterEvent = view.findViewById(R.id.etvSearchEvent)
         distanceChip = view.findViewById(R.id.distanceEventChip)
         rvEvents = view.findViewById(R.id.rvEventsList)
+        eventMap = view.findViewById(R.id.eventMapView)
+        eventMap.visibility = View.INVISIBLE
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
+        val tabEvent: TabLayout = view.findViewById(R.id.tabEvent)
+
+        eventMap.onCreate(savedInstanceState)
+        getSavedEvents()
+
+
+        tabEvent.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    when(tab.position) {
+                        0 -> {
+                            rvEvents.visibility = View.VISIBLE
+                            eventMap.visibility = View.INVISIBLE
+                            adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
+                            rvEvents.adapter = adapter
+                        }
+                        1 -> {
+                            rvEvents.visibility = View.INVISIBLE
+                            eventMap.visibility = View.VISIBLE
+                        }
+                        2 -> {
+                            rvEvents.visibility = View.VISIBLE
+                            eventMap.visibility = View.INVISIBLE
+                            adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
+                            rvEvents.adapter = adapter
+                        }
+                        else -> {
+                            Log.d("!!!", "No tab")
+                        }
+                    }
+
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+
+        })
 
 
         rvEvents.layoutManager = LinearLayoutManager(view.context)
@@ -77,12 +142,12 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
             )
         )
-        adapter = EventAdapter(view.context, eventsInRecyclerView, this)
+        getEvents()
+        adapter = EventAdapter(view.context, eventList, this)
+        // adapter = EventAdapter(view.context, eventsInRecyclerView, this)
         rvEvents.adapter = adapter
-
-//        getEvents()
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
-        getEventsWithinDistance(distanceSet.toInt())
+       // getEventsWithinDistance(distanceSet.toInt())
         addTextChangeListener()
 
         distanceChip.setOnClickListener {
@@ -104,6 +169,81 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
 
         return view
+    }
+
+    private fun getSavedEvents() {
+        savedEvents.clear()
+        for(eventID in CurrentUser.savedEvent) {
+            db.collection("Events").document(eventID).get()
+                .addOnSuccessListener {document->
+                    val newEvent = document.toObject<Event>()
+                    if (newEvent != null) {
+                        savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
+                    }
+                }
+        }
+        db.collection("Events").whereEqualTo("createdByUID", CurrentUser.userID.toString())
+            .get()
+            .addOnSuccessListener {documents->
+                for(document in documents) {
+                    val newEvent = document.toObject<Event>()
+                    if(newEvent != null) {
+                        savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
+                    }
+                }
+            }
+    }
+
+    private fun setMap(googleMap: GoogleMap) {
+        this.googleMap = googleMap
+        val adapter = EventMapInfoAdapter(requireContext())
+        googleMap.setInfoWindowAdapter(adapter)
+        val userLocation = LatLng(CurrentUser.locLat ?: 59.334591, CurrentUser.locLng ?: 18.063240)
+        val circleOptions = CircleOptions()
+            .center(userLocation)
+            .radius((distanceSet * 1000).toDouble()) // Initial radius in meters (1 km)
+            .strokeWidth(2f)
+            .strokeColor(Color.RED)
+            .fillColor(Color.parseColor("#30FF0000")) // Transparent red color
+        circle = googleMap.addCircle(circleOptions)
+
+        for(event in eventList) {
+            val lat = event.locLat
+            val lng = event.locLng
+            if(lat != null && lng != null) {
+                val latLng = LatLng(lat, lng)
+                val marker =
+                    googleMap.addMarker(MarkerOptions().position(latLng).title(event.name))
+                marker?.tag = event
+
+            }
+        }
+
+
+
+        val cameraUpdate =  CameraUpdateFactory.newLatLngZoom(userLocation, currentZoomLevel)
+        googleMap.moveCamera(cameraUpdate)
+        googleMap.setOnInfoWindowClickListener {
+            val event = it.tag as? Event
+            val eventID = event?.docID
+            if (event != null) {
+                goToEvent(event)
+            }
+
+        }
+
+    }
+    private fun updateCircleRadius(radiusInMeters: Double){
+        circle.radius = radiusInMeters
+        setCameraZoom(radiusInMeters.toFloat())
+    }
+    private fun setCameraZoom(radiusInKM: Float) {
+        // Set to dived by 13 because zoom looks good over Stockholm. Needs to change if we target areas closer to the equator.
+        currentZoomLevel = (STARTING_ZOOM - (radiusInKM / 13))
+
+
     }
 
 
@@ -164,6 +304,9 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                 }
                 eventList.sortBy { it.startDateTime }
                 filterList(etvFilterEvent.text.toString())
+                eventMap.getMapAsync { googleMap ->
+                    setMap(googleMap)
+                }
 
             }
         }
@@ -204,6 +347,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         distanceSet = distance.toFloat()
         getEventsWithinDistance(distance.toInt())
         distanceChip.text = "Distance: $distanceSet km"
+        updateCircleRadius(distanceSet.toDouble())
     }
 
     private fun getEventsWithinDistance(distanceInKilometers: Int){
@@ -289,9 +433,21 @@ Log.d("!!!", "rh")
     private fun setListInRecyclerView(categoryFilterChanged: Boolean){
         eventsInRecyclerView.clear()
         eventsInRecyclerView.addAll(eventList)
+        eventMap.getMapAsync { googleMap ->
+            setMap(googleMap)
+        }
 //        val nameFilteredList = filterListOnInterestName(listAfterCategoryFilter.toList())
 //        listInRecyclerView.addAll(nameFilteredList)
        // tvNoSearchResult.isVisible = listInRecyclerView.isEmpty()
         adapter.notifyDataSetChanged()
     }
+
+//    override fun onDataPassed(event: Event) {
+//        Log.d("!!!", "we got here")
+//        savedEvents.add(event)
+//        savedEvents.sortBy { it.startDateTime }
+//        adapter.notifyDataSetChanged()
+//    }
+
+
 }

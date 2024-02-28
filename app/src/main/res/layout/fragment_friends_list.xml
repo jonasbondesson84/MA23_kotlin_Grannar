@@ -5,13 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FriendsListFragment">
+    <com.google.android.material.tabs.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabFriends"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All"
+            />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My friends"
+            />
+    </com.google.android.material.tabs.TabLayout>
+
 
     <TextView
         android:id="@+id/tvFindFriends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Friends"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabFriends"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"

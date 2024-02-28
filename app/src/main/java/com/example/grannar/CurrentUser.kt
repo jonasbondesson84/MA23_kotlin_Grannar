@@ -27,6 +27,7 @@ object CurrentUser {
     var unreadMessageIDs: HashMap<String, Int> = hashMapOf()
     private val _unreadMessagesNumber = MutableLiveData<Int>( 0)
     val unreadMessageNumber: LiveData<Int> = _unreadMessagesNumber
+    var savedEvent: MutableList<String> = mutableListOf()
 
 
 
@@ -50,6 +51,7 @@ object CurrentUser {
         this.imageURLs = user.imageURLs
         this.friendsList = user.friendsList
         this.unreadMessageIDs = user.unreadMessages
+        this.savedEvent = user.savedEvents
         getUnreadMessages(user)
 
     }
@@ -76,6 +78,7 @@ object CurrentUser {
         this.friendsList?.clear()
         this.unreadMessageIDs.clear()
         this._unreadMessagesNumber.value = 0
+        this.savedEvent.clear()
     }
 
     fun loadUserInfo(uid: String) {

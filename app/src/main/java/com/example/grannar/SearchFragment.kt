@@ -25,7 +25,13 @@ import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
+
 import com.google.android.material.chip.ChipGroup
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.textfield.TextInputLayout
+
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -57,12 +63,18 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
     private lateinit var filterChip: Chip
+    private lateinit var tilSearch: TextInputLayout
     private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
     private var selectedGenders = mutableListOf<String>()
     private var genders = listOf("Male", "Female", "Non-Binary")
     private lateinit var distanceChip: Chip
     private var distanceSet: Float = 5f
+    private lateinit var tabFriends: TabLayout
+    private var onMyFriends = false
+    private var friendsList = mutableListOf<User>()
+    private var filterString = ""
+    private var searchString = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -251,21 +263,59 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
+
         val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
+        tabFriends = view.findViewById(R.id.tabFriends)
+        tilSearch = view.findViewById(R.id.tilSearchInterest)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
-
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-        adapter.onUserClick = {
-            val uid = it.userID
-            if(uid != null) {
-                val action =
-                    SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
-                findNavController().navigate(action)
+
+        tabFriends.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    when(tab.position) {
+                        0 -> {
+                            distanceChip.visibility = View.VISIBLE
+                            onMyFriends = false
+                            etvSearch.setText(searchString)
+                            tilSearch.hint = "Search Interest"
+                            setListInRecyclerView(false)
+                            adapter = SearchListAdapter(requireContext(), listInRecyclerView, this@SearchFragment)
+                            rvSearchList.adapter = adapter
+                            tvNoSearchResult.visibility = View.INVISIBLE
+                        }
+                        1 -> {
+                            distanceChip.visibility = View.GONE
+
+                            onMyFriends = true
+                            filterList(filterString)
+                            adapter = SearchListAdapter(view.context, friendsList, this@SearchFragment)
+                            rvSearchList.adapter = adapter
+                            etvSearch.setText(filterString)
+                            tilSearch.hint = "Search Friend"
+                            tvNoSearchResult.visibility = View.INVISIBLE
+                        }
+                        else -> {
+                            Log.d("!!!", "no tab")
+                        }
+                    }
+                }
             }
 
-        }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+
+        })
+
+
         btnGetuser.setOnClickListener {
             val auth = Firebase.auth
             CurrentUser.clearUser()
@@ -309,11 +359,22 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
             override fun afterTextChanged(s: Editable?) {
-                setListInRecyclerView(false)
+                Log.d("!!!", onMyFriends.toString())
+                val textInSearchField = s.toString().lowercase().trim()
+                if(onMyFriends) {
+                    filterString = textInSearchField
+                    filterList(textInSearchField)
+//                    friendsList.filter { it.contains(s.toString(), ignoreCase = true)}
+                }else {
+                    searchString = textInSearchField
+                    setListInRecyclerView(false)
+                }
+
             }
 
         })
     }
+
 
 
     private fun openDialogFragment() {
@@ -463,6 +524,15 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
+    override fun goToUser(user: User) {
+        val uid = user.userID
+        if(uid != null) {
+            val action =
+                SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
+            findNavController().navigate(action)
+        }
+    }
+
     override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
         //adapter.notifyDataSetChanged()
         getUsersWithinDistance(distanceSet.toInt())
@@ -484,5 +554,26 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         getUsersWithinDistance(distance.toInt())
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
+    }
+
+    private fun addChatsToRecycler(listToAdd: List<User>){
+        friendsList.clear()
+        friendsList.addAll(listToAdd)
+        adapter.notifyDataSetChanged()
+        tvNoSearchResult.isVisible = listToAdd.isEmpty()
+
+    }
+    private fun filterList(textToSearchFor: String?){
+        if (textToSearchFor != null){
+            val filteredList = CurrentUser.friendsList?.filter { user ->
+                user.firstName?.lowercase()?.contains(textToSearchFor) ?: false
+            }
+
+            if (filteredList != null) {
+                addChatsToRecycler(filteredList)
+            }
+        }else{
+            CurrentUser.friendsList?.let { addChatsToRecycler(it) }
+        }
     }
 }
