@@ -278,6 +278,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                     when(tab.position) {
                         0 -> {
                             distanceChip.visibility = View.VISIBLE
+                            filterChip.visibility = View.VISIBLE
                             onMyFriends = false
                             etvSearch.setText(searchString)
                             tilSearch.hint = "Search Interest"
@@ -288,7 +289,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                         }
                         1 -> {
                             distanceChip.visibility = View.GONE
-
+                            filterChip.visibility = View.GONE
                             onMyFriends = true
                             filterList(filterString)
                             adapter = SearchListAdapter(view.context, friendsList, this@SearchFragment)
