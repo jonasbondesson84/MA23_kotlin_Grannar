@@ -14,18 +14,26 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.lang.IllegalStateException
+import com.google.firebase.firestore.auth.User
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,6 +60,7 @@ class EditProfileDialogFragment : DialogFragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: LatLng? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -67,6 +76,8 @@ class EditProfileDialogFragment : DialogFragment() {
     ): View? {
 
         val rootView: View = inflater.inflate(R.layout.dialog_fragment_edit_profile, container, false)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        genderRadioGroup = rootView.findViewById(R.id.genderRadioGroup)
 
 
         birthdayEditText = rootView.findViewById(R.id.birthDateEditText)
@@ -78,7 +89,7 @@ class EditProfileDialogFragment : DialogFragment() {
             isFocusableInTouchMode = false
         }
 
-        rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener{
+        rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
             Log.d("!!!", "Button clicked")
 //            mapFragment?.let {
 //                it.showMapForLocationSelection()
@@ -91,26 +102,63 @@ class EditProfileDialogFragment : DialogFragment() {
         }
 
         rootView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-                onDismiss()
+            onDismiss()
+        }
+
+
+        rootView.findViewById<Button>(R.id.saveButton).setOnClickListener {
+            updateUserInformation()
         }
 
 
 
         return rootView
 
-
-
-
-
-
-
     }
+
+
+    private fun updateUserInformation() {
+        val userID = "${CurrentUser.userID}"
+
+        val user = User(
+            userID = userID,
+            firstName = firstNameEditText.text.toString(),
+            surname = surNameEditText.text.toString(),
+            age = calculateAge(birthDate),
+            gender = getGender(),
+            location = location,
+        )
+
+        val db = Firebase.firestore
+        val userRef = db.collection("users").document(userID)
+
+        userRef.set(user).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                dismiss()
+            } else {
+                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
 
 
     private fun onDismiss() {
         dismiss()
     }
 
+    private fun calculateAge(birthDate: Date?): String? {
+
+        showDatePickerDialog()
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd",Locale.getDefault())
+        val birthDateStr = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(birthDate)
+        val localDate = LocalDate.parse(birthDateStr, formatter)
+        val today = LocalDate.now()
+        val age = Period.between(localDate, today).years
+        return age.toString()
+    }
 
         private fun getPermission() {
             if (ActivityCompat.checkSelfPermission(
@@ -205,6 +253,10 @@ class EditProfileDialogFragment : DialogFragment() {
                 return view?.findViewById<RadioButton>(pickedRadioButtonID)?.text.toString()
             }
 
+     fun onDataPassed(data: LatLng) {
+        location = data
+        Log.d("!!!","Data från dialogfragment ${location}")
+    }
 
 
 
