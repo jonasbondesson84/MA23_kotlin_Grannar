@@ -188,4 +188,8 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
             findNavController().navigate(action)
         }
     }
+
+    override fun goToUser(user: User) {
+
+    }
 }

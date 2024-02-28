@@ -18,6 +18,7 @@ import com.google.firebase.firestore.firestore
 
 class SearchListAdapter(val context: Context, private val searchList: MutableList<User>,private val listener: MyAdapterListener) : RecyclerView.Adapter<SearchListAdapter.ViewHolder>() {
 
+
     private val layoutInflater = LayoutInflater.from(context)
     private val db = Firebase.firestore
 
@@ -26,6 +27,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
     interface MyAdapterListener {
         fun onAddFriendsListener(user: User)
         fun onSendMessageListener(user: User)
+        fun goToUser(user: User)
     }
 
     var onUserClick: ((User) -> Unit)? = null
@@ -78,6 +80,13 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
             holder.addFriend.visibility = View.INVISIBLE
         }
 
+        holder.itemView.setOnClickListener {
+            if(CurrentUser.userID != null) {
+                listener.goToUser(selectedUser)
+            } else {
+                listener.onAddFriendsListener(selectedUser)
+            }
+        }
         holder.btnSendMessage.setOnClickListener {
             if(CurrentUser.userID != null) {
                 listener.onSendMessageListener(selectedUser)
@@ -93,13 +102,13 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
             }
         }
 
-        holder.itemView.setOnClickListener {
-            if(CurrentUser.userID != null) {
-                onUserClick?.invoke(selectedUser)
-            } else {
-                listener.onAddFriendsListener(selectedUser)
-            }
-        }
+//        holder.itemView.setOnClickListener {
+//            if(CurrentUser.userID != null) {
+//                onUserClick?.invoke(selectedUser)
+//            } else {
+//                listener.onAddFriendsListener(selectedUser)
+//            }
+//        }
         holder.btnAddFriend.setOnClickListener {
             if(CurrentUser.userID != null) {
             saveFriend(selectedUser, position)
