@@ -31,7 +31,8 @@ data class User(
     var aboutMe: String? = null,
     var imageURLs: MutableList<String>? = null,
     var friendsList: MutableList<User>? = mutableListOf<User>(),
-    var unreadMessages: HashMap<String, Int> = hashMapOf()
+    var unreadMessages: HashMap<String, Int> = hashMapOf(),
+    var savedEvents: MutableList<String> = mutableListOf()
 
     ) {
    // constructor() : this("", null, null, null, null, null, null, null, null, null, null, null, null)
