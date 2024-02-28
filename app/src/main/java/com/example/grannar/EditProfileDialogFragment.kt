@@ -161,6 +161,7 @@ class EditProfileDialogFragment : DialogFragment() {
     }
 
         private fun getPermission() {
+            Log.d("!!!", "getPermisson()")
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -169,8 +170,9 @@ class EditProfileDialogFragment : DialogFragment() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
+                Log.d("!!!", "${requireContext()},")
                 getLastLocation()
-
+                Log.d("!!!", "${getLastLocation()},")
             } else {
                 ActivityCompat.requestPermissions(
                     requireActivity(),
@@ -180,6 +182,7 @@ class EditProfileDialogFragment : DialogFragment() {
                     ),
                     1
                 )
+                Log.d("!!!", "${requireActivity()},")
             }
         }
 
