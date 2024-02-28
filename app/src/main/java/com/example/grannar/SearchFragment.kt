@@ -10,11 +10,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -27,6 +28,7 @@ import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -36,8 +38,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import kotlin.math.cos
-import kotlin.math.ln
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -54,17 +54,24 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var searchList = mutableListOf<User>()
-    private var listInRecyclerView = mutableListOf<User>()
-    private var listAfterCategoryFilter = mutableListOf<User>()
+    private var searchList = mutableListOf<User>() // The whole downloaded list to filter
+    private var listInRecyclerView = mutableListOf<User>() // The list that is in the recyclerView
+    private var listAfterCategoryFilter = mutableListOf<User>() // The downloaded list but filter from dialog
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
     private lateinit var fabFilter: FloatingActionButton
     private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
+    private var selectedGenders = mutableListOf<String>()
+    private var genders = listOf("Male", "Female", "Non-Binary")
     private lateinit var distanceChip: Chip
     private var distanceSet: Float = 5f
+//    private var genderFilters = mapOf(
+//        "Male" to true,
+//        "Female" to true,
+//        "Non_Binary" to true
+//        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -199,20 +206,60 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
     private fun filterListOnInterestCategory(listToFilter: MutableList<User>):List<User>{
-        if (selectedCategories.isEmpty()){
+//        var filteredList = emptyList<User>()
+//        if (selectedCategories.isEmpty() && selectedGenders.isEmpty()){
+//            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
+//            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
+//            return listToFilter
+//        }else {
+//            //val filteredList = listToFilter.filter { user ->
+//            if (selectedCategories.isNotEmpty())
+//            filteredList = listToFilter.filter { user ->
+//                user.interests?.any {interest ->
+//                    interest.category in selectedCategories
+//                } == true
+//            }
+//            Log.d("!!!", "Inside else")
+//            if (selectedGenders.isNotEmpty()){
+//                filteredList = filteredList.filter { user ->
+//                    user.gender in selectedGenders
+//
+//                }
+//                Log.d("!!!", "Inside else")
+//            }
+//            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
+//            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
+//            return filteredList
+//        }
+        val filteredList = if (selectedCategories.isEmpty() && selectedGenders.isEmpty()) {
             fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
             fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
-            return listToFilter
-        }else {
-            val filteredList = listToFilter.filter { user ->
-                user.interests?.any {interest ->
-                    interest.category in selectedCategories
-                } == true
+            listToFilter.toList() // Returns a copy of the original list if no filers is selected
+        } else {
+            var tempList = listToFilter.toMutableList()
+
+            if (selectedCategories.isNotEmpty()) {
+                tempList = tempList.filter { user ->
+                    user.interests?.any { interest ->
+                        interest.category in selectedCategories
+                    } == true
+                }.toMutableList()
             }
+
+            if (selectedGenders.isNotEmpty()) {
+                tempList = tempList.filter { user ->
+                    user.gender in selectedGenders
+                }.toMutableList()
+            }
+
             fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
             fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
-            return filteredList
+
+            tempList.toList() // Returnera den filtrerade listan
         }
+
+        Log.d("!!!", "Filtered list size: ${filteredList.size}")
+        return filteredList
     }
 
     private fun filterListOnInterestName(listToFilter: List<User>): List<User>{
@@ -340,55 +387,93 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         val dialog = Dialog(requireContext())
          dialog.setContentView(R.layout.dialog_category_filter)
-        val container = dialog.findViewById<LinearLayout>(R.id.categoryLinearLayout)
-        val checkBoxes = mutableListOf<CheckBox>()
+        val categoryChipGroup = dialog.findViewById<ChipGroup>(R.id.categoryChipGroup)
+        val categoryChips = mutableListOf<Chip>()
+        val genderChips = mutableListOf<Chip>()
+        val inflater = LayoutInflater.from(requireContext())
         CategoryManager.categories.forEach { (category, colorID) ->
+//            val checkBox = CheckBox(requireContext())
+//            checkBox.text = category
+//            checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))
+//
+//            if (selectedCategories.contains(category)){
+//                checkBox.isChecked = true
+//            }
+//            checkBoxes.add(checkBox)
+//            container.addView(checkBox)
+            val chip = inflater.inflate(R.layout.chip_layout, categoryChipGroup, false) as Chip
+            chip.text = category
 
-            val checkBox = CheckBox(requireContext())
-            checkBox.text = category
-            checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))
 
-            if (selectedCategories.contains(category)){
-                checkBox.isChecked = true
-            }
-            checkBoxes.add(checkBox)
-            container.addView(checkBox)
+            val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
+            chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+            chip.isChecked = selectedCategories.contains(category)
+            categoryChips.add(chip)
+            categoryChipGroup.addView(chip)
         }
-        container.requestLayout()
+
+       // categoryChipGroup.requestLayout()
+
+        val genderChipGroup = dialog.findViewById<ChipGroup>(R.id.genderChipGroup)
+        genders.forEach { gender ->
+
+            val chip = inflater.inflate(R.layout.chip_layout, genderChipGroup, false) as Chip
+            chip.text = gender
+            chip.isChecked = selectedGenders.contains(gender)
+            genderChips.add(chip)
+            genderChipGroup.addView(chip)
+        }
+
         dialog.findViewById<Button>(R.id.btnCancelAddFilter).setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.findViewById<Button>(R.id.btnAddCategoryFilter).setOnClickListener {
-            setCategoryFilter(checkBoxes, dialog)
+            setCategoryFilter(categoryChips, genderChips, dialog)
         }
         dialog.findViewById<TextView>(R.id.tvClearFilter).setOnClickListener {
             selectedCategories.clear()
-            checkBoxes.forEach { checkBox ->
+            categoryChips.forEach { checkBox ->
                 checkBox.isChecked = false
+            }
+            selectedGenders.clear()
+            genderChips.forEach { chip ->
+                chip.isChecked = false
             }
             setListInRecyclerView(true)
             dialog.dismiss()
         }
 
+        val window = dialog.window
 
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+       // dialog.findViewById<ConstraintLayout>(R.id.mainContainerConstraintLayout).requestLayout()
         dialog.show()
     }
 
-    private fun setCategoryFilter(checkBoxes: List<CheckBox>, dialog: Dialog){
+    private fun setCategoryFilter(categoryChips: List<Chip>, genderChips: List<Chip>, dialog: Dialog){
         selectedCategories.clear()
-        checkBoxes.forEach { checkBox ->
-            if (checkBox.isChecked)
-                selectedCategories.add(checkBox.text.toString())
+        categoryChips.forEach { chip ->
+            if (chip.isChecked)
+                selectedCategories.add(chip.text.toString())
         }
+
+        selectedGenders.clear()
+        genderChips.forEach { chip ->
+            if (chip.isChecked){
+                selectedGenders.add(chip.text.toString())
+            }
+        }
+
         Log.d("!!!", selectedCategories.toString())
         setListInRecyclerView(true)
 
         dialog.dismiss()
 
     }
-
-
 
 
 
