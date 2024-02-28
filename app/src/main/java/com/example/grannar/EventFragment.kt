@@ -45,7 +45,10 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener {
+//interface OnSavedEventListener{
+//    fun onDataPassed(event: Event)
+//}
+class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener{
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -176,10 +179,21 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     val newEvent = document.toObject<Event>()
                     if (newEvent != null) {
                         savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
                     }
                 }
         }
-
+        db.collection("Events").whereEqualTo("createdByUID", CurrentUser.userID.toString())
+            .get()
+            .addOnSuccessListener {documents->
+                for(document in documents) {
+                    val newEvent = document.toObject<Event>()
+                    if(newEvent != null) {
+                        savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
+                    }
+                }
+            }
     }
 
     private fun setMap(googleMap: GoogleMap) {
@@ -427,4 +441,13 @@ Log.d("!!!", "rh")
        // tvNoSearchResult.isVisible = listInRecyclerView.isEmpty()
         adapter.notifyDataSetChanged()
     }
+
+//    override fun onDataPassed(event: Event) {
+//        Log.d("!!!", "we got here")
+//        savedEvents.add(event)
+//        savedEvents.sortBy { it.startDateTime }
+//        adapter.notifyDataSetChanged()
+//    }
+
+
 }

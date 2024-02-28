@@ -217,7 +217,10 @@ class EventInfoFragment : Fragment() {
 
         if(event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false
+        } else {
+            topBar.menu.getItem(1).isVisible = false
         }
+
         if(event.docID in CurrentUser.savedEvent) {
             isSaved = true
             topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
