@@ -90,7 +90,7 @@ class EditProfileDialogFragment : DialogFragment() {
 
         }
 
-        rootView.findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener {
+        rootView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
                 onDismiss()
         }
 
