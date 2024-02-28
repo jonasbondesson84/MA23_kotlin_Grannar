@@ -1,11 +1,13 @@
 package com.example.grannar
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,6 +20,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
@@ -51,6 +54,7 @@ class EventInfoFragment : Fragment() {
     private lateinit var storage: FirebaseStorage
     private lateinit var locationMap: MapView
     private lateinit var googleMap: GoogleMap
+    private var isSaved = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +93,15 @@ class EventInfoFragment : Fragment() {
                     showDeleteDialog()
                     true
                 }
+                R.id.saveEvent-> {
+                    if(isSaved) {
+                        removeEvent()
+                    } else {
+                        saveEvent()
+
+                    }
+                    true
+                }
                 else -> false
             }
         }
@@ -97,6 +110,35 @@ class EventInfoFragment : Fragment() {
 
 
         return view
+    }
+
+    private fun removeEvent() {
+        db.collection("users").document(CurrentUser.userID.toString())
+            .update("savedEvents", FieldValue.arrayRemove(selectedEvent?.docID.toString()))
+            .addOnSuccessListener {
+//                CurrentUser.savedEvent.remove(selectedEvent?.docID.toString())
+                isSaved = false
+                updateIcon()
+            }
+    }
+
+    private fun updateIcon()  {
+        if(isSaved) {
+            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
+        } else {
+            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_border_24, null)
+        }
+    }
+
+    private fun saveEvent() {
+        db.collection("users").document(CurrentUser.userID.toString())
+            .update("savedEvents", FieldValue.arrayUnion(selectedEvent?.docID.toString()))
+            .addOnSuccessListener {
+//                CurrentUser.savedEvent.add(selectedEvent?.docID.toString())
+                isSaved = true
+                updateIcon()
+                Log.d("!!!", "saved event")
+            }
     }
 
     private fun showDeleteDialog() {
@@ -158,7 +200,11 @@ class EventInfoFragment : Fragment() {
         tvName.text = event.name
         tvDesc.text = event.description
         val formattedDate =
-            SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(event.startDateTime)
+            event.startDateTime?.let {
+                SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(
+                    it
+                )
+            }
         tvDate.text = formattedDate
         tvLocation.text = event.geoHash
         Glide
@@ -171,6 +217,13 @@ class EventInfoFragment : Fragment() {
 
         if(event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false
+        } else {
+            topBar.menu.getItem(1).isVisible = false
+        }
+
+        if(event.docID in CurrentUser.savedEvent) {
+            isSaved = true
+            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
         }
         locationMap.getMapAsync { googleMap ->
             setMap(googleMap, event)

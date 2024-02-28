@@ -38,7 +38,7 @@ import java.util.Date
 import java.util.Locale
 
 class AddEventDialogFragment: DialogFragment() {
-//    private var onDataPassListener: OnDataPassListener? = null
+   // private var onSaveEventListener: OnSavedEventListener? = null
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
@@ -55,6 +55,8 @@ class AddEventDialogFragment: DialogFragment() {
     private var lng: Double? = null
     private var geohash: String? = null
     private var imageUri: Uri? = null
+
+
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -203,6 +205,7 @@ class AddEventDialogFragment: DialogFragment() {
             imageURL = imageURL
         )
         db.collection("Events").add(event).addOnSuccessListener {
+           // onSaveEventListener?.onDataPassed(event)
             dismiss()
 
         }
@@ -262,4 +265,17 @@ class AddEventDialogFragment: DialogFragment() {
 
 
     }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        if (context is OnSavedEventListener) {
+//            onSaveEventListener = context
+//        } else {
+//            throw RuntimeException("$context must implement OnDataPassListener")
+//        }
+//    }
+//    override fun onDetach() {
+//        super.onDetach()
+//        onSaveEventListener = null // Avregistrera lyssnare för att undvika minnesläckor
+//    }
+
 }

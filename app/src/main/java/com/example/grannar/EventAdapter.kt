@@ -11,12 +11,12 @@ import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+
 class EventAdapter(val context: Context, private val eventList: MutableList<Event>, private val listener: EventAdapter.MyAdapterListener): RecyclerView.Adapter<EventAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
     interface MyAdapterListener {
         fun goToEvent(event: Event)
-
     }
 
 
