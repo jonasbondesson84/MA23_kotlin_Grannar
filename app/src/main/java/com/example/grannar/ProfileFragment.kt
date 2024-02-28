@@ -150,8 +150,12 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
         val editProfileTextBtn: ImageButton = view.findViewById(R.id.editImageButton)
         editProfileTextBtn.setOnClickListener{
-
+            val dialogFragment = EditProfileDialogFragment()
+            dialogFragment.show(childFragmentManager, "editprofileDialog")
         }
+
+
+
 
         signoutButton.setOnClickListener {
             if (isLoggedIn()) {
