@@ -12,10 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -60,18 +58,14 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
-    private lateinit var fabFilter: FloatingActionButton
+    private lateinit var filterChip: Chip
     private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
     private var selectedGenders = mutableListOf<String>()
     private var genders = listOf("Male", "Female", "Non-Binary")
     private lateinit var distanceChip: Chip
     private var distanceSet: Float = 5f
-//    private var genderFilters = mapOf(
-//        "Male" to true,
-//        "Female" to true,
-//        "Non_Binary" to true
-//        )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,17 +118,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     fun getUsersWithinDistance(distanceInKilometers: Int){
         val lat = CurrentUser.locLat
         val lng = CurrentUser.locLng
-
         val center = GeoLocation(lat ?: 59.334591, lng ?: 18.063240)
+        val radiusInM = distanceInKilometers * 1000
+        val tasks = getListOfDbQueries(radiusInM, center)
+        queryForUsersByGeoHash(tasks, center, radiusInM)
 
 
-       // if (lat != null && lng != null) {
-          //  val center = GeoLocation(lat, lng)
-            val radiusInM = distanceInKilometers * 1000
-            val tasks = getListOfDbQueries(radiusInM, center)
-            queryForUsersByGeoHash(tasks, center, radiusInM)
-
-      //  }
     }
 
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
@@ -164,19 +153,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                         val docLng = doc.getDouble("locLng")
                         if (docLat != null && docLng != null) {
                             val docLoc = GeoLocation(docLat, docLng)
-                            Log.d("!!!", "${doc.getDouble("locLat")}")
-                            Log.d("!!!", "${doc.getString("firstName")}")
-                            Log.d(
-                                "!!!",
-                                "Distance M: ${GeoFireUtils.getDistanceBetween(docLoc, center)}"
-                            )
                             // Remove the false positive, that has the same hash but is still outside of the radius
                             val distanceToUserInM = GeoFireUtils.getDistanceBetween(docLoc, center)
                             if (distanceToUserInM <= radiusInM) {
                                 matchingDocuments.add(doc)
-                                Log.d("!!!", "Matching documents: ${matchingDocuments.size}")
+
                             } else {
-                                Log.d("!!!", "False Positive Document!!!")
+
                             }
                         }
                     }
@@ -194,10 +177,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             val user = document.toObject<User>()
             if (user != null && user.userID != loggedInUserID) {
                 searchList.add(user)
-                Log.d("!!!", "User with Name added: ${user.firstName}")
+
             }
         }
-        Log.d("!!!", "SearchList: ${searchList.size}")
+
         setListInRecyclerView(true)
 
     }
@@ -206,34 +189,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
     private fun filterListOnInterestCategory(listToFilter: MutableList<User>):List<User>{
-//        var filteredList = emptyList<User>()
-//        if (selectedCategories.isEmpty() && selectedGenders.isEmpty()){
-//            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
-//            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
-//            return listToFilter
-//        }else {
-//            //val filteredList = listToFilter.filter { user ->
-//            if (selectedCategories.isNotEmpty())
-//            filteredList = listToFilter.filter { user ->
-//                user.interests?.any {interest ->
-//                    interest.category in selectedCategories
-//                } == true
-//            }
-//            Log.d("!!!", "Inside else")
-//            if (selectedGenders.isNotEmpty()){
-//                filteredList = filteredList.filter { user ->
-//                    user.gender in selectedGenders
-//
-//                }
-//                Log.d("!!!", "Inside else")
-//            }
-//            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
-//            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
-//            return filteredList
-//        }
+
         val filteredList = if (selectedCategories.isEmpty() && selectedGenders.isEmpty()) {
-            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
             listToFilter.toList() // Returns a copy of the original list if no filers is selected
         } else {
             var tempList = listToFilter.toMutableList()
@@ -252,8 +209,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 }.toMutableList()
             }
 
-            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
 
             tempList.toList() // Returnera den filtrerade listan
         }
@@ -279,6 +234,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     private fun setListInRecyclerView(categoryFilterChanged: Boolean){
+
         listInRecyclerView.clear()
         if (categoryFilterChanged){
             listAfterCategoryFilter.clear()
@@ -313,10 +269,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         }
         btnGetuser.setOnClickListener {
-
-//           getUsersWithinDistance(2)
-
-
             val auth = Firebase.auth
             CurrentUser.clearUser()
             auth.signOut()
@@ -327,24 +279,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         addTextChangeListener()
         tvNoSearchResult = view.findViewById(R.id.tvEmptySearchList)
 
-
-        fabFilter = view.findViewById(R.id.fabFilter)
-
-        if (selectedCategories.isEmpty()){
-            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
-
-        }else{
-            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
-        }
-
-        fabFilter.setOnClickListener {
+        filterChip = view.findViewById(R.id.filterChip)
+        filterChip.setOnClickListener {
             openCategoryFilterDialog()
         }
 
-
-        distanceChip = view.findViewById(R.id.distancseChip)
+        distanceChip = view.findViewById(R.id.distanceChip)
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
         distanceChip.setOnClickListener {
@@ -386,43 +326,16 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private fun openCategoryFilterDialog(){
 
         val dialog = Dialog(requireContext())
-         dialog.setContentView(R.layout.dialog_category_filter)
+        dialog.setContentView(R.layout.dialog_category_filter)
+        dialog.setOnDismissListener {
+            setFilterChipState()
+        }
+
         val categoryChipGroup = dialog.findViewById<ChipGroup>(R.id.categoryChipGroup)
-        val categoryChips = mutableListOf<Chip>()
-        val genderChips = mutableListOf<Chip>()
-        val inflater = LayoutInflater.from(requireContext())
-        CategoryManager.categories.forEach { (category, colorID) ->
-//            val checkBox = CheckBox(requireContext())
-//            checkBox.text = category
-//            checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))
-//
-//            if (selectedCategories.contains(category)){
-//                checkBox.isChecked = true
-//            }
-//            checkBoxes.add(checkBox)
-//            container.addView(checkBox)
-            val chip = inflater.inflate(R.layout.chip_layout, categoryChipGroup, false) as Chip
-            chip.text = category
-
-
-            val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
-            chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
-            chip.isChecked = selectedCategories.contains(category)
-            categoryChips.add(chip)
-            categoryChipGroup.addView(chip)
-        }
-
-       // categoryChipGroup.requestLayout()
-
+        val categoryChips = createCategoryChips(categoryChipGroup)
         val genderChipGroup = dialog.findViewById<ChipGroup>(R.id.genderChipGroup)
-        genders.forEach { gender ->
+        val genderChips = createGenderChips(genderChipGroup)
 
-            val chip = inflater.inflate(R.layout.chip_layout, genderChipGroup, false) as Chip
-            chip.text = gender
-            chip.isChecked = selectedGenders.contains(gender)
-            genderChips.add(chip)
-            genderChipGroup.addView(chip)
-        }
 
         dialog.findViewById<Button>(R.id.btnCancelAddFilter).setOnClickListener {
             dialog.dismiss()
@@ -450,9 +363,45 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
-       // dialog.findViewById<ConstraintLayout>(R.id.mainContainerConstraintLayout).requestLayout()
+
         dialog.show()
     }
+
+
+    private fun createCategoryChips(chipGroup:ChipGroup ): MutableList<Chip>{
+        val categoryChips = mutableListOf<Chip>()
+        val inflater = LayoutInflater.from(requireContext())
+        CategoryManager.categories.forEach { (category, colorID) ->
+            val chip = inflater.inflate(R.layout.chip_layout, chipGroup, false) as Chip
+            chip.text = category
+            val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
+            chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+            chip.isChecked = selectedCategories.contains(category)
+            categoryChips.add(chip)
+            chipGroup.addView(chip)
+        }
+        return categoryChips
+    }
+
+    private fun createGenderChips(chipGroup: ChipGroup): MutableList<Chip>{
+        val genderChips = mutableListOf<Chip>()
+        val inflater = LayoutInflater.from(requireContext())
+        genders.forEach { gender ->
+
+            val chip = inflater.inflate(R.layout.chip_layout, chipGroup, false) as Chip
+            chip.text = gender
+            chip.isChecked = selectedGenders.contains(gender)
+            genderChips.add(chip)
+            chipGroup.addView(chip)
+        }
+        return genderChips
+    }
+
+
+
+
+
+
 
     private fun setCategoryFilter(categoryChips: List<Chip>, genderChips: List<Chip>, dialog: Dialog){
         selectedCategories.clear()
@@ -467,12 +416,21 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                 selectedGenders.add(chip.text.toString())
             }
         }
-
-        Log.d("!!!", selectedCategories.toString())
         setListInRecyclerView(true)
 
         dialog.dismiss()
 
+    }
+    private fun setFilterChipState(){
+        filterChip.isChecked = selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()
+        val numberOfFilters = if (selectedGenders.size + selectedCategories.size == 0){
+            ""
+        }else{
+            (selectedGenders.size + selectedCategories.size).toString()
+        }
+        filterChip.text = "${resources.getString(R.string.filter)} $numberOfFilters "
+
+        Log.d("!!!", "FilterChipState: ${selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()}")
     }
 
 
