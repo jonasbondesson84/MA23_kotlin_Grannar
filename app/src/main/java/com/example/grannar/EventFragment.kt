@@ -56,6 +56,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var rvEvents: RecyclerView
+    private lateinit var tabEvent: TabLayout
     private var eventList = mutableListOf<Event>()
     private var eventsInRecyclerView = mutableListOf<Event>()
     private lateinit var db: FirebaseFirestore
@@ -94,7 +95,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         eventMap = view.findViewById(R.id.eventMapView)
         eventMap.visibility = View.INVISIBLE
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
-        val tabEvent: TabLayout = view.findViewById(R.id.tabEvent)
+        tabEvent = view.findViewById(R.id.tabEvent)
 
         eventMap.onCreate(savedInstanceState)
         eventMap.getMapAsync(this)
@@ -110,16 +111,19 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 0
                         }
                         1 -> {
                             rvEvents.visibility = View.INVISIBLE
                             eventMap.visibility = View.VISIBLE
+                            CurrentUser.tabEventItem = 1
                         }
                         2 -> {
                             rvEvents.visibility = View.VISIBLE
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 2
                         }
                         else -> {
                             Log.d("!!!", "No tab")
@@ -174,6 +178,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         return view
     }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 //        setMap(map)
@@ -466,6 +471,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 //    }
 override fun onResume() {
     super.onResume()
+    tabEvent.getTabAt(CurrentUser.tabEventItem)?.select()
     eventMap.onResume()
 }
 

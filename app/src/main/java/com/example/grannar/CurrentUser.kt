@@ -30,6 +30,9 @@ object CurrentUser {
     val unreadMessageNumber: LiveData<Int> = _unreadMessagesNumber
     var savedEvent: MutableList<String> = mutableListOf()
 
+    var tabFriendItem = 0
+    var tabEventItem = 0
+
 
 
 

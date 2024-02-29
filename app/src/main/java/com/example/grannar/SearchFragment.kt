@@ -286,6 +286,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                             adapter = SearchListAdapter(requireContext(), listInRecyclerView, this@SearchFragment)
                             rvSearchList.adapter = adapter
                             tvNoSearchResult.visibility = View.INVISIBLE
+                            CurrentUser.tabFriendItem = 0
                         }
                         1 -> {
                             distanceChip.visibility = View.GONE
@@ -297,6 +298,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                             etvSearch.setText(filterString)
                             tilSearch.hint = "Search Friend"
                             tvNoSearchResult.visibility = View.INVISIBLE
+                            CurrentUser.tabFriendItem = 1
                         }
                         else -> {
                             Log.d("!!!", "no tab")
@@ -348,6 +350,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("!!!", CurrentUser.tabFriendItem.toString())
+        tabFriends.getTabAt(CurrentUser.tabFriendItem)?.select()
     }
     private fun addTextChangeListener(){
         etvSearch.addTextChangedListener(object : TextWatcher{
@@ -577,4 +585,5 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             CurrentUser.friendsList?.let { addFriendsListToRecycler(it) }
         }
     }
+
 }
