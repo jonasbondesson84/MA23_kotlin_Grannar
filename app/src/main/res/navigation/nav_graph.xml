@@ -77,6 +77,14 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_friendProfileFragment_to_chatFragment"
+            app:destination="@id/chatFragment" >
+            <argument
+                android:name="userID"
+                app:argType="string"
+                />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/messagesFragment"
