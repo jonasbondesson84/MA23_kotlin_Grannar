@@ -4,4 +4,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_interest">Add interest</string>
     <string name="interest">Interest</string>
+    <string name="Male">Male</string>
+    <string name="Female">Female</string>
+    <string name="Non_binary">Non binary</string>
+    <string name="gender">Gender:</string>
+    <string name="filter">Filter:</string>
 </resources>

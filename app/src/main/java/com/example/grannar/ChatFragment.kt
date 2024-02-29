@@ -78,6 +78,8 @@ class ChatFragment : Fragment() {
 
         rvChatMessage = view.findViewById(R.id.rvChatMessages)
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
+        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
+        rvChatMessage.adapter = adapter
 //        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
 //        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
@@ -134,7 +136,11 @@ class ChatFragment : Fragment() {
                     ).update("unread", false).addOnSuccessListener {
                         item.unread = false
                     }
+
                 } }
+            }
+            if(i == messages.size-1) {
+                markAsRead()
             }
 
         }
@@ -202,19 +208,38 @@ class ChatFragment : Fragment() {
                         return@addSnapshotListener
                     } else {
                         if (snapshot != null) {
-                            messages.clear()
-                            for (document in snapshot.documents) {
-                                val newMessage = document?.toObject<Message>()
-                                if (newMessage != null) {
-                                    //set lastRead position
-                                    messages.add(newMessage)
+//                            for(document in snapshot.documentChanges) {
+//                                if(document.type == DocumentChange.Type.ADDED) {
+//                                    val newMessage = document.document.toObject<Message>()
+//                                    Log.d("!!!", newMessage.toString())
+////                                    if(newMessage != null) {
+//
+//                                    messages.add(newMessage)
+//                                    messages.sortBy { it.timeStamp }
+//                                        Log.d("!!!", "new message added")
+//                                        adapter.notifyItemInserted(messages.size-1)
+//                                        rvChatMessage.scrollToPosition(messages.size-1)
+//                                //rvChatMessage.scrollToPosition(getFirstUnread()-1)
+//                                        markAsRead()
+////                                    }
+//                                }
+//                            }
+                            for(document in snapshot) {
+                                messages.clear()
+                                for (document in snapshot.documents) {
+                                    val newMessage = document?.toObject<Message>()
+                                    if (newMessage != null) {
+                                        //set lastRead position
+                                        messages.add(newMessage)
+                                    }
+
                                 }
                             }
                             messages.sortBy { it.timeStamp }
                             adapter.notifyDataSetChanged()
-
-                            rvChatMessage.scrollToPosition(getFirstUnread() - 1)
-
+                            Log.d("!!!", "new message")
+                            rvChatMessage.scrollToPosition(messages.size - 1)
+                            //markAsRead()
                         }
 
                     }
@@ -224,6 +249,22 @@ class ChatFragment : Fragment() {
         }
 
     }
+
+    private fun markAsRead() {
+        var newHashMap = mutableMapOf<String, Int>()
+        for(unreadMessage in CurrentUser.unreadMessageIDs) {
+            if(unreadMessage.key != args.userID.toString()) {
+                newHashMap[unreadMessage.key] = unreadMessage.value
+            }
+
+        }
+        db.collection("users").document(CurrentUser.userID.toString())
+            .update("unreadMessages", newHashMap).addOnSuccessListener {
+                Log.d("!!!", "hurra")
+            }
+        Log.d("!!!", newHashMap.toString())
+    }
+
     private fun getFirstUnread(): Int {
         for(message in messages) {
             if(message.toID == CurrentUser.userID.toString() && message.unread) {
@@ -309,8 +350,23 @@ class ChatFragment : Fragment() {
                     getOldMessages()
                     hideKeyboard(requireView())
                     etvMessageText.text?.clear()
+                    addToUnreadMessage()
                 }
         }
+    }
+
+    private fun addToUnreadMessage() {
+        val updates = hashMapOf<String, Any>(
+            "unreadMessages.${CurrentUser.userID}" to 1
+        )
+        Log.d("!!!", updates.toString())
+            db.collection("users").document(args.userID.toString())
+                .update(updates).addOnSuccessListener {
+                    Log.d("!!!", "added unread")
+                }
+                .addOnFailureListener {
+                    Log.d("!!!", it.toString())
+                }
     }
 
 

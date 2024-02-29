@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventInfoFragment">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topEventInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:menu="@menu/event_menu"
+            app:navigationIcon="@drawable/baseline_arrow_back_24" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/box"
+        android:gravity="left"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imEventInfoImage"
+            android:layout_width="135dp"
+            android:layout_height="142dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/avatar"
+            app:civ_border_color="#00201B"
+            app:civ_border_width="3dp"
+            tools:src="@tools:sample/avatars" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imEventInfoImage"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/imEventInfoImage"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/tvEventInfoName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="25dp"
+                android:text="Name"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEventInfoDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:text="gender"
+                app:layout_constraintStart_toEndOf="@+id/friendProfileImageView"
+                app:layout_constraintTop_toBottomOf="@+id/friendProfileNameTextView" />
+
+            <TextView
+                android:id="@+id/tvEventInfoLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="8dp"
+                android:text="location"
+                app:layout_constraintStart_toEndOf="@+id/friendProfileImageView"
+                app:layout_constraintTop_toBottomOf="@+id/friendProfileAgeTextView" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvEventInfoDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:background="@drawable/box"
+        android:ems="10"
+        android:gravity="top"
+        android:layout_marginHorizontal="35dp"
+
+        android:paddingHorizontal="12dp"
+        android:hint="Event description"
+        android:layout_marginTop="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+    <com.google.android.gms.maps.MapView
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:id="@+id/eventInfoMapView"
+        app:layout_constraintTop_toBottomOf="@+id/tvEventInfoDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/box"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

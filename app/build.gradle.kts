@@ -60,6 +60,7 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.1.0") // för kartan
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
 
-    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("com.firebase:geofire-android-common:3.2.0") // For GeoHash
+
 
 }

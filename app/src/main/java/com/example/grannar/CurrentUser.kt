@@ -1,5 +1,8 @@
 package com.example.grannar
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
@@ -13,6 +16,7 @@ object CurrentUser {
     var location: com.google.android.gms.maps.model.LatLng? = null
     var locLat: Double? = null
     var locLng: Double? = null
+    var geoHash: String? = null
     var email: String? = null
     var gender: String? = null
     var profileImageURL: String? = null
@@ -20,6 +24,10 @@ object CurrentUser {
     var aboutMe: String? = null
     var imageURLs: MutableList<String>? = mutableListOf()
     var friendsList: MutableList<User>? = mutableListOf()
+    var unreadMessageIDs: HashMap<String, Int> = hashMapOf()
+    private val _unreadMessagesNumber = MutableLiveData<Int>( 0)
+    val unreadMessageNumber: LiveData<Int> = _unreadMessagesNumber
+    var savedEvent: MutableList<String> = mutableListOf()
 
 
 
@@ -34,6 +42,7 @@ object CurrentUser {
         this.location = user.location
         this.locLat= user.locLat
         this.locLng= user.locLng
+        this.geoHash = user.geoHash
         this.email = user.email
         this.gender = user.gender
         this.profileImageURL = user.profileImageURL
@@ -41,7 +50,15 @@ object CurrentUser {
         this.aboutMe = user.aboutMe
         this.imageURLs = user.imageURLs
         this.friendsList = user.friendsList
+        this.unreadMessageIDs = user.unreadMessages
+        this.savedEvent = user.savedEvents
+        getUnreadMessages(user)
 
+    }
+
+    private fun getUnreadMessages(user: User) {
+        this._unreadMessagesNumber.value = user.unreadMessages.size
+        Log.d("!!!", user.unreadMessages.size.toString())
     }
 
     fun clearUser() {
@@ -59,20 +76,31 @@ object CurrentUser {
         this.aboutMe = null
         this.imageURLs = null
         this.friendsList?.clear()
+        this.unreadMessageIDs.clear()
+        this._unreadMessagesNumber.value = 0
+        this.savedEvent.clear()
     }
 
     fun loadUserInfo(uid: String) {
         val db = Firebase.firestore
-        db.collection("users").document(uid).get()
-            .addOnSuccessListener {document ->
-                if (document != null) {
-                    val currentUser = document.toObject<User>()
-                    if (currentUser != null) {
-                        setUser(currentUser)
-                    }
+        db.collection("users").document(uid).addSnapshotListener { user, error ->
+            if(user != null) {
+                val currentUser = user.toObject<User>()
+                if(currentUser != null) {
+                    setUser(currentUser)
                 }
-
             }
+        }
+//        db.collection("users").document(uid).get()
+//            .addOnSuccessListener {document ->
+//                if (document != null) {
+//                    val currentUser = document.toObject<User>()
+//                    if (currentUser != null) {
+//                        setUser(currentUser)
+//                    }
+//                }
+//
+//            }
     }
 
 }
