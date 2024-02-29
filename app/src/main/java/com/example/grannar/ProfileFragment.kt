@@ -90,7 +90,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 selectedImageUri = it
 
                 val firebasePath = "userImage/${CurrentUser.userID}/${UUID.randomUUID()}.jpg"
-                uploadImageToFirebaseStorage(it, firebasePath)
+                uploadPersonalImageToFirebase(it)
             }
         }
     }
@@ -207,6 +207,19 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        personalImageView = view.findViewById(R.id.personalImageView)
+        loadPersonalImageFromPreferences()
+
+    }
+
+    private fun loadPersonalImageFromPreferences(){
+        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
+        val imageUrl = sharedPreferences.getString("personalImageUrl", null)
+        if(imageUrl != null) {
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .into(personalImageView!!)
+        }
     }
 
     override fun onResume() {
@@ -424,21 +437,61 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     fun openGallery() {
         getContent.launch("image/*")
     }
-private fun uploadImageToFirebaseStorage(imageUri: Uri, firebasePath: String) {
-    val storageRef = FirebaseStorage.getInstance().getReference(firebasePath)
-    storageRef.putFile(imageUri)
-        .addOnSuccessListener{
-            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                Log.d("ProfileFragment", "Bild uppladdad: $downloadUri")
-                Glide.with(this@ProfileFragment)
-                    .load(downloadUri.toString())
-                    .into(personalImageView!!)
+//private fun uploadImageToFirebaseStorage(imageUri: Uri, firebasePath: String) {
+   // val storageRef = FirebaseStorage.getInstance().getReference(firebasePath)
+  //  storageRef.putFile(imageUri)
+       // .addOnSuccessListener{
+          //  storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+              //  Log.d("ProfileFragment", "Bild uppladdad: $downloadUri")
+             //   Glide.with(this@ProfileFragment)
+                 //   .load(downloadUri.toString())
+                  //  .into(personalImageView!!)
+         //   }
+       // }
+     //   .addOnFailureListener {
+          //  Toast.makeText(context, "Uppladdning misslyckades: ${it.message}", Toast.LENGTH_SHORT).show()
+      //  }
+//}
+
+    private fun uploadPersonalImageToFirebase(imageUri: Uri) {
+        val firebasePath = "images/${CurrentUser.userID}/personalImages/${UUID.randomUUID()}.jpg"
+        val storageRef = FirebaseStorage.getInstance().getReference(firebasePath)
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    updatePersonalImageUrlInFirestore(downloadUri.toString())
+                    Log.d("Upload", "Perosnal Image Uploaded: $downloadUri")
+                    Glide.with(requireContext())
+                        .load(downloadUri)
+                        .into(personalImageView!!)
+                }
             }
-        }
-        .addOnFailureListener {
-            Toast.makeText(context, "Uppladdning misslyckades: ${it.message}", Toast.LENGTH_SHORT).show()
-        }
-}
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to upload personal image: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("Upload", "Failed to upload personal image", e)
+            }
+    }
+
+    private fun updatePersonalImageUrlInFirestore(imageUrl: String){
+        val userRef = db.collection("users").document(CurrentUser.userID!!)
+        userRef.update("perosnalImageUrl", imageUrl)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Perosnal image URL updated ")
+                saveImageUrlToPreferences(imageUrl)
+
+            }
+            .addOnFailureListener{ e ->
+                Log.e("Firestore", "Error updating perosnal image URL", e)
+            }
+    }
+
+    private fun saveImageUrlToPreferences(imageUrl: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
+        sharedPreferences.edit().putString("personalImageUrl", imageUrl).apply()
+    }
+
+
     private fun saveAboutMe(newAboutMe: String) {
         val userRef = db.collection("users").document(CurrentUser.userID!!)
         userRef.update("aboutMe", newAboutMe)
