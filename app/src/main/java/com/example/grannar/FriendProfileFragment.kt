@@ -139,6 +139,8 @@ class FriendProfileFragment : Fragment() {
             FieldValue.arrayUnion(selectedUser?.userID)
         ).addOnCompleteListener {
             Log.d("!!!", "saved friend")
+            CurrentUser.friendsUIDList.add(selectedUser?.userID.toString())
+            selectedUser?.let { it1 -> setIcons(it1) }
         }
     }
 
@@ -165,6 +167,8 @@ class FriendProfileFragment : Fragment() {
             FieldValue.arrayRemove(selectedUser?.userID)
         ).addOnSuccessListener {
             Log.d("!!!", "friend removed")
+            CurrentUser.friendsUIDList.remove(selectedUser?.userID.toString())
+            selectedUser?.let { it1 -> setIcons(it1) }
         }
 
         CurrentUser.friendsList?.remove(selectedUser)
@@ -187,9 +191,11 @@ class FriendProfileFragment : Fragment() {
         if(CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
             Log.d("!!!", "Contains: true")
             appBar.menu.getItem(0).isVisible = false
+            appBar.menu.getItem(1).isVisible = true
         } else {
             Log.d("!!!", "Contains: false")
             appBar.menu.getItem(1).isVisible = false
+            appBar.menu.getItem(0).isVisible = true
         }
     }
 
