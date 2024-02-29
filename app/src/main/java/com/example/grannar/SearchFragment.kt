@@ -2,7 +2,6 @@ package com.example.grannar
 
 import android.app.Dialog
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,10 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -27,7 +25,13 @@ import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
+
+import com.google.android.material.chip.ChipGroup
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.textfield.TextInputLayout
+
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -36,8 +40,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import kotlin.math.cos
-import kotlin.math.ln
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -54,17 +56,26 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var searchList = mutableListOf<User>()
-    private var listInRecyclerView = mutableListOf<User>()
-    private var listAfterCategoryFilter = mutableListOf<User>()
+    private var searchList = mutableListOf<User>() // The whole downloaded list to filter
+    private var listInRecyclerView = mutableListOf<User>() // The list that is in the recyclerView
+    private var listAfterCategoryFilter = mutableListOf<User>() // The downloaded list but filter from dialog
     private lateinit var db : FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
-    private lateinit var fabFilter: FloatingActionButton
+    private lateinit var filterChip: Chip
+    private lateinit var tilSearch: TextInputLayout
     private lateinit var tvNoSearchResult: TextView
     private var selectedCategories = mutableListOf<String>()
+    private var selectedGenders = mutableListOf<String>()
+    private var genders = listOf("Male", "Female", "Non-Binary")
     private lateinit var distanceChip: Chip
     private var distanceSet: Float = 5f
+    private lateinit var tabFriends: TabLayout
+    private var onMyFriends = false
+    private var friendsList = mutableListOf<User>()
+    private var filterString = ""
+    private var searchString = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,17 +128,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     fun getUsersWithinDistance(distanceInKilometers: Int){
         val lat = CurrentUser.locLat
         val lng = CurrentUser.locLng
-
         val center = GeoLocation(lat ?: 59.334591, lng ?: 18.063240)
+        val radiusInM = distanceInKilometers * 1000
+        val tasks = getListOfDbQueries(radiusInM, center)
+        queryForUsersByGeoHash(tasks, center, radiusInM)
 
 
-       // if (lat != null && lng != null) {
-          //  val center = GeoLocation(lat, lng)
-            val radiusInM = distanceInKilometers * 1000
-            val tasks = getListOfDbQueries(radiusInM, center)
-            queryForUsersByGeoHash(tasks, center, radiusInM)
-
-      //  }
     }
 
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
@@ -157,19 +163,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                         val docLng = doc.getDouble("locLng")
                         if (docLat != null && docLng != null) {
                             val docLoc = GeoLocation(docLat, docLng)
-                            Log.d("!!!", "${doc.getDouble("locLat")}")
-                            Log.d("!!!", "${doc.getString("firstName")}")
-                            Log.d(
-                                "!!!",
-                                "Distance M: ${GeoFireUtils.getDistanceBetween(docLoc, center)}"
-                            )
                             // Remove the false positive, that has the same hash but is still outside of the radius
                             val distanceToUserInM = GeoFireUtils.getDistanceBetween(docLoc, center)
                             if (distanceToUserInM <= radiusInM) {
                                 matchingDocuments.add(doc)
-                                Log.d("!!!", "Matching documents: ${matchingDocuments.size}")
+
                             } else {
-                                Log.d("!!!", "False Positive Document!!!")
+
                             }
                         }
                     }
@@ -187,10 +187,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             val user = document.toObject<User>()
             if (user != null && user.userID != loggedInUserID) {
                 searchList.add(user)
-                Log.d("!!!", "User with Name added: ${user.firstName}")
+
             }
         }
-        Log.d("!!!", "SearchList: ${searchList.size}")
+
         setListInRecyclerView(true)
 
     }
@@ -199,20 +199,32 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
 
     private fun filterListOnInterestCategory(listToFilter: MutableList<User>):List<User>{
-        if (selectedCategories.isEmpty()){
-            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
-            return listToFilter
-        }else {
-            val filteredList = listToFilter.filter { user ->
-                user.interests?.any {interest ->
-                    interest.category in selectedCategories
-                } == true
+
+        val filteredList = if (selectedCategories.isEmpty() && selectedGenders.isEmpty()) {
+            listToFilter.toList() // Returns a copy of the original list if no filers is selected
+        } else {
+            var tempList = listToFilter.toMutableList()
+
+            if (selectedCategories.isNotEmpty()) {
+                tempList = tempList.filter { user ->
+                    user.interests?.any { interest ->
+                        interest.category in selectedCategories
+                    } == true
+                }.toMutableList()
             }
-            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
-            return filteredList
+
+            if (selectedGenders.isNotEmpty()) {
+                tempList = tempList.filter { user ->
+                    user.gender in selectedGenders
+                }.toMutableList()
+            }
+
+
+            tempList.toList() // Returnera den filtrerade listan
         }
+
+        Log.d("!!!", "Filtered list size: ${filteredList.size}")
+        return filteredList
     }
 
     private fun filterListOnInterestName(listToFilter: List<User>): List<User>{
@@ -232,6 +244,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     private fun setListInRecyclerView(categoryFilterChanged: Boolean){
+
         listInRecyclerView.clear()
         if (categoryFilterChanged){
             listAfterCategoryFilter.clear()
@@ -250,26 +263,61 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
+
         val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
+        tabFriends = view.findViewById(R.id.tabFriends)
+        tilSearch = view.findViewById(R.id.tilSearchInterest)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
-
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-        adapter.onUserClick = {
-            val uid = it.userID
-            if(uid != null) {
-                val action =
-                    SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
-                findNavController().navigate(action)
+
+        tabFriends.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    when(tab.position) {
+                        0 -> {
+                            distanceChip.visibility = View.VISIBLE
+                            filterChip.visibility = View.VISIBLE
+                            onMyFriends = false
+                            etvSearch.setText(searchString)
+                            tilSearch.hint = "Search Interest"
+                            setListInRecyclerView(false)
+                            adapter = SearchListAdapter(requireContext(), listInRecyclerView, this@SearchFragment)
+                            rvSearchList.adapter = adapter
+                            tvNoSearchResult.visibility = View.INVISIBLE
+                        }
+                        1 -> {
+                            distanceChip.visibility = View.GONE
+                            filterChip.visibility = View.GONE
+                            onMyFriends = true
+                            filterList(filterString)
+                            adapter = SearchListAdapter(view.context, friendsList, this@SearchFragment)
+                            rvSearchList.adapter = adapter
+                            etvSearch.setText(filterString)
+                            tilSearch.hint = "Search Friend"
+                            tvNoSearchResult.visibility = View.INVISIBLE
+                        }
+                        else -> {
+                            Log.d("!!!", "no tab")
+                        }
+                    }
+                }
             }
 
-        }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+
+        })
+
+
         btnGetuser.setOnClickListener {
-
-//           getUsersWithinDistance(2)
-
-
             val auth = Firebase.auth
             CurrentUser.clearUser()
             auth.signOut()
@@ -280,24 +328,12 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         addTextChangeListener()
         tvNoSearchResult = view.findViewById(R.id.tvEmptySearchList)
 
-
-        fabFilter = view.findViewById(R.id.fabFilter)
-
-        if (selectedCategories.isEmpty()){
-            fabFilter.setImageResource(R.drawable.baseline_filter_alt_off_24)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.md_theme_primaryContainer))
-
-        }else{
-            fabFilter.setImageResource(R.drawable.baseline_filter_list_alt_242)
-            fabFilter.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E6FF00"))
+        filterChip = view.findViewById(R.id.filterChip)
+        filterChip.setOnClickListener {
+            openFilterDialog()
         }
 
-        fabFilter.setOnClickListener {
-            openCategoryFilterDialog()
-        }
-
-
-        distanceChip = view.findViewById(R.id.distancseChip)
+        distanceChip = view.findViewById(R.id.distanceChip)
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
         distanceChip.setOnClickListener {
@@ -324,11 +360,22 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
             override fun afterTextChanged(s: Editable?) {
-                setListInRecyclerView(false)
+                Log.d("!!!", onMyFriends.toString())
+                val textInSearchField = s.toString().lowercase().trim()
+                if(onMyFriends) {
+                    filterString = textInSearchField
+                    filterList(textInSearchField)
+//                    friendsList.filter { it.contains(s.toString(), ignoreCase = true)}
+                }else {
+                    searchString = textInSearchField
+                    setListInRecyclerView(false)
+                }
+
             }
 
         })
     }
+
 
 
     private fun openDialogFragment() {
@@ -336,59 +383,112 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
     }
 
-    private fun openCategoryFilterDialog(){
+    private fun openFilterDialog(){
 
         val dialog = Dialog(requireContext())
-         dialog.setContentView(R.layout.dialog_category_filter)
-        val container = dialog.findViewById<LinearLayout>(R.id.categoryLinearLayout)
-        val checkBoxes = mutableListOf<CheckBox>()
-        CategoryManager.categories.forEach { (category, colorID) ->
-
-            val checkBox = CheckBox(requireContext())
-            checkBox.text = category
-            checkBox.setBackgroundColor(ContextCompat.getColor(requireContext(), colorID))
-
-            if (selectedCategories.contains(category)){
-                checkBox.isChecked = true
-            }
-            checkBoxes.add(checkBox)
-            container.addView(checkBox)
+        dialog.setContentView(R.layout.dialog_category_filter)
+        dialog.setOnDismissListener {
+            setFilterChipState()
         }
-        container.requestLayout()
+
+        val categoryChipGroup = dialog.findViewById<ChipGroup>(R.id.categoryChipGroup)
+        val categoryChips = createCategoryChips(categoryChipGroup)
+
+        val genderChipGroup = dialog.findViewById<ChipGroup>(R.id.genderChipGroup)
+        val genderChips = createGenderChips(genderChipGroup)
+
+
         dialog.findViewById<Button>(R.id.btnCancelAddFilter).setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.findViewById<Button>(R.id.btnAddCategoryFilter).setOnClickListener {
-            setCategoryFilter(checkBoxes, dialog)
+            setCategoryFilter(categoryChips, genderChips, dialog)
         }
         dialog.findViewById<TextView>(R.id.tvClearFilter).setOnClickListener {
-            selectedCategories.clear()
-            checkBoxes.forEach { checkBox ->
-                checkBox.isChecked = false
-            }
+            clearFilterChips(categoryChips, genderChips)
             setListInRecyclerView(true)
             dialog.dismiss()
         }
 
-
+        val window = dialog.window
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         dialog.show()
     }
 
-    private fun setCategoryFilter(checkBoxes: List<CheckBox>, dialog: Dialog){
+    private fun clearFilterChips(categoryChips: MutableList<Chip>, genderChips: List<Chip>){
         selectedCategories.clear()
-        checkBoxes.forEach { checkBox ->
-            if (checkBox.isChecked)
-                selectedCategories.add(checkBox.text.toString())
+        categoryChips.forEach { checkBox ->
+            checkBox.isChecked = false
         }
-        Log.d("!!!", selectedCategories.toString())
+        selectedGenders.clear()
+        genderChips.forEach { chip ->
+            chip.isChecked = false
+        }
+    }
+
+
+    private fun createCategoryChips(chipGroup:ChipGroup ): MutableList<Chip>{
+        val categoryChips = mutableListOf<Chip>()
+        val inflater = LayoutInflater.from(requireContext())
+        CategoryManager.categories.forEach { (category, colorID) ->
+            val chip = inflater.inflate(R.layout.chip_layout, chipGroup, false) as Chip
+            chip.text = category
+            val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
+            chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+            chip.isChecked = selectedCategories.contains(category)
+            categoryChips.add(chip)
+            chipGroup.addView(chip)
+        }
+        return categoryChips
+    }
+
+    private fun createGenderChips(chipGroup: ChipGroup): MutableList<Chip>{
+        val genderChips = mutableListOf<Chip>()
+        val inflater = LayoutInflater.from(requireContext())
+        genders.forEach { gender ->
+
+            val chip = inflater.inflate(R.layout.chip_layout, chipGroup, false) as Chip
+            chip.text = gender
+            chip.isChecked = selectedGenders.contains(gender)
+            genderChips.add(chip)
+            chipGroup.addView(chip)
+        }
+        return genderChips
+    }
+
+    private fun setCategoryFilter(categoryChips: List<Chip>, genderChips: List<Chip>, dialog: Dialog){
+        selectedCategories.clear()
+        categoryChips.forEach { chip ->
+            if (chip.isChecked)
+                selectedCategories.add(chip.text.toString())
+        }
+
+        selectedGenders.clear()
+        genderChips.forEach { chip ->
+            if (chip.isChecked){
+                selectedGenders.add(chip.text.toString())
+            }
+        }
         setListInRecyclerView(true)
 
         dialog.dismiss()
 
     }
+    private fun setFilterChipState(){
+        filterChip.isChecked = selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()
+        val numberOfFilters = if (selectedGenders.size + selectedCategories.size == 0){
+            ""
+        }else{
+            (selectedGenders.size + selectedCategories.size).toString()
+        }
+        filterChip.text = "${resources.getString(R.string.filter)} $numberOfFilters "
 
-
+        Log.d("!!!", "FilterChipState: ${selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()}")
+    }
 
 
 
@@ -425,6 +525,15 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
+    override fun goToUser(user: User) {
+        val uid = user.userID
+        if(uid != null) {
+            val action =
+                SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
+            findNavController().navigate(action)
+        }
+    }
+
     override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
         //adapter.notifyDataSetChanged()
         getUsersWithinDistance(distanceSet.toInt())
@@ -446,5 +555,26 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         getUsersWithinDistance(distance.toInt())
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
+    }
+
+    private fun addChatsToRecycler(listToAdd: List<User>){
+        friendsList.clear()
+        friendsList.addAll(listToAdd)
+        adapter.notifyDataSetChanged()
+        tvNoSearchResult.isVisible = listToAdd.isEmpty()
+
+    }
+    private fun filterList(textToSearchFor: String?){
+        if (textToSearchFor != null){
+            val filteredList = CurrentUser.friendsList?.filter { user ->
+                user.firstName?.lowercase()?.contains(textToSearchFor) ?: false
+            }
+
+            if (filteredList != null) {
+                addChatsToRecycler(filteredList)
+            }
+        }else{
+            CurrentUser.friendsList?.let { addChatsToRecycler(it) }
+        }
     }
 }

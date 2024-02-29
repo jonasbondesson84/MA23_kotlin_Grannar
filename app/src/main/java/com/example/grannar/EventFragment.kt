@@ -45,7 +45,10 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener {
+//interface OnSavedEventListener{
+//    fun onDataPassed(event: Event)
+//}
+class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener{
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -62,6 +65,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private lateinit var circle: Circle
     private var currentZoomLevel = 10.75f
     private val STARTING_ZOOM = 10.75f
+    private var savedEvents = mutableListOf<Event>()
 
 
 
@@ -90,21 +94,34 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         val tabEvent: TabLayout = view.findViewById(R.id.tabEvent)
 
         eventMap.onCreate(savedInstanceState)
+        getSavedEvents()
 
 
         tabEvent.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    if(tab.position == 0) {
-                        rvEvents.visibility = View.VISIBLE
-                        eventMap.visibility = View.INVISIBLE
+                    when(tab.position) {
+                        0 -> {
+                            rvEvents.visibility = View.VISIBLE
+                            eventMap.visibility = View.INVISIBLE
+                            adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
+                            rvEvents.adapter = adapter
+                        }
+                        1 -> {
+                            rvEvents.visibility = View.INVISIBLE
+                            eventMap.visibility = View.VISIBLE
+                        }
+                        2 -> {
+                            rvEvents.visibility = View.VISIBLE
+                            eventMap.visibility = View.INVISIBLE
+                            adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
+                            rvEvents.adapter = adapter
+                        }
+                        else -> {
+                            Log.d("!!!", "No tab")
+                        }
                     }
-                    else if(tab.position == 1) {
-                        rvEvents.visibility = View.INVISIBLE
-                        eventMap.visibility = View.VISIBLE
-                    } else {
-                        Log.d("!!!", tab.position.toString())
-                    }
+
                 }
             }
 
@@ -125,12 +142,12 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
             )
         )
-        adapter = EventAdapter(view.context, eventsInRecyclerView, this)
+        getEvents()
+        adapter = EventAdapter(view.context, eventList, this)
+        // adapter = EventAdapter(view.context, eventsInRecyclerView, this)
         rvEvents.adapter = adapter
-
-       // getEvents()
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
-        getEventsWithinDistance(distanceSet.toInt())
+       // getEventsWithinDistance(distanceSet.toInt())
         addTextChangeListener()
 
         distanceChip.setOnClickListener {
@@ -152,6 +169,31 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
 
         return view
+    }
+
+    private fun getSavedEvents() {
+        savedEvents.clear()
+        for(eventID in CurrentUser.savedEvent) {
+            db.collection("Events").document(eventID).get()
+                .addOnSuccessListener {document->
+                    val newEvent = document.toObject<Event>()
+                    if (newEvent != null) {
+                        savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
+                    }
+                }
+        }
+        db.collection("Events").whereEqualTo("createdByUID", CurrentUser.userID.toString())
+            .get()
+            .addOnSuccessListener {documents->
+                for(document in documents) {
+                    val newEvent = document.toObject<Event>()
+                    if(newEvent != null) {
+                        savedEvents.add(newEvent)
+                        savedEvents.sortBy { it.startDateTime }
+                    }
+                }
+            }
     }
 
     private fun setMap(googleMap: GoogleMap) {
@@ -399,4 +441,13 @@ Log.d("!!!", "rh")
        // tvNoSearchResult.isVisible = listInRecyclerView.isEmpty()
         adapter.notifyDataSetChanged()
     }
+
+//    override fun onDataPassed(event: Event) {
+//        Log.d("!!!", "we got here")
+//        savedEvents.add(event)
+//        savedEvents.sortBy { it.startDateTime }
+//        adapter.notifyDataSetChanged()
+//    }
+
+
 }
