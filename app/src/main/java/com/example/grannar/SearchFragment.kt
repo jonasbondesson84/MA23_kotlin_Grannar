@@ -28,7 +28,6 @@ import com.google.android.material.chip.Chip
 
 import com.google.android.material.chip.ChipGroup
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
 
@@ -73,6 +72,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var tabFriends: TabLayout
     private var onMyFriends = false
     private var friendsList = mutableListOf<User>()
+    private var filteredFriendsList = mutableListOf<User>()
     private var filterString = ""
     private var searchString = ""
 
@@ -557,7 +557,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     }
 
-    private fun addChatsToRecycler(listToAdd: List<User>){
+    private fun addFriendsListToRecycler(listToAdd: List<User>){
         friendsList.clear()
         friendsList.addAll(listToAdd)
         adapter.notifyDataSetChanged()
@@ -571,10 +571,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
             if (filteredList != null) {
-                addChatsToRecycler(filteredList)
+                addFriendsListToRecycler(filteredList)
             }
         }else{
-            CurrentUser.friendsList?.let { addChatsToRecycler(it) }
+            CurrentUser.friendsList?.let { addFriendsListToRecycler(it) }
         }
     }
 }

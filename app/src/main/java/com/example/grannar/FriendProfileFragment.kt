@@ -119,24 +119,24 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun addFriend() {
-        val userMap = mapOf(
-            "userID" to selectedUser?.userID,
-            "firstName" to selectedUser?.firstName,
-            "surname" to selectedUser?.surname,
-            "age" to selectedUser?.age,
-            "location" to selectedUser?.location,
-            "email" to selectedUser?.email,
-            "gender" to selectedUser?.gender,
-            "profileImageURL" to selectedUser?.profileImageURL,
-            "interests" to selectedUser?.interests,
-            "aboutMe" to selectedUser?.aboutMe,
-            "imageURLs" to selectedUser?.imageURLs,
-            "friendsList" to selectedUser?.friendsList
-
-        )
+//        val userMap = mapOf(
+//            "userID" to selectedUser?.userID,
+//            "firstName" to selectedUser?.firstName,
+//            "surname" to selectedUser?.surname,
+//            "age" to selectedUser?.age,
+//            "location" to selectedUser?.location,
+//            "email" to selectedUser?.email,
+//            "gender" to selectedUser?.gender,
+//            "profileImageURL" to selectedUser?.profileImageURL,
+//            "interests" to selectedUser?.interests,
+//            "aboutMe" to selectedUser?.aboutMe,
+//            "imageURLs" to selectedUser?.imageURLs,
+//            "friendsList" to selectedUser?.friendsList
+//
+//        )
         db.collection("users").document(CurrentUser.userID.toString()).update(
-            "friendsList",
-            FieldValue.arrayUnion(userMap)
+            "friendsUIDList",
+            FieldValue.arrayUnion(selectedUser?.userID)
         ).addOnCompleteListener {
             Log.d("!!!", "saved friend")
         }
@@ -144,26 +144,28 @@ class FriendProfileFragment : Fragment() {
 
     private fun removeFriend() {
 
-
-        val userMap = mapOf(
-            "userID" to (selectedUser?.userID),
-            "firstName" to (selectedUser?.firstName ),
-            "surname" to (selectedUser?.surname),
-            "age" to (selectedUser?.age),
-            "location" to (selectedUser?.location ),
-            "email" to (selectedUser?.email ),
-            "gender" to selectedUser?.gender,
-            "profileImageURL" to selectedUser?.profileImageURL,
-            "interests" to selectedUser?.interests,
-            "aboutMe" to selectedUser?.aboutMe,
-            "imageURLs" to selectedUser?.imageURLs,
-            "friendsList" to selectedUser?.friendsList
-
-        )
+//
+//        val userMap = mapOf(
+//            "userID" to (selectedUser?.userID),
+//            "firstName" to (selectedUser?.firstName ),
+//            "surname" to (selectedUser?.surname),
+//            "age" to (selectedUser?.age),
+//            "location" to (selectedUser?.location ),
+//            "email" to (selectedUser?.email ),
+//            "gender" to selectedUser?.gender,
+//            "profileImageURL" to selectedUser?.profileImageURL,
+//            "interests" to selectedUser?.interests,
+//            "aboutMe" to selectedUser?.aboutMe,
+//            "imageURLs" to selectedUser?.imageURLs,
+//            "friendsList" to selectedUser?.friendsList
+//
+//        )
         db.collection("users").document(CurrentUser.userID.toString()).update(
-            "friendsList",
-            FieldValue.arrayRemove(userMap)
-        )
+            "friendsUIDList",
+            FieldValue.arrayRemove(selectedUser?.userID)
+        ).addOnSuccessListener {
+            Log.d("!!!", "friend removed")
+        }
 
         CurrentUser.friendsList?.remove(selectedUser)
 
@@ -182,7 +184,7 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun setIcons(selectedUser: User) {
-        if(CurrentUser.friendsList?.contains(selectedUser) == true) {
+        if(CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
             Log.d("!!!", "Contains: true")
             appBar.menu.getItem(0).isVisible = false
         } else {
@@ -199,7 +201,7 @@ class FriendProfileFragment : Fragment() {
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
-       // setIcons(selectedUser)
+        setIcons(selectedUser)
 
     }
 
