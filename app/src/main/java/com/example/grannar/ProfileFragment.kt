@@ -5,9 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -15,11 +17,17 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavDestination
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
@@ -30,6 +38,7 @@ import java.util.UUID
 
 private lateinit var userProfile: User
 val db = Firebase.firestore
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,6 +52,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class ProfileFragment : Fragment(), AddedInterestCallback {
     // TODO: Rename and change types of parameters
+
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -59,6 +70,13 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     private lateinit var getContent: ActivityResultLauncher<String>
 
 
+    private var pendingDestination: NavDestination? = null
+    private var pendingBundle: Bundle? = null
+    private lateinit var signUpLauncher: ActivityResultLauncher<Intent>
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -73,11 +91,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
                 val firebasePath = "userImage/${CurrentUser.userID}/${UUID.randomUUID()}.jpg"
                 uploadImageToFirebaseStorage(it, firebasePath)
-
             }
         }
-
-
     }
 
 
@@ -97,16 +112,15 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
         profileImageView = view.findViewById(R.id.profileImageView)
 
-        val showName = view.findViewById<TextView>(R.id.profileNameTextView)
-        val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
-        val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
-        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
+        val showName = view.findViewById<TextView>(R.id.profileNameEditText)
+        val showGender = view.findViewById<TextView>(R.id.profileGenderEditText)
+        val showAge = view.findViewById<TextView>(R.id.profileAgeEditText)
+        val showLocation = view.findViewById<TextView>(R.id.profileLocationEditText)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
-
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
+        val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
-        //Anv ska kunna ladda upp en övrig bild
-        val chooseImageButton = view.findViewById<ImageButton>(R.id.chooseImageButton)
+
 
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
@@ -132,6 +146,24 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val button: ImageButton = view.findViewById(R.id.chooseImageButton)
         button.setOnClickListener {
             openGallery()
+        }
+
+        val editProfileTextBtn: ImageButton = view.findViewById(R.id.editImageButton)
+        editProfileTextBtn.setOnClickListener{
+            val dialogFragment = EditProfileDialogFragment()
+            dialogFragment.show(childFragmentManager, "editprofileDialog")
+        }
+
+
+
+
+        signoutButton.setOnClickListener {
+            if (isLoggedIn()) {
+                signOut()
+                Log.d("!!!", "User is signing out")
+            } else {
+                Log.d("!!!", "user is not loged in")
+            }
         }
 
 
@@ -168,7 +200,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             }
         }
 
-
         return view
     }
 
@@ -186,7 +217,26 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     //funktioner
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+
+    private fun isLoggedIn(): Boolean {
+        val auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null){
+            return true
+        }
+        else return false
+    }
+
+    private fun signOut() {
+        val auth = FirebaseAuth.getInstance()
+        auth.signOut()
+        Toast.makeText(requireContext(), "You have Logged Out", Toast.LENGTH_SHORT)
+            .show()
+
+    }
+
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
