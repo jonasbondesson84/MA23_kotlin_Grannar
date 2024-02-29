@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -44,6 +46,8 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvAboutMe: TextView
     private var interestsTextViewList = mutableListOf<TextView>()
 
+    private lateinit var personalImageView: ImageView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,12 +72,16 @@ class FriendProfileFragment : Fragment() {
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
 
+        personalImageView = view.findViewById(R.id.personalImageView)
+
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest1TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest2TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest3TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest4TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest5TextView))
         interestsTextViewList.add(view.findViewById(R.id.friendsInterest6TextView))
+
+
 
 
 
@@ -112,6 +120,12 @@ class FriendProfileFragment : Fragment() {
         tvLocation.text = selectedUser.location.toString()
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
+
+        Glide.with(this)
+            .load(selectedUser.imageURLs)
+            .into(personalImageView)
+
+
 
     }
 
