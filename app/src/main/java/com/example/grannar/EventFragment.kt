@@ -52,7 +52,7 @@ private const val ARG_PARAM2 = "param2"
 //    fun onDataPassed(event: Event)
 //}
 class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener,
-    OnMapReadyCallback {
+    OnMapReadyCallback, AddEventDialogFragment.OnSaveListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -174,8 +174,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         fabAddEvent.setOnClickListener {
             if(CurrentUser.userID != null) {
-                val dialogFragment = AddEventDialogFragment()
-                dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+                addEvent()
+
             } else {
                 openLogInFragment()
             }
@@ -185,6 +185,14 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         return view
     }
+
+
+    private fun addEvent() {
+        val dialogFragment = AddEventDialogFragment()
+        dialogFragment.setOnSuccessListener(this)
+        dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+    }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -440,15 +448,15 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             }
     }
     private fun createEventsAndFilRecycler(matchingDocuments: MutableList<DocumentSnapshot>){
-        val yesterday = Calendar.getInstance().time
+        val nowTime = Calendar.getInstance().time
         eventList.clear()
         for (document in matchingDocuments){
 
             val event = document.toObject<Event>()
 
             if (event?.startDateTime != null) {
-                Log.d("!!!", event.startDateTime?.compareTo(yesterday).toString())
-                if(event.startDateTime?.compareTo(yesterday)!! > 0) {
+                Log.d("!!!", event.name + " " +event.startDateTime?.compareTo(nowTime).toString())
+                if(event.startDateTime?.compareTo(nowTime)!! > 0) {
                     eventList.add(event)
                 }
             }
@@ -491,6 +499,7 @@ override fun onResume() {
     super.onResume()
     tabEvent.getTabAt(CurrentUser.tabEventItem)?.select()
     eventMap.onResume()
+
 }
 
     override fun onPause() {
@@ -511,6 +520,18 @@ override fun onResume() {
     override fun onLowMemory() {
         super.onLowMemory()
         eventMap.onLowMemory()
+    }
+
+    override fun onSuccessPass(success: Boolean) {
+        if(success) {
+            getEventsWithinDistance(distanceSet.toInt())
+            getSavedEvents()
+        Log.d("!!!", "this is it")
+        }
+    }
+
+    override fun onDataPass(eventID: String) {
+
     }
 
 

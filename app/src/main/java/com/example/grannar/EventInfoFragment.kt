@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.appbar.MaterialToolbar
@@ -37,7 +38,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventInfoFragment : Fragment() {
+class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment.OnEditListener {
 
 
     // TODO: Rename and change types of parameters
@@ -98,8 +99,11 @@ class EventInfoFragment : Fragment() {
                         removeEvent()
                     } else {
                         saveEvent()
-
                     }
+                    true
+                }
+                R.id.editEvent -> {
+                    editEvent()
                     true
                 }
                 else -> false
@@ -110,6 +114,26 @@ class EventInfoFragment : Fragment() {
 
 
         return view
+    }
+
+    private fun editEvent() {
+        val dialogFragment = AddEventDialogFragment()
+        val args = Bundle()
+//        userLocation?.let { args.putDouble("lat", it.latitude) }
+//        userLocation?.let { args.putDouble("lng", it.longitude) }
+
+        args.putString("name", selectedEvent?.name)
+        args.putString("desc", selectedEvent?.description)
+        selectedEvent?.locLat?.let { args.putDouble("lat", it) }
+        selectedEvent?.locLng?.let { args.putDouble("lng", it) }
+        args.putString("imageURL", selectedEvent?.imageURL)
+        args.putSerializable("startDateTime", selectedEvent?.startDateTime)
+        args.putString("createdByUID", selectedEvent?.createdByUID)
+        args.putString("docID", selectedEvent?.docID)
+        dialogFragment.arguments = args
+        dialogFragment.setOnDataPassListener(this)
+
+        dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
     }
 
     private fun removeEvent() {
@@ -183,6 +207,15 @@ class EventInfoFragment : Fragment() {
     }
 
     private fun getEventInfo(eventID: String) {
+//        db.collection("Events").document(eventID).addSnapshotListener { event, error ->
+//            if(event != null) {
+//                val thisEvent = event.toObject<Event>()
+//                if (thisEvent != null) {
+//                    selectedEvent = thisEvent
+//                    showEventData(thisEvent)
+//                }
+//            }
+//        }
         db.collection("Events").document(eventID).get()
             .addOnSuccessListener {document->
                 if(document != null) {
@@ -217,8 +250,9 @@ class EventInfoFragment : Fragment() {
 
         if(event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false
-        } else {
             topBar.menu.getItem(1).isVisible = false
+        } else {
+            topBar.menu.getItem(2).isVisible = false
         }
 
         if(event.docID in CurrentUser.savedEvent) {
@@ -226,6 +260,7 @@ class EventInfoFragment : Fragment() {
             topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
         }
         locationMap.getMapAsync { googleMap ->
+            googleMap.clear()
             setMap(googleMap, event)
         }
 
@@ -262,5 +297,39 @@ class EventInfoFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+
+
+    }
+    override fun onResume() {
+        super.onResume()
+        locationMap.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationMap.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        locationMap.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        locationMap.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        locationMap.onLowMemory()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        selectedEvent?.let { setMap(map, it) }
+    }
+
+    override fun onDataPass(eventID: String) {
+        getEventInfo(eventID)
     }
 }
