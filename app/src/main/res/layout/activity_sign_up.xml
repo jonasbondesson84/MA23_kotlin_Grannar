@@ -6,6 +6,98 @@
     android:layout_height="match_parent"
     tools:context=".SignUpActivity">
 
+    <ImageView
+        android:id="@+id/imFirstNameCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/firstNameTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/firstNameTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/firstNameTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imSurNameCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/surNameTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/surNameTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/surNameTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imLocationCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="invisible"
+        android:layout_marginStart="8dp"
+
+        app:layout_constraintTop_toTopOf="@+id/locationImageButton"
+        app:layout_constraintBottom_toBottomOf="@+id/locationImageButton"
+        app:layout_constraintStart_toEndOf="@+id/locationImageButton"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imBirthdayCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="invisible"
+        android:layout_marginStart="8dp"
+
+        app:layout_constraintTop_toTopOf="@+id/birthDateTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/birthDateTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/birthDateTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imGenderCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="invisible"
+        android:layout_marginStart="8dp"
+
+        app:layout_constraintTop_toTopOf="@+id/genderRadioGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/genderRadioGroup"
+        app:layout_constraintStart_toEndOf="@+id/genderRadioGroup"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imEmailCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/emailTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/emailTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/emailTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imPasswordCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/passwordTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/passwordTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/passwordTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageView
+        android:id="@+id/imConfirmPasswordCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/confirmPasswordTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmPasswordTextInputLayout"
+        app:layout_constraintStart_toEndOf="@+id/confirmPasswordTextInputLayout"
+        app:srcCompat="@drawable/baseline_done_24" />
+
+
+
+
     <TextView
         android:id="@+id/signUpHeaderTextView"
         android:layout_width="wrap_content"
@@ -201,6 +293,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Sign up"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cancelSignUpButton"
