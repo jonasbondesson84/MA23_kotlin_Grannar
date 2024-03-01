@@ -9,16 +9,19 @@ import android.view.LayoutInflater
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapDialogFragment: DialogFragment() {
+class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var onDataPassListener: OnDataPassListener? = null
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
+    private lateinit var map : MapView
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -51,7 +54,7 @@ class MapDialogFragment: DialogFragment() {
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
-        val map = view.findViewById<MapView>(R.id.dialogMapView)
+        map = view.findViewById(R.id.dialogMapView)
         map.onCreate(savedInstanceState)
         map.getMapAsync { googleMap ->
 
@@ -87,6 +90,34 @@ class MapDialogFragment: DialogFragment() {
     override fun onDetach() {
         super.onDetach()
         onDataPassListener = null // Avregistrera lyssnare för att undvika minnesläckor
+    }
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        map.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        map.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        map.onLowMemory()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+
     }
 
     private fun getUserLocation() {

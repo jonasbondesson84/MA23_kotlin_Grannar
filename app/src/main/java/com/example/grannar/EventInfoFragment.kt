@@ -332,4 +332,5 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
     override fun onDataPass(eventID: String) {
         getEventInfo(eventID)
     }
+
 }
