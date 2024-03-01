@@ -3,6 +3,7 @@ package com.example.grannar
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -42,6 +43,9 @@ import java.util.Locale
 
 class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
    // private var onSaveEventListener: OnSavedEventListener? = null
+    interface OnSaveListener {
+        fun onDataPass(eventID: String)
+    }
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
@@ -62,6 +66,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var imageChanged = false
     private lateinit var mapView: MapView
     private lateinit var btnAddEvent: Button
+    private var dataPassListener: OnSaveListener? = null
 
 
 
@@ -273,6 +278,8 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
                     "imageURL", imageURL)
                     .addOnSuccessListener {
                         Log.d("!!!", "event updated")
+                        //update infofragment
+                        dataPassListener?.onDataPass(docID)
                         dismiss()
                     }
             }
@@ -366,6 +373,18 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
 
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnSaveListener) {
+            dataPassListener = context
+        } else {
+            Log.d("!!!", "nope")
+        }
+    }
+    fun setOnDataPassListener(listener: OnSaveListener) {
+        dataPassListener = listener
     }
 //    override fun onAttach(context: Context) {
 //        super.onAttach(context)

@@ -426,15 +426,15 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             }
     }
     private fun createEventsAndFilRecycler(matchingDocuments: MutableList<DocumentSnapshot>){
-        val yesterday = Calendar.getInstance().time
+        val nowTime = Calendar.getInstance().time
         eventList.clear()
         for (document in matchingDocuments){
 
             val event = document.toObject<Event>()
 
             if (event?.startDateTime != null) {
-                Log.d("!!!", event.startDateTime?.compareTo(yesterday).toString())
-                if(event.startDateTime?.compareTo(yesterday)!! > 0) {
+                Log.d("!!!", event.name + " " +event.startDateTime?.compareTo(nowTime).toString())
+                if(event.startDateTime?.compareTo(nowTime)!! > 0) {
                     eventList.add(event)
                 }
             }

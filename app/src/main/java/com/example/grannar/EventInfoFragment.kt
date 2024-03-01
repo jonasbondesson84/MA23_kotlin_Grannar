@@ -38,7 +38,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventInfoFragment : Fragment(), OnMapReadyCallback {
+class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment.OnSaveListener {
 
 
     // TODO: Rename and change types of parameters
@@ -131,6 +131,7 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback {
         args.putString("createdByUID", selectedEvent?.createdByUID)
         args.putString("docID", selectedEvent?.docID)
         dialogFragment.arguments = args
+        dialogFragment.setOnDataPassListener(this)
 
         dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
     }
@@ -206,6 +207,15 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun getEventInfo(eventID: String) {
+//        db.collection("Events").document(eventID).addSnapshotListener { event, error ->
+//            if(event != null) {
+//                val thisEvent = event.toObject<Event>()
+//                if (thisEvent != null) {
+//                    selectedEvent = thisEvent
+//                    showEventData(thisEvent)
+//                }
+//            }
+//        }
         db.collection("Events").document(eventID).get()
             .addOnSuccessListener {document->
                 if(document != null) {
@@ -250,6 +260,7 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback {
             topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
         }
         locationMap.getMapAsync { googleMap ->
+            googleMap.clear()
             setMap(googleMap, event)
         }
 
@@ -316,5 +327,9 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         selectedEvent?.let { setMap(map, it) }
+    }
+
+    override fun onDataPass(eventID: String) {
+        getEventInfo(eventID)
     }
 }
