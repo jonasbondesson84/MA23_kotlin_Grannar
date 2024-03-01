@@ -43,8 +43,12 @@ import java.util.Locale
 
 class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
    // private var onSaveEventListener: OnSavedEventListener? = null
-    interface OnSaveListener {
+    interface OnEditListener {
         fun onDataPass(eventID: String)
+    }
+    interface OnSaveListener : OnEditListener {
+        fun onSuccessPass(success: Boolean)
+
     }
 
     private var setLocation: LatLng? = null
@@ -66,7 +70,8 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var imageChanged = false
     private lateinit var mapView: MapView
     private lateinit var btnAddEvent: Button
-    private var dataPassListener: OnSaveListener? = null
+    private var dataPassListener: OnEditListener? = null
+    private var successPassListener: OnSaveListener? = null
 
 
 
@@ -86,7 +91,10 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         if(arguments != null) {
             editMode = true
             setData(requireArguments())
+        } else {
+            editMode = false
         }
+        Log.d("!!!", editMode.toString())
         etvDate.apply {
             setOnClickListener {
                 showDatePickerDialog()
@@ -127,6 +135,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
                 }
             } else {
                 if (!etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && lat != null && dateTime != null) {
+                    Log.d("!!!", "we can save")
                     savePhoto()
                 }
                 //dismiss()
@@ -263,6 +272,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
             createdByUID = CurrentUser.userID.toString(),
             imageURL = imageURL
         )
+        Log.d("!!!", editMode.toString())
         if(editMode) {
 
             val docID = arguments?.getString("docID")
@@ -286,6 +296,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         }else {
             db.collection("Events").add(event).addOnSuccessListener {
                 // onSaveEventListener?.onDataPassed(event)
+                successPassListener?.onSuccessPass(true)
                 dismiss()
 
             }
@@ -377,15 +388,19 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is OnSaveListener) {
+        if(context is OnEditListener) {
             dataPassListener = context
         } else {
             Log.d("!!!", "nope")
         }
     }
-    fun setOnDataPassListener(listener: OnSaveListener) {
+    fun setOnDataPassListener(listener: OnEditListener) {
         dataPassListener = listener
     }
+    fun setOnSuccessListener(listener: OnSaveListener) {
+        successPassListener = listener
+    }
+
 //    override fun onAttach(context: Context) {
 //        super.onAttach(context)
 //        if (context is OnSavedEventListener) {

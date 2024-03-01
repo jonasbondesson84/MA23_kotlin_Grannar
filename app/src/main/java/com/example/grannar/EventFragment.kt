@@ -51,7 +51,7 @@ private const val ARG_PARAM2 = "param2"
 //    fun onDataPassed(event: Event)
 //}
 class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener,
-    OnMapReadyCallback {
+    OnMapReadyCallback, AddEventDialogFragment.OnSaveListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -163,8 +163,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         fabAddEvent.setOnClickListener {
             if(CurrentUser.userID != null) {
-                val dialogFragment = AddEventDialogFragment()
-                dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+                addEvent()
+
             } else {
                 openLogInFragment()
             }
@@ -174,6 +174,13 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         return view
     }
+
+    private fun addEvent() {
+        val dialogFragment = AddEventDialogFragment()
+        dialogFragment.setOnSuccessListener(this)
+        dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 //        setMap(map)
@@ -467,6 +474,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 override fun onResume() {
     super.onResume()
     eventMap.onResume()
+
 }
 
     override fun onPause() {
@@ -487,6 +495,18 @@ override fun onResume() {
     override fun onLowMemory() {
         super.onLowMemory()
         eventMap.onLowMemory()
+    }
+
+    override fun onSuccessPass(success: Boolean) {
+        if(success) {
+            getEventsWithinDistance(distanceSet.toInt())
+            getSavedEvents()
+        Log.d("!!!", "this is it")
+        }
+    }
+
+    override fun onDataPass(eventID: String) {
+
     }
 
 

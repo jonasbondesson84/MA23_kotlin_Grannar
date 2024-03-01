@@ -38,7 +38,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EventInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment.OnSaveListener {
+class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment.OnEditListener {
 
 
     // TODO: Rename and change types of parameters
