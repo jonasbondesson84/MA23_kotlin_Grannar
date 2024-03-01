@@ -81,7 +81,8 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
 
         //If a user is in CurrentUsers friendslist, the add friend button gets removed
-        if(CurrentUser.friendsList?.any{it.userID == selectedUser.userID} == true) {
+        Log.d("!!!", CurrentUser.friendsUIDList.toString())
+        if(CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
             holder.addFriend.visibility = View.INVISIBLE
         }
 
@@ -174,51 +175,52 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
     fun removeFriend( position: Int) {
         val selectedUser = searchList[position]
-        val userMap = mapOf(
-            "userID" to selectedUser.userID,
-            "firstName" to selectedUser.firstName,
-            "surname" to selectedUser.surname,
-            "age" to selectedUser.age,
-            "location" to selectedUser.location,
-            "email" to selectedUser.email,
-            "gender" to selectedUser.gender,
-            "profileImageURL" to selectedUser.profileImageURL,
-            "interests" to selectedUser.interests,
-            "aboutMe" to selectedUser.aboutMe,
-            "imageURLs" to selectedUser.imageURLs,
-            "friendsList" to selectedUser.friendsList
-
-        )
+//        val userMap = mapOf(
+//            "userID" to selectedUser.userID,
+//            "firstName" to selectedUser.firstName,
+//            "surname" to selectedUser.surname,
+//            "age" to selectedUser.age,
+//            "location" to selectedUser.location,
+//            "email" to selectedUser.email,
+//            "gender" to selectedUser.gender,
+//            "profileImageURL" to selectedUser.profileImageURL,
+//            "interests" to selectedUser.interests,
+//            "aboutMe" to selectedUser.aboutMe,
+//            "imageURLs" to selectedUser.imageURLs,
+//            "friendsList" to selectedUser.friendsList
+//
+//        )
         db.collection("users").document(CurrentUser.userID.toString()).update(
-            "friendsList",
-            FieldValue.arrayRemove(userMap)
+            "friendsUIDList",
+            FieldValue.arrayRemove(selectedUser.userID.toString())
         )
 
-        CurrentUser.friendsList?.remove(selectedUser)
+        CurrentUser.friendsUIDList?.remove(selectedUser.userID.toString())
         notifyItemRemoved(position)
     }
 
     private fun saveFriend(friend: User, position: Int) {
-        CurrentUser.friendsList?.add(friend)
-        Log.d("!!!", CurrentUser.userID.toString())
-        val userMap = mapOf(
-            "userID" to friend.userID,
-            "firstName" to friend.firstName,
-            "surname" to friend.surname,
-            "age" to friend.age,
-            "location" to friend.location,
-                "email" to friend.email,
-                "gender" to friend.gender,
-                "profileImageURL" to friend.profileImageURL,
-                "interests" to friend.interests,
-                "aboutMe" to friend.aboutMe,
-                "imageURLs" to friend.imageURLs,
-                "friendsList" to friend.friendsList
-
-        )
+//        CurrentUser.friendsList?.add(friend)
+//        Log.d("!!!", CurrentUser.userID.toString())
+//        val userMap = mapOf(
+//            "userID" to friend.userID,
+//            "firstName" to friend.firstName,
+//            "surname" to friend.surname,
+//            "age" to friend.age,
+//            "location" to friend.location,
+//                "email" to friend.email,
+//                "gender" to friend.gender,
+//                "profileImageURL" to friend.profileImageURL,
+//                "interests" to friend.interests,
+//                "aboutMe" to friend.aboutMe,
+//                "imageURLs" to friend.imageURLs,
+//                "friendsList" to friend.friendsList
+//
+//        )
+        CurrentUser.friendsUIDList.add(friend.userID.toString())
         db.collection("users").document(CurrentUser.userID.toString()).update(
-                "friendsList",
-                FieldValue.arrayUnion(userMap)
+                "friendsUIDList",
+                FieldValue.arrayUnion(friend.userID)
             ).addOnCompleteListener {
                 Log.d("!!!", "saved friend")
         }

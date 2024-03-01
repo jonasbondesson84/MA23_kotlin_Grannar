@@ -17,5 +17,4 @@ class Event(
     val locLat: Double? = null,
     val locLng: Double? = null
 
-) {
-}
+)

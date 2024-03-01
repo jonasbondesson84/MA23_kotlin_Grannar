@@ -24,10 +24,14 @@ object CurrentUser {
     var aboutMe: String? = null
     var imageURLs: MutableList<String>? = mutableListOf()
     var friendsList: MutableList<User>? = mutableListOf()
+    var friendsUIDList: MutableList<String> = mutableListOf()
     var unreadMessageIDs: HashMap<String, Int> = hashMapOf()
     private val _unreadMessagesNumber = MutableLiveData<Int>( 0)
     val unreadMessageNumber: LiveData<Int> = _unreadMessagesNumber
     var savedEvent: MutableList<String> = mutableListOf()
+
+    var tabFriendItem = 0
+    var tabEventItem = 0
 
 
 
@@ -50,9 +54,11 @@ object CurrentUser {
         this.aboutMe = user.aboutMe
         this.imageURLs = user.imageURLs
         this.friendsList = user.friendsList
+        this.friendsUIDList = user.friendsUIDList
         this.unreadMessageIDs = user.unreadMessages
         this.savedEvent = user.savedEvents
         getUnreadMessages(user)
+        getFriendList(user)
 
     }
 
@@ -76,6 +82,7 @@ object CurrentUser {
         this.aboutMe = null
         this.imageURLs = null
         this.friendsList?.clear()
+        this.friendsUIDList.clear()
         this.unreadMessageIDs.clear()
         this._unreadMessagesNumber.value = 0
         this.savedEvent.clear()
@@ -88,6 +95,7 @@ object CurrentUser {
                 val currentUser = user.toObject<User>()
                 if(currentUser != null) {
                     setUser(currentUser)
+
                 }
             }
         }
@@ -101,6 +109,21 @@ object CurrentUser {
 //                }
 //
 //            }
+    }
+    fun getFriendList(user: User) {
+        this.friendsList?.clear()
+        for(userID in user.friendsUIDList) {
+            db.collection("users").document(userID).get()
+                .addOnSuccessListener {document->
+                    if(document != null) {
+                        val friend = document.toObject<User>()
+                        if(friend != null) {
+                            this.friendsList?.add(friend)
+                        }
+                    }
+
+                }
+        }
     }
 
 }

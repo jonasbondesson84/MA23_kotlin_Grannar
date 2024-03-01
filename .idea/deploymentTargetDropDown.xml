@@ -3,7 +3,12 @@
   <component name="deploymentTargetDropDown">
     <value>
       <entry key="app">
-        <State />
+
+        
+        <State>
+
+        </State>
+
       </entry>
     </value>
   </component>

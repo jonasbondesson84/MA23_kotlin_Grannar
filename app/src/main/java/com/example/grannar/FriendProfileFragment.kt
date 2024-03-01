@@ -2,6 +2,7 @@ package com.example.grannar
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 
@@ -43,6 +46,10 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvLocation: TextView
     private lateinit var tvAboutMe: TextView
     private var interestChips = mutableListOf<Chip>()
+    private var selectedUser: User? = null
+    private var interestsTextViewList = mutableListOf<TextView>()
+    private lateinit var appBar: MaterialToolbar
+
 
 
 
@@ -78,10 +85,27 @@ class FriendProfileFragment : Fragment() {
 
 
 
-        val appBar = view.findViewById<MaterialToolbar>(R.id.topFriendProfile)
+         appBar = view.findViewById(R.id.topFriendProfile)
 
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+        appBar.setOnMenuItemClickListener {menuItem->
+            when(menuItem.itemId) {
+                R.id.removeFriendMenu-> {
+                    showDeleteDialog(view)
+                    true
+                }
+                R.id.addFriendMenu -> {
+                    addFriend()
+                    true
+                }
+                R.id.sendMessageMenu -> {
+                    sendMessage()
+                    true
+                }
+                else -> false
+            }
         }
 
         val friendUid = args.userID
@@ -92,17 +116,94 @@ class FriendProfileFragment : Fragment() {
         return view
     }
 
+    private fun sendMessage() {
+        val uid = selectedUser?.userID
+        if(uid != null) {
+            val action =
+                FriendProfileFragmentDirections.actionFriendProfileFragmentToChatFragment(uid)
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun addFriend() {
+//        val userMap = mapOf(
+//            "userID" to selectedUser?.userID,
+//            "firstName" to selectedUser?.firstName,
+//            "surname" to selectedUser?.surname,
+//            "age" to selectedUser?.age,
+//            "location" to selectedUser?.location,
+//            "email" to selectedUser?.email,
+//            "gender" to selectedUser?.gender,
+//            "profileImageURL" to selectedUser?.profileImageURL,
+//            "interests" to selectedUser?.interests,
+//            "aboutMe" to selectedUser?.aboutMe,
+//            "imageURLs" to selectedUser?.imageURLs,
+//            "friendsList" to selectedUser?.friendsList
+//
+//        )
+        db.collection("users").document(CurrentUser.userID.toString()).update(
+            "friendsUIDList",
+            FieldValue.arrayUnion(selectedUser?.userID)
+        ).addOnCompleteListener {
+            Log.d("!!!", "saved friend")
+            CurrentUser.friendsUIDList.add(selectedUser?.userID.toString())
+            selectedUser?.let { it1 -> setIcons(it1) }
+        }
+    }
+
+    private fun removeFriend() {
+
+//
+//        val userMap = mapOf(
+//            "userID" to (selectedUser?.userID),
+//            "firstName" to (selectedUser?.firstName ),
+//            "surname" to (selectedUser?.surname),
+//            "age" to (selectedUser?.age),
+//            "location" to (selectedUser?.location ),
+//            "email" to (selectedUser?.email ),
+//            "gender" to selectedUser?.gender,
+//            "profileImageURL" to selectedUser?.profileImageURL,
+//            "interests" to selectedUser?.interests,
+//            "aboutMe" to selectedUser?.aboutMe,
+//            "imageURLs" to selectedUser?.imageURLs,
+//            "friendsList" to selectedUser?.friendsList
+//
+//        )
+        db.collection("users").document(CurrentUser.userID.toString()).update(
+            "friendsUIDList",
+            FieldValue.arrayRemove(selectedUser?.userID)
+        ).addOnSuccessListener {
+            Log.d("!!!", "friend removed")
+            CurrentUser.friendsUIDList.remove(selectedUser?.userID.toString())
+            selectedUser?.let { it1 -> setIcons(it1) }
+        }
+
+        CurrentUser.friendsList?.remove(selectedUser)
+
+    }
+
     private fun getUserInfo(friendUid: String) {
         val db = Firebase.firestore
         db.collection("users").document(friendUid).get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    val selectedUser = document.toObject<User>()
-                    if (selectedUser != null) {
-                        showInfo(selectedUser)
-                    }
+                    selectedUser = document.toObject<User>()
+                    selectedUser?.let { showInfo(it) }
+
                 }
             }
+    }
+
+    private fun setIcons(selectedUser: User) {
+        if(CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
+            Log.d("!!!", "Contains: true")
+            appBar.menu.getItem(0).isVisible = false
+            appBar.menu.getItem(1).isVisible = true
+        } else {
+            Log.d("!!!", "Contains: false")
+            appBar.menu.getItem(1).isVisible = false
+            appBar.menu.getItem(0).isVisible = true
+        }
     }
 
     private fun showInfo(selectedUser: User) {
@@ -112,6 +213,8 @@ class FriendProfileFragment : Fragment() {
         tvLocation.text = selectedUser.location.toString()
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
+
+        setIcons(selectedUser)
 
     }
 
@@ -150,5 +253,23 @@ class FriendProfileFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun showDeleteDialog(view: View) {
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle("Warning")
+                .setMessage("Do you want to remove ${selectedUser?.firstName} from your friendslist?")
+                .setNegativeButton("No") { dialog, which ->
+                    // Respond to negative button press
+
+                }
+                .setPositiveButton("Yes") { dialog, which ->
+                    // Respond to positive button press
+                    removeFriend()
+
+                }
+                .show()
+        }
     }
 }

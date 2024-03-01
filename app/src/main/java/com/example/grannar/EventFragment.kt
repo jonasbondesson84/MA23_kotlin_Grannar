@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,6 +19,7 @@ import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
@@ -34,6 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import java.util.Calendar
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,11 +51,13 @@ private const val ARG_PARAM2 = "param2"
 //interface OnSavedEventListener{
 //    fun onDataPassed(event: Event)
 //}
-class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener{
+class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSliderListener,
+    OnMapReadyCallback, AddEventDialogFragment.OnSaveListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var rvEvents: RecyclerView
+    private lateinit var tabEvent: TabLayout
     private var eventList = mutableListOf<Event>()
     private var eventsInRecyclerView = mutableListOf<Event>()
     private lateinit var db: FirebaseFirestore
@@ -66,6 +71,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private var currentZoomLevel = 10.75f
     private val STARTING_ZOOM = 10.75f
     private var savedEvents = mutableListOf<Event>()
+    private lateinit var tvEmptyList: TextView
 
 
 
@@ -91,9 +97,11 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         eventMap = view.findViewById(R.id.eventMapView)
         eventMap.visibility = View.INVISIBLE
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
-        val tabEvent: TabLayout = view.findViewById(R.id.tabEvent)
+        tabEvent = view.findViewById(R.id.tabEvent)
+        tvEmptyList = view.findViewById(R.id.tvEmptyEventList)
 
         eventMap.onCreate(savedInstanceState)
+        eventMap.getMapAsync(this)
         getSavedEvents()
 
 
@@ -106,16 +114,23 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 0
+                            showEmptyMessage(eventsInRecyclerView)
                         }
                         1 -> {
                             rvEvents.visibility = View.INVISIBLE
                             eventMap.visibility = View.VISIBLE
+                            CurrentUser.tabEventItem = 1
+                            showEmptyMessage(eventsInRecyclerView)
                         }
                         2 -> {
                             rvEvents.visibility = View.VISIBLE
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 2
+                            showEmptyMessage(savedEvents)
+
                         }
                         else -> {
                             Log.d("!!!", "No tab")
@@ -142,12 +157,12 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
             )
         )
-        getEvents()
-        adapter = EventAdapter(view.context, eventList, this)
-        // adapter = EventAdapter(view.context, eventsInRecyclerView, this)
+//        getEvents()
+//        adapter = EventAdapter(view.context, eventList, this)
+         adapter = EventAdapter(view.context, eventsInRecyclerView, this)
         rvEvents.adapter = adapter
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
-       // getEventsWithinDistance(distanceSet.toInt())
+        getEventsWithinDistance(distanceSet.toInt())
         addTextChangeListener()
 
         distanceChip.setOnClickListener {
@@ -159,8 +174,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         fabAddEvent.setOnClickListener {
             if(CurrentUser.userID != null) {
-                val dialogFragment = AddEventDialogFragment()
-                dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+                addEvent()
+
             } else {
                 openLogInFragment()
             }
@@ -169,6 +184,19 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
 
         return view
+    }
+
+
+    private fun addEvent() {
+        val dialogFragment = AddEventDialogFragment()
+        dialogFragment.setOnSuccessListener(this)
+        dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
+    }
+
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+//        setMap(map)
     }
 
     private fun getSavedEvents() {
@@ -180,6 +208,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     if (newEvent != null) {
                         savedEvents.add(newEvent)
                         savedEvents.sortBy { it.startDateTime }
+
                     }
                 }
         }
@@ -191,15 +220,18 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     if(newEvent != null) {
                         savedEvents.add(newEvent)
                         savedEvents.sortBy { it.startDateTime }
+
                     }
                 }
             }
     }
 
-    private fun setMap(googleMap: GoogleMap) {
-        this.googleMap = googleMap
+    private fun setMap(map: GoogleMap) {
+        googleMap = map
+        map.clear()
+
         val adapter = EventMapInfoAdapter(requireContext())
-        googleMap.setInfoWindowAdapter(adapter)
+        map.setInfoWindowAdapter(adapter)
         val userLocation = LatLng(CurrentUser.locLat ?: 59.334591, CurrentUser.locLng ?: 18.063240)
         val circleOptions = CircleOptions()
             .center(userLocation)
@@ -207,7 +239,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             .strokeWidth(2f)
             .strokeColor(Color.RED)
             .fillColor(Color.parseColor("#30FF0000")) // Transparent red color
-        circle = googleMap.addCircle(circleOptions)
+        circle = map.addCircle(circleOptions)
 
         for(event in eventList) {
             val lat = event.locLat
@@ -215,7 +247,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             if(lat != null && lng != null) {
                 val latLng = LatLng(lat, lng)
                 val marker =
-                    googleMap.addMarker(MarkerOptions().position(latLng).title(event.name))
+                    map.addMarker(MarkerOptions().position(latLng).title(event.name))
                 marker?.tag = event
 
             }
@@ -224,8 +256,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
 
         val cameraUpdate =  CameraUpdateFactory.newLatLngZoom(userLocation, currentZoomLevel)
-        googleMap.moveCamera(cameraUpdate)
-        googleMap.setOnInfoWindowClickListener {
+        map.moveCamera(cameraUpdate)
+        map.setOnInfoWindowClickListener {
             val event = it.tag as? Event
             val eventID = event?.docID
             if (event != null) {
@@ -251,6 +283,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         eventsInRecyclerView.clear()
         eventsInRecyclerView.addAll(listToAdd)
         adapter.notifyDataSetChanged()
+
+
 
     }
     private fun filterList(textToSearchFor: String){
@@ -290,27 +324,27 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         val dialogFragment = SignInDialogFragment()
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
     }
-    private fun getEvents() {
-
-        db.collection("Events").addSnapshotListener { snapshot, error ->
-            if (snapshot != null) {
-                eventList.clear()
-                for (document in snapshot.documents) {
-                    val event = document?.toObject<Event>()
-                    if (event != null) {
-                        //set lastRead position
-                        eventList.add(event)
-                    }
-                }
-                eventList.sortBy { it.startDateTime }
-                filterList(etvFilterEvent.text.toString())
-                eventMap.getMapAsync { googleMap ->
-                    setMap(googleMap)
-                }
-
-            }
-        }
-    }
+//    private fun getEvents() {
+//
+//        db.collection("Events").addSnapshotListener { snapshot, error ->
+//            if (snapshot != null) {
+//                eventList.clear()
+//                for (document in snapshot.documents) {
+//                    val event = document?.toObject<Event>()
+//                    if (event != null) {
+//                        //set lastRead position
+//                        eventList.add(event)
+//                    }
+//                }
+//                eventList.sortBy { it.startDateTime }
+//                filterList(etvFilterEvent.text.toString())
+//                eventMap.getMapAsync { googleMap ->
+//                    setMap(googleMap)
+//                }
+//
+//            }
+//        }
+//    }
 
     companion object {
         /**
@@ -365,11 +399,12 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         }
     }
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
-Log.d("!!!", "rh")
+
         // Get all surrounding geo hashes within radius
         val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM.toDouble())
         val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
         // Query for all users with the same hash as in the list
+
         for (b in bounds) {
             val query = db.collection("Events")
                 .orderBy("geoHash")
@@ -413,14 +448,17 @@ Log.d("!!!", "rh")
             }
     }
     private fun createEventsAndFilRecycler(matchingDocuments: MutableList<DocumentSnapshot>){
-
+        val nowTime = Calendar.getInstance().time
         eventList.clear()
         for (document in matchingDocuments){
 
             val event = document.toObject<Event>()
 
-            if (event != null) {
-                eventList.add(event)
+            if (event?.startDateTime != null) {
+                Log.d("!!!", event.name + " " +event.startDateTime?.compareTo(nowTime).toString())
+                if(event.startDateTime?.compareTo(nowTime)!! > 0) {
+                    eventList.add(event)
+                }
             }
 
 
@@ -430,9 +468,18 @@ Log.d("!!!", "rh")
 
     }
 
+    private fun showEmptyMessage(eventList: MutableList<Event>) {
+        if(eventList.size == 0) {
+            tvEmptyList.visibility = View.VISIBLE
+        } else {
+            tvEmptyList.visibility = View.INVISIBLE
+        }
+    }
+
     private fun setListInRecyclerView(categoryFilterChanged: Boolean){
         eventsInRecyclerView.clear()
         eventsInRecyclerView.addAll(eventList)
+        showEmptyMessage(eventsInRecyclerView)
         eventMap.getMapAsync { googleMap ->
             setMap(googleMap)
         }
@@ -448,6 +495,44 @@ Log.d("!!!", "rh")
 //        savedEvents.sortBy { it.startDateTime }
 //        adapter.notifyDataSetChanged()
 //    }
+override fun onResume() {
+    super.onResume()
+    tabEvent.getTabAt(CurrentUser.tabEventItem)?.select()
+    eventMap.onResume()
+
+}
+
+    override fun onPause() {
+        super.onPause()
+        eventMap.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        eventMap.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        eventMap.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        eventMap.onLowMemory()
+    }
+
+    override fun onSuccessPass(success: Boolean) {
+        if(success) {
+            getEventsWithinDistance(distanceSet.toInt())
+            getSavedEvents()
+        Log.d("!!!", "this is it")
+        }
+    }
+
+    override fun onDataPass(eventID: String) {
+
+    }
 
 
 }

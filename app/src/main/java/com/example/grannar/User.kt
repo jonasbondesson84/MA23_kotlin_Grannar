@@ -31,6 +31,7 @@ data class User(
     var aboutMe: String? = null,
     var imageURLs: MutableList<String>? = null,
     var friendsList: MutableList<User>? = mutableListOf<User>(),
+    var friendsUIDList: MutableList<String> = mutableListOf(),
     var unreadMessages: HashMap<String, Int> = hashMapOf(),
     var savedEvents: MutableList<String> = mutableListOf()
 
@@ -136,6 +137,8 @@ data class User(
 
         return distance
     }
+
+
 
 
 
