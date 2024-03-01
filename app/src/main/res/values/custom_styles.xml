@@ -2,9 +2,20 @@
 <resources>
 
     <style name="Circular">
-
         <item name="cornerSize">50%</item>
-
     </style>
+
+
+    <style name="SmallInterestChip">
+        <item name="chipCornerRadius">5dp</item>
+        <item name="chipEndPadding">0dp</item>
+        <item name="chipMinHeight">20dp</item>
+        <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="chipStartPadding">0dp</item>
+        <item name="textEndPadding">10dp</item>
+        <item name="textStartPadding">10dp</item>
+    </style>
+
+
 
 </resources>

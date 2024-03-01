@@ -439,6 +439,9 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             chip.text = category
             val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
             chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+
+            val textColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryTextColorID(category))
+            chip.setTextColor(textColor)
             chip.isChecked = selectedCategories.contains(category)
             categoryChips.add(chip)
             chipGroup.addView(chip)

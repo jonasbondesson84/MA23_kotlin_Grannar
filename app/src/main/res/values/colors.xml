@@ -141,16 +141,30 @@
     <color name="md_theme_surfaceContainerHigh_highContrast">#E3EAE6</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#DEE4E1</color>
 
-    <color name="sportCategory">#FFAAAA</color> <!-- Ljusrosa -->
-    <color name="natureCategory">#AAFFAA</color> <!-- Ljusgrön -->
-    <color name="animalsCategory">#AAAAFF</color> <!-- Ljusblå -->
-    <color name="musicCategory">#FFFFAA</color> <!-- Ljusgul -->
-    <color name="literatureCategory">#FFAAFF</color> <!-- Ljuslila -->
-    <color name="travelCategory">#AAFFFF</color> <!-- Ljuscyan -->
-    <color name="gamesCategory">#FFDCAA</color> <!-- Ljusorange -->
-    <color name="exerciseCategory">#DCAADF</color> <!-- Ljuslila -->
-    <color name="otherCategory">#DDDDDD</color> <!-- Ljusgrå -->
+
+
+    <color name="sportCategory">#f7daed</color> <!-- Ljusrosa -->
+    <color name="natureCategory">#c7ebd1</color> <!-- Ljusgrön -->
+    <color name="animalsCategory">#d4e4fa</color> <!-- Ljusblå -->
+    <color name="musicCategory">#faf6cf</color> <!-- Ljusgul -->
+    <color name="literatureCategory">#d5f0b1</color> <!-- LjusLime -->
+    <color name="travelCategory">#beebe7</color> <!-- Ljuscyan -->
+    <color name="gamesCategory">#fcddc7</color> <!-- Ljusorange -->
+    <color name="exerciseCategory">#dee0fa</color> <!-- UltraMarine -->
+    <color name="otherCategory">#dce3e8</color> <!-- Ljusgrå -->
+
+    <color name="sportCategoryText">#961574</color> <!-- Ljusrosa -->
+    <color name="natureCategoryText">#13664d</color> <!-- Ljusgrön -->
+    <color name="animalsCategoryText">#0d4ea6</color> <!-- Ljusblå -->
+    <color name="musicCategoryText">#1c2b36</color> <!-- Ljusgul -->
+    <color name="literatureCategoryText">#2e5c0e</color> <!-- LjusLime -->
+    <color name="travelCategoryText">#155c5e</color> <!-- Ljuscyan -->
+    <color name="gamesCategoryText">#8f3415</color> <!-- Ljusorange -->
+    <color name="exerciseCategoryText">#3a44b0</color> <!-- UltraMarine -->
+    <color name="otherCategoryText">#3e5463</color> <!-- Ljusgrå -->
+
 
 
 
 </resources>
+
