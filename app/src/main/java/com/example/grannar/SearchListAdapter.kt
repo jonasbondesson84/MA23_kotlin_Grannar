@@ -2,6 +2,7 @@
 package com.example.grannar
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,12 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources.getColorStateList
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
@@ -45,13 +50,13 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         val tvDistance: TextView = itemView.findViewById(R.id.distance)
 
 
-        val interestsTextViewList = mutableListOf<TextView>(
-            itemView.findViewById(R.id.interest1ListItemTextView),
-            itemView.findViewById(R.id.interest2ListItemTextView),
-            itemView.findViewById(R.id.interest3ListItemTextView),
-            itemView.findViewById(R.id.interest4ListItemTextView),
-            itemView.findViewById(R.id.interest5ListItemTextView),
-            itemView.findViewById(R.id.interest6ListItemTextView),
+        val interestsChips = mutableListOf<Chip>(
+            itemView.findViewById(R.id.interest1Chip),
+            itemView.findViewById(R.id.interest2Chip),
+            itemView.findViewById(R.id.interest3Chip),
+            itemView.findViewById(R.id.interest4Chip),
+            itemView.findViewById(R.id.interest5Chip),
+            itemView.findViewById(R.id.interest6Chip),
         )
 
 
@@ -69,7 +74,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
     override fun onBindViewHolder(holder: SearchListAdapter.ViewHolder, position: Int) {
         val selectedUser = searchList[position]
-        clearInterestsTextViews(holder.interestsTextViewList)
+        clearInterestsChips(holder.interestsChips)
         holder.tvName.text = selectedUser.firstName
         holder.tvAge.text = "Age: ${selectedUser.getAgeSpan() }"
         holder.tvDistance.text = "${selectedUser.showDistanceSpan()} away"
@@ -128,7 +133,7 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         val interests = selectedUser.interests
 
         if (interests != null){
-            addInterests(interests, holder.interestsTextViewList)
+            addInterests(interests, holder.interestsChips)
         }
 
 
@@ -146,19 +151,24 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
 
     }
 
-    private fun addInterests(interests: List<Interest>, interestTextViewList: List<TextView> ){
+    private fun addInterests(interests: List<Interest>, interestChips: List<Chip> ){
         interests.forEachIndexed{index, interest ->
-            interestTextViewList[index].text = interest.name
-            val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
+            interestChips[index].text = interest.name
 
-            interestTextViewList[index].setBackgroundColor(context.resources.getColor(categoryColorID))
+            val backgroundColor = ContextCompat.getColor(context, CategoryManager.getCategoryColorId(interest.category))
+            interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+            interestChips[index].isVisible = true
+            interestChips[index].setTextColor(getColorStateList(context, CategoryManager.getCategoryTextColorID(interest.category)))
+
         }
     }
 
-    private fun clearInterestsTextViews(interestTextViewList: List<TextView>){
-        interestTextViewList.forEach{textView ->
-            textView.text = ""
-            textView.setBackgroundColor(0)
+    private fun clearInterestsChips(interestChips: List<Chip>){
+        interestChips.forEach{chip ->
+            chip.text = ""
+
+            chip.chipBackgroundColor = ColorStateList.valueOf(0)
+            chip.isVisible = false
         }
     }
 

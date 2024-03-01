@@ -1,15 +1,20 @@
 package com.example.grannar
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
@@ -40,9 +45,11 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvGender: TextView
     private lateinit var tvLocation: TextView
     private lateinit var tvAboutMe: TextView
+    private var interestChips = mutableListOf<Chip>()
     private var selectedUser: User? = null
     private var interestsTextViewList = mutableListOf<TextView>()
     private lateinit var appBar: MaterialToolbar
+
 
 
 
@@ -68,12 +75,12 @@ class FriendProfileFragment : Fragment() {
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
 
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest1TextView))
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest2TextView))
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest3TextView))
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest4TextView))
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest5TextView))
-        interestsTextViewList.add(view.findViewById(R.id.friendsInterest6TextView))
+        interestChips.add(view.findViewById(R.id.friendsInterest1Chip))
+        interestChips.add(view.findViewById(R.id.friendsInterest2Chip))
+        interestChips.add(view.findViewById(R.id.friendsInterest3Chip))
+        interestChips.add(view.findViewById(R.id.friendsInterest4Chip))
+        interestChips.add(view.findViewById(R.id.friendsInterest5Chip))
+        interestChips.add(view.findViewById(R.id.friendsInterest6Chip))
 
 
 
@@ -213,12 +220,14 @@ class FriendProfileFragment : Fragment() {
 
 
     private fun showInterests(interests: List<Interest>?){
-        interests?.forEachIndexed{ i, interest ->
-            val categoryColorID = interest.category?.let { CategoryManager.getCategoryColorId(it) }
-            interestsTextViewList[i].text = interest.name
-            if (categoryColorID != null) {
-                interestsTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
-            }
+        interests?.forEachIndexed{ index, interest ->
+
+            interestChips[index].text = interest.name
+            val backgroundColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryColorId(interest.category))
+            interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+            interestChips[index].isVisible = true
+            interestChips[index].setTextColor(
+                AppCompatResources.getColorStateList(requireContext(), CategoryManager.getCategoryTextColorID(interest.category)))
 
         }
     }

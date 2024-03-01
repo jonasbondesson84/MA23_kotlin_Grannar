@@ -2,6 +2,8 @@ package com.example.grannar
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,13 +22,18 @@ import android.widget.Toast
 import android.widget.Toolbar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
@@ -61,10 +68,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     private var imageUri: Uri? = null
     private var personalImageView: ImageView? = null
     private var profileImageView: ImageView? = null
-    private var interestTextViewList = mutableListOf<TextView>()
-    private var interestConstraintList = mutableListOf<ConstraintLayout>()
-    private lateinit var lastInterestImageView: ImageView
-    val MAX_INTERESTS = 6
+    private var interestChips = mutableListOf<Chip>()
+    private val MAX_INTERESTS = 6
 
     private lateinit var selectedImageUri: Uri
     private lateinit var getContent: ActivityResultLauncher<String>
@@ -125,21 +130,12 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
 
-        interestTextViewList.add(view.findViewById(R.id.interest1TextView))
-        interestTextViewList.add(view.findViewById(R.id.interest2TextView))
-        interestTextViewList.add(view.findViewById(R.id.interest3TextView))
-        interestTextViewList.add(view.findViewById(R.id.interest4TextView))
-        interestTextViewList.add(view.findViewById(R.id.interest5TextView))
-        interestTextViewList.add(view.findViewById(R.id.interest6TextView))
-
-        interestConstraintList.add(view.findViewById(R.id.interest1Constraint))
-        interestConstraintList.add(view.findViewById(R.id.interest2Constraint))
-        interestConstraintList.add(view.findViewById(R.id.interest3Constraint))
-        interestConstraintList.add(view.findViewById(R.id.interest4Constraint))
-        interestConstraintList.add(view.findViewById(R.id.interest5Constraint))
-        interestConstraintList.add(view.findViewById(R.id.interest6Constraint))
-
-        lastInterestImageView = view.findViewById(R.id.deleteInterest6ImageView)
+        interestChips.add(view.findViewById(R.id.profileInterest1Chip))
+        interestChips.add(view.findViewById(R.id.profileInterest2Chip))
+        interestChips.add(view.findViewById(R.id.profileInterest3Chip))
+        interestChips.add(view.findViewById(R.id.profileInterest4Chip))
+        interestChips.add(view.findViewById(R.id.profileInterest5Chip))
+        interestChips.add(view.findViewById(R.id.profileInterest6Chip))
 
         Log.d("!!!", "${CurrentUser.interests?.size}")
 
@@ -332,73 +328,45 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
     }
 
-    private fun showInterest(interests: MutableList<Interest>?) {
-
-        val interest1TextView = view?.findViewById<TextView>(R.id.interest1TextView)
-        val interest2TextView = view?.findViewById<TextView>(R.id.interest2TextView)
-        val interest3TextView = view?.findViewById<TextView>(R.id.interest3TextView)
-        val interest4TextView = view?.findViewById<TextView>(R.id.interest4TextView)
-        val interest5TextView = view?.findViewById<TextView>(R.id.interest5TextView)
-        val interest6TextView = view?.findViewById<TextView>(R.id.interest6TextView)
-
-
-        if (interests != null && interests.size >= 6) {
-            interest1TextView?.text = interests[0].name
-            interest2TextView?.text = interests[1].name
-            interest3TextView?.text = interests[2].name
-            interest4TextView?.text = interests[3].name
-            interest5TextView?.text = interests[4].name
-            interest6TextView?.text = interests[5].name
-        } else {
-            interest1TextView?.text = " "
-            interest2TextView?.text = " "
-            interest3TextView?.text = " "
-            interest4TextView?.text = " "
-            interest5TextView?.text = " "
-            interest6TextView?.text = " "
-        }
-    }
-
     private fun showInterestsWithColor(interests: MutableList<Interest>?) {
         if (interests != null) {
-            interests?.forEachIndexed { i, interest ->
-                interestTextViewList[i].text = interest.name
-                val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
-                interestTextViewList[i].setBackgroundColor(resources.getColor(categoryColorID))
-                // interest.category?.colorID?.let { interestTextViewList[i].setBackgroundColor(resources.getColor(it)) }
-                interestConstraintList[i].visibility = View.VISIBLE
-                interestConstraintList[i].setOnClickListener {
-                    deleteInterest(i)
-                }
-                if (i == MAX_INTERESTS - 1) {
-                    lastInterestImageView.setImageResource(R.drawable.baseline_close_24)
-                    lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_error))
+            interests?.forEachIndexed { index, interest ->
 
+                interestChips[index].text = interest.name
+                val backgroundColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryColorId(interest.category))
+                interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+                interestChips[index].isVisible = true
+                interestChips[index].setTextColor(
+                    AppCompatResources.getColorStateList(requireContext(), CategoryManager.getCategoryTextColorID(interest.category)))
+                interestChips[index].setChipIconResource(R.drawable.baseline_close_24)
+                interestChips[index].setOnClickListener {
+                    deleteInterest(index)
                 }
             }
-            interests?.size?.let { hideConstraints(it) }
+            interests?.size?.let { hideInterestChips(it) }
 
         } else {
-            hideConstraints(0)
+            hideInterestChips(0)
         }
     }
 
-    private fun hideConstraints(numberToBeVisible: Int) {
-        interestConstraintList.forEachIndexed() { i, constraintLayout ->
+    private fun hideInterestChips(numberToBeVisible: Int) {
+        interestChips.forEachIndexed() { i, chip ->
             if (i >= numberToBeVisible) {
                 if (i == MAX_INTERESTS - 1) {
-                    interestTextViewList[i].text = "Add Interest"
-                    constraintLayout.visibility = View.VISIBLE
-                    interestTextViewList[i].setTextColor(resources.getColor(R.color.md_theme_primary))
-                    lastInterestImageView.setImageResource(R.drawable.baseline_add_24)
-                    lastInterestImageView.setBackgroundColor(resources.getColor(R.color.md_theme_primary))
-                    interestTextViewList[i].setBackgroundColor(0)
-                    constraintLayout.setOnClickListener {
+                    chip.text = "Add Interest"
+                    val backgroundColor = ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
+                    chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
+                    chip.setTextColor(Color.WHITE)
+                    chip.isVisible = true
+                    chip.setChipIconResource(R.drawable.baseline_add_24)
+                    chip.setOnClickListener {
                         startAddInterestDialog()
                     }
+//                    }
 
                 } else {
-                    constraintLayout.visibility = View.INVISIBLE
+                    chip.visibility = View.INVISIBLE
 
                 }
             }
