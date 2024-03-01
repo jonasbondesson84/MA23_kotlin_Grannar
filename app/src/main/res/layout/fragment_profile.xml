@@ -128,17 +128,90 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/squareTextView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/squareInterestConstraintLayout"
             android:layout_width="360dp"
-            android:layout_height="72dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:background="@drawable/box"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" >
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/profileInterest1Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/profileInterest2Chip"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/profileInterest3Chip"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="28dp"
+                app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+            <com.google.android.material.chip.Chip
+
+                android:id="@+id/profileInterest4Chip"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="10dp"
+                android:text=""
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/profileInterest5Chip"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/profileInterest6Chip"
+                style="@style/SmallInterestChip.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+
+                android:layout_marginEnd="28dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileInterest2Chip" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
             android:id="@+id/profileAbout_meEditText"
@@ -153,7 +226,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.54"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout" />
 
         <TextView
             android:id="@+id/textView6"
@@ -162,7 +235,7 @@
             android:text="Interest"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/squareTextView"
+            app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.147"
             app:layout_constraintStart_toStartOf="parent"
@@ -179,7 +252,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.132"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareTextView"
+            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintVertical_bias="1.0" />
 
 
@@ -224,214 +297,6 @@
             app:layout_constraintStart_toStartOf="@+id/frameImageView"
             app:layout_constraintTop_toTopOf="@+id/frameImageView"
             app:layout_constraintVertical_bias="1.0" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest1Constraint"
-            android:layout_width="0dp"
-
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/interest2Constraint"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView">
-
-            <TextView
-                android:id="@+id/interest1TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest1ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteInterest1ImageView"
-                android:layout_width="14dp"
-                android:layout_height="0dp"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest2Constraint"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/interest3Constraint"
-            app:layout_constraintStart_toEndOf="@+id/interest1Constraint"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView">
-
-            <TextView
-                android:id="@+id/interest2TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-                android:textAlignment="textStart"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest2ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteInterest2ImageView"
-                android:layout_width="14dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="0dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest3Constraint"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintStart_toEndOf="@+id/interest2Constraint"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView">
-
-            <ImageView
-                android:id="@+id/deleteInterest3ImageView"
-                android:layout_width="14dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/interest3TextView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest3ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest4Constraint"
-            android:layout_width="0dp"
-
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/interest5Constraint"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toBottomOf="@+id/interest1Constraint">
-
-            <TextView
-                android:id="@+id/interest4TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest4ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteInterest4ImageView"
-                android:layout_width="14dp"
-                android:layout_height="0dp"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest5Constraint"
-            android:layout_width="0dp"
-
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/interest6Constraint"
-            app:layout_constraintStart_toEndOf="@+id/interest4Constraint"
-            app:layout_constraintTop_toBottomOf="@+id/interest1Constraint">
-
-            <TextView
-                android:id="@+id/interest5TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest5ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteInterest5ImageView"
-                android:layout_width="14dp"
-                android:layout_height="0dp"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/interest6Constraint"
-            android:layout_width="0dp"
-
-            android:layout_height="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintStart_toEndOf="@+id/interest5Constraint"
-            app:layout_constraintTop_toBottomOf="@+id/interest2Constraint">
-
-            <TextView
-                android:id="@+id/interest6TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="5dp"
-                android:text=""
-
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/deleteInterest6ImageView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteInterest6ImageView"
-                android:layout_width="14dp"
-                android:layout_height="0dp"
-                android:background="@drawable/background_delete"
-                android:src="@drawable/baseline_close_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImageView"
@@ -481,7 +346,7 @@
             android:layout_weight="1"
             android:backgroundTint="#00FFFFFF"
             android:src="@drawable/baseline_edit_24"
-            app:layout_constraintBottom_toTopOf="@+id/squareTextView"
+            app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.975"
             app:layout_constraintStart_toStartOf="parent" />

@@ -109,7 +109,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/squareTextView"
+            android:id="@+id/squareInterestConstraintLayout"
             android:layout_width="344dp"
             android:layout_height="72dp"
             android:layout_marginTop="28dp"
@@ -135,7 +135,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.54"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout" />
 
         <TextView
             android:id="@+id/textView6"
@@ -144,7 +144,7 @@
             android:text="Interest"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/squareTextView"
+            app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.147"
             app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +161,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.132"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareTextView"
+            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintVertical_bias="1.0" />
 
 
@@ -199,8 +199,8 @@
             style="@style/SmallInterestChip.NonClickable"
             android:layout_marginStart="28dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
+            app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
+            app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest2Chip"
@@ -211,7 +211,7 @@
             app:layout_constraintEnd_toStartOf="@+id/friendsInterest3Chip"
             app:layout_constraintHorizontal_bias="0.509"
             app:layout_constraintStart_toEndOf="@+id/friendsInterest1Chip"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
+            app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest3Chip"
@@ -220,8 +220,8 @@
             style="@style/SmallInterestChip.NonClickable"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="40dp"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
-            app:layout_constraintTop_toTopOf="@+id/squareTextView" />
+            app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
+            app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
 
         <com.google.android.material.chip.Chip
 
@@ -241,7 +241,7 @@
             android:layout_marginStart="28dp"
             style="@style/SmallInterestChip.NonClickable"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@+id/squareTextView"
+            app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintTop_toBottomOf="@+id/friendsInterest1Chip" />
 
         <com.google.android.material.chip.Chip
@@ -262,7 +262,7 @@
             android:layout_marginTop="8dp"
             style="@style/SmallInterestChip.NonClickable"
             android:layout_marginEnd="40dp"
-            app:layout_constraintEnd_toEndOf="@+id/squareTextView"
+            app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintTop_toBottomOf="@+id/friendsInterest3Chip" />
 
 
