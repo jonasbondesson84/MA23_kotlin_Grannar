@@ -10,10 +10,19 @@
         <item name="chipCornerRadius">5dp</item>
         <item name="chipEndPadding">0dp</item>
         <item name="chipMinHeight">20dp</item>
-        <item name="chipMinTouchTargetSize">0dp</item>
         <item name="chipStartPadding">0dp</item>
         <item name="textEndPadding">10dp</item>
         <item name="textStartPadding">10dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:visibility">invisible</item>
+
+    </style>
+
+    <style name="SmallInterestChip.NonClickable">
+        <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="android:clickable">false</item>
+
     </style>
 
 

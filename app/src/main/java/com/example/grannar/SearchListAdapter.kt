@@ -153,22 +153,19 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
     private fun addInterests(interests: List<Interest>, interestChips: List<Chip> ){
         interests.forEachIndexed{index, interest ->
             interestChips[index].text = interest.name
-//            val categoryColorID = CategoryManager.getCategoryColorId(interest.category)
-//            val color = context.resources.getColor(categoryColorID)
 
             val backgroundColor = ContextCompat.getColor(context, CategoryManager.getCategoryColorId(interest.category))
             interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
             interestChips[index].isVisible = true
             interestChips[index].setTextColor(getColorStateList(context, CategoryManager.getCategoryTextColorID(interest.category)))
 
-         //   interestChips[index].setBackgroundColor(context.resources.getColor(categoryColorID))
         }
     }
 
     private fun clearInterestsChips(interestChips: List<Chip>){
         interestChips.forEach{chip ->
             chip.text = ""
-           // textView.setBackgroundColor(0)
+
             chip.chipBackgroundColor = ColorStateList.valueOf(0)
             chip.isVisible = false
         }
