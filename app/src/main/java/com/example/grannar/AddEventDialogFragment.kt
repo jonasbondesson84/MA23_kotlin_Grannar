@@ -390,13 +390,20 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         super.onAttach(context)
         if(context is OnEditListener) {
             dataPassListener = context
-        } else {
+        }  else {
             Log.d("!!!", "nope")
+
         }
+    }
+    override fun onDetach() {
+        super.onDetach()
+        dataPassListener = null
+        successPassListener = null// Avregistrera lyssnare för att undvika minnesläckor
     }
     fun setOnDataPassListener(listener: OnEditListener) {
         dataPassListener = listener
     }
+
     fun setOnSuccessListener(listener: OnSaveListener) {
         successPassListener = listener
     }
