@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -56,6 +57,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var rvEvents: RecyclerView
+    private lateinit var tabEvent: TabLayout
     private var eventList = mutableListOf<Event>()
     private var eventsInRecyclerView = mutableListOf<Event>()
     private lateinit var db: FirebaseFirestore
@@ -69,6 +71,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     private var currentZoomLevel = 10.75f
     private val STARTING_ZOOM = 10.75f
     private var savedEvents = mutableListOf<Event>()
+    private lateinit var tvEmptyList: TextView
 
 
 
@@ -94,7 +97,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         eventMap = view.findViewById(R.id.eventMapView)
         eventMap.visibility = View.INVISIBLE
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
-        val tabEvent: TabLayout = view.findViewById(R.id.tabEvent)
+        tabEvent = view.findViewById(R.id.tabEvent)
+        tvEmptyList = view.findViewById(R.id.tvEmptyEventList)
 
         eventMap.onCreate(savedInstanceState)
         eventMap.getMapAsync(this)
@@ -110,16 +114,23 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 0
+                            showEmptyMessage(eventsInRecyclerView)
                         }
                         1 -> {
                             rvEvents.visibility = View.INVISIBLE
                             eventMap.visibility = View.VISIBLE
+                            CurrentUser.tabEventItem = 1
+                            showEmptyMessage(eventsInRecyclerView)
                         }
                         2 -> {
                             rvEvents.visibility = View.VISIBLE
                             eventMap.visibility = View.INVISIBLE
                             adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
                             rvEvents.adapter = adapter
+                            CurrentUser.tabEventItem = 2
+                            showEmptyMessage(savedEvents)
+
                         }
                         else -> {
                             Log.d("!!!", "No tab")
@@ -175,11 +186,13 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         return view
     }
 
+
     private fun addEvent() {
         val dialogFragment = AddEventDialogFragment()
         dialogFragment.setOnSuccessListener(this)
         dialogFragment.show(parentFragmentManager, "AddEventDialogFragment")
     }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -195,6 +208,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     if (newEvent != null) {
                         savedEvents.add(newEvent)
                         savedEvents.sortBy { it.startDateTime }
+
                     }
                 }
         }
@@ -206,6 +220,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     if(newEvent != null) {
                         savedEvents.add(newEvent)
                         savedEvents.sortBy { it.startDateTime }
+
                     }
                 }
             }
@@ -453,9 +468,18 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
     }
 
+    private fun showEmptyMessage(eventList: MutableList<Event>) {
+        if(eventList.size == 0) {
+            tvEmptyList.visibility = View.VISIBLE
+        } else {
+            tvEmptyList.visibility = View.INVISIBLE
+        }
+    }
+
     private fun setListInRecyclerView(categoryFilterChanged: Boolean){
         eventsInRecyclerView.clear()
         eventsInRecyclerView.addAll(eventList)
+        showEmptyMessage(eventsInRecyclerView)
         eventMap.getMapAsync { googleMap ->
             setMap(googleMap)
         }
@@ -473,6 +497,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 //    }
 override fun onResume() {
     super.onResume()
+    tabEvent.getTabAt(CurrentUser.tabEventItem)?.select()
     eventMap.onResume()
 
 }
