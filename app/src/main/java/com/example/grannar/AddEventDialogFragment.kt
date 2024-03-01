@@ -13,10 +13,13 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -37,7 +40,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class AddEventDialogFragment: DialogFragment() {
+class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
    // private var onSaveEventListener: OnSavedEventListener? = null
 
     private var setLocation: LatLng? = null
@@ -55,6 +58,10 @@ class AddEventDialogFragment: DialogFragment() {
     private var lng: Double? = null
     private var geohash: String? = null
     private var imageUri: Uri? = null
+    private var editMode = false
+    private var imageChanged = false
+    private lateinit var mapView: MapView
+    private lateinit var btnAddEvent: Button
 
 
 
@@ -69,6 +76,12 @@ class AddEventDialogFragment: DialogFragment() {
         etvName = view.findViewById(R.id.etvEventName)
         etvDesc = view.findViewById(R.id.etvEventDescription)
         imAddImage = view.findViewById(R.id.imEventAddImage)
+        btnAddEvent = view.findViewById(R.id.eventAddButton)
+
+        if(arguments != null) {
+            editMode = true
+            setData(requireArguments())
+        }
         etvDate.apply {
             setOnClickListener {
                 showDatePickerDialog()
@@ -97,16 +110,24 @@ class AddEventDialogFragment: DialogFragment() {
             dismiss()
         }
 
-        view.findViewById<Button>(R.id.eventAddButton).setOnClickListener {
+        btnAddEvent.setOnClickListener {
 //            if(setLocation != null) {
 //                onDataPassListener?.onDataPassed(setLocation!!)
-                if( !etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && lat != null && dateTime != null) {
-                   savePhoto()
-               }
+            if(editMode) {
+                if(imageChanged) {
+                    savePhoto()
+                } else {
+                    val imageURL = arguments?.getString("imageURL")
+                    saveEvent(imageURL)
+                }
+            } else {
+                if (!etvName.text.isNullOrBlank() && !etvDesc.text.isNullOrBlank() && lat != null && dateTime != null) {
+                    savePhoto()
+                }
                 //dismiss()
 
 //            }
-
+            }
 
 
 
@@ -115,9 +136,9 @@ class AddEventDialogFragment: DialogFragment() {
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
-        val map = view.findViewById<MapView>(R.id.dialogEventMapView)
-        map.onCreate(savedInstanceState)
-        map.getMapAsync { googleMap ->
+        mapView = view.findViewById(R.id.dialogEventMapView)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync { googleMap ->
 
             val latLng = com.google.android.gms.maps.model.LatLng(
                 59.334591,
@@ -126,6 +147,16 @@ class AddEventDialogFragment: DialogFragment() {
             val cameraUpdate = userLocation?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) } ?: CameraUpdateFactory.newLatLngZoom(latLng, 15f)
             googleMap.moveCamera(cameraUpdate)
             var marker: Marker? = null
+            if(editMode) {
+                lat = arguments?.getDouble("lat")?.toDouble()
+                lng = arguments?.getDouble("lng")?.toDouble()
+                val savedLatLng = lat?.let {
+                    lng?.let { it1 -> LatLng(it, it1) }
+                }
+
+                marker = savedLatLng?.let { MarkerOptions().position(it) }
+                    ?.let { googleMap.addMarker(it) }
+            }
 
             googleMap.setOnMapClickListener { latLng ->
                 marker?.remove()
@@ -148,6 +179,24 @@ class AddEventDialogFragment: DialogFragment() {
 
 
     }
+
+    private fun setData(arguments: Bundle) {
+        btnAddEvent.text = "Save"
+        etvName.setText(arguments.getString("name"))
+        etvDesc.setText(arguments.getString("desc"))
+        dateTime = arguments.getSerializable("startDateTime") as Date?
+        val formattedDate =
+            SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(dateTime)
+        etvDate.setText(formattedDate)
+        val imageURL = arguments.getString("imageURL")
+        Glide
+            .with(requireContext())
+            .load(imageURL)
+            .error(R.drawable.baseline_add_photo_alternate_24)
+            .into(imAddImage)
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -159,6 +208,7 @@ class AddEventDialogFragment: DialogFragment() {
                 imAddImage.setImageURI(uri)
 
                 imageUri = uri // spara för uppladdning
+                imageChanged = true
 
             }
         } else {
@@ -167,6 +217,7 @@ class AddEventDialogFragment: DialogFragment() {
     }
 
     private fun savePhoto() {
+
             if (imageUri != null) { //If you have selected an image, if first saves the image to firebase.storage, then saves the post in firebase
                 val fileName = "image_${System.currentTimeMillis()}.jpg"
                 val filePath = imageUri
@@ -181,7 +232,8 @@ class AddEventDialogFragment: DialogFragment() {
                         }
                     } else {
                         // Image upload failed
-                        Toast.makeText(requireContext(),"Error uploading file", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Error uploading file", Toast.LENGTH_SHORT)
+                            .show()
 
                     }
                 }
@@ -189,10 +241,12 @@ class AddEventDialogFragment: DialogFragment() {
                 saveEvent(null)
             }
 
+
     }
 
 
     private fun saveEvent(imageURL: String?) {
+
         val event = Event(
             name = etvName.text.toString(),
             description = etvDesc.text.toString(),
@@ -204,10 +258,30 @@ class AddEventDialogFragment: DialogFragment() {
             createdByUID = CurrentUser.userID.toString(),
             imageURL = imageURL
         )
-        db.collection("Events").add(event).addOnSuccessListener {
-           // onSaveEventListener?.onDataPassed(event)
-            dismiss()
+        if(editMode) {
 
+            val docID = arguments?.getString("docID")
+            Log.d("!!!", "docID: $docID")
+            if (docID != null) {
+                db.collection("Events").document(docID).update(
+                    "name", event.name,
+                "description", event.description,
+                    "locLng", lng,
+                    "locLat", lat,
+                    "startDateTime", dateTime,
+                    "geoHash", geohash,
+                    "imageURL", imageURL)
+                    .addOnSuccessListener {
+                        Log.d("!!!", "event updated")
+                        dismiss()
+                    }
+            }
+        }else {
+            db.collection("Events").add(event).addOnSuccessListener {
+                // onSaveEventListener?.onDataPassed(event)
+                dismiss()
+
+            }
         }
     }
     private fun showDatePickerDialog() {
@@ -263,6 +337,34 @@ class AddEventDialogFragment: DialogFragment() {
             etvDate.setText(formattedDate)
         }
 
+
+    }
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
 
     }
 //    override fun onAttach(context: Context) {
