@@ -410,6 +410,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                 .orderBy("geoHash")
                 .startAt(b.startHash)
                 .endAt(b.endHash)
+                .limit(30)
             tasks.add(query.get())
         }
         return tasks
