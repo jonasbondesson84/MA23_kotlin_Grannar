@@ -3,8 +3,11 @@ package com.example.grannar
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.media.SoundPool.OnLoadCompleteListener
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +18,7 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -30,6 +34,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -45,7 +50,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EditProfileDialogFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EditProfileDialogFragment : DialogFragment() {
+class EditProfileDialogFragment : DialogFragment(){
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -61,14 +66,6 @@ class EditProfileDialogFragment : DialogFragment() {
     private var userLocation: LatLng? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,8 +75,8 @@ class EditProfileDialogFragment : DialogFragment() {
         val rootView: View = inflater.inflate(R.layout.dialog_fragment_edit_profile, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         genderRadioGroup = rootView.findViewById(R.id.genderRadioGroup)
-
-
+        firstNameEditText = rootView.findViewById(R.id.firstNameEditText)
+        surNameEditText = rootView.findViewById(R.id.surnameEditText)
         birthdayEditText = rootView.findViewById(R.id.birthDateEditText)
         birthdayEditText.apply {
             setOnClickListener {
@@ -107,6 +104,7 @@ class EditProfileDialogFragment : DialogFragment() {
 
 
         rootView.findViewById<Button>(R.id.saveButton).setOnClickListener {
+            Log.d("!!!", "Savebutton clicked")
             updateUserInformation()
         }
 
@@ -118,29 +116,61 @@ class EditProfileDialogFragment : DialogFragment() {
 
 
     private fun updateUserInformation() {
-        val userID = "${CurrentUser.userID}"
+        Log.d("!!!", "fun updateUserInfo")
+        //val userID = "${CurrentUser.userID}"
+
+        val userID = "wvoyMZOsavbU0SLaVFDjoRMtY6u1"
+        val firstName = "LInnea"
+        val surname = "Frida"
+        val birthDate ="1990/01/01"
+        val gender="male"
 
         val user = User(
-            userID = userID,
-            firstName = firstNameEditText.text.toString(),
-            surname = surNameEditText.text.toString(),
-            age = calculateAge(birthDate),
-            gender = getGender(),
-            location = location,
+            userID,
+            firstName,
+            surname,
+            birthDate,
+            gender,
+            location
+            //firstNameEditText.text.toString(),
+            //surNameEditText.text.toString(),
+            //getBirthDate(),
+            //getGender(),
+            //location,
         )
 
         val db = Firebase.firestore
+        Log.d("!!!","FIrestore instance ${db}")
         val userRef = db.collection("users").document(userID)
+        Log.d("!!!", "${userRef}")
 
         userRef.set(user).addOnCompleteListener { task ->
+            Log.d("!!!", "Task result: ${task.result}")
+            Log.d("!!!", "Task exception: ${task.exception}")
             if (task.isSuccessful) {
+                Log.d("!!!", "${task.isSuccessful} Update successful")
                 dismiss()
+                Log.d("!!!", "${dismiss()}, dissmiss")
             } else {
+                Log.d("!!!", "Update failed", task.exception)
                 Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
                     .show()
             }
         }
     }
+
+    fun getBirthDate(): String? {
+        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        return try {
+            LocalDate.parse(birthdayEditText.text.toString(), formatter).toString()
+        } catch (e: DateTimeParseException) {
+            // Handle the case where parsing fails, log an error, or return null
+            Log.e("User", "Error parsing birth date: ${birthdayEditText}", e)
+            null
+        }
+    }
+
+
 
 
 
