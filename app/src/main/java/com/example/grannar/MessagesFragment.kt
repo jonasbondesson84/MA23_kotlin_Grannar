@@ -9,13 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -63,6 +67,12 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
         db = Firebase.firestore
         val view = inflater.inflate(R.layout.fragment_messages, container, false)
         val rvMessageList = view.findViewById<RecyclerView>(R.id.rvMessageList)
+
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialElevationScale(/* growing= */ false)
+        reenterTransition = MaterialElevationScale(/* growing= */ true)
+
         rvMessageList.layoutManager = LinearLayoutManager(view.context)
         rvMessageList.addItemDecoration(
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
@@ -276,12 +286,13 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
             }
     }
 
-    override fun goToMessage(user: User) {
+    override fun goToMessage(user: User, card: ConstraintLayout) {
         val uid = user.userID
         if(uid != null) {
+            val extra = FragmentNavigatorExtras(card to uid)
             val action =
                 MessagesFragmentDirections.actionMessagesFragmentToChatFragment(uid)
-            findNavController().navigate(action)
+            findNavController().navigate(action, extra)
         }
     }
 }

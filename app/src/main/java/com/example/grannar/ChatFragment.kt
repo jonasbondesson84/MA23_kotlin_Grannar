@@ -1,6 +1,7 @@
 package com.example.grannar
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -49,6 +52,7 @@ class ChatFragment : Fragment() {
     private var docExist: Boolean = false
     private lateinit var rvChatMessage: RecyclerView
     private var fromProfileImageURL = ""
+    private lateinit var constMessage: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +75,30 @@ class ChatFragment : Fragment() {
         imImage = view.findViewById(R.id.imChatImage)
         val bottomNavigationView: BottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
         bottomNavigationView.menu.findItem(R.id.messagesFragment).isChecked = true
+        constMessage = view.findViewById(R.id.constMessage)
 
+
+            constMessage.transitionName = args.userID
+
+//            image = view.findViewById(R.id.friendProfileImageView)
+//        image.transitionName = friendUid
+//
+//        val animation = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+//        sharedElementEnterTransition = animation
+//        sharedElementReturnTransition = animation
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+
+        }
+        sharedElementReturnTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+        }
         getDocID()
 
         getUserInfo(args.userID.toString(), view)

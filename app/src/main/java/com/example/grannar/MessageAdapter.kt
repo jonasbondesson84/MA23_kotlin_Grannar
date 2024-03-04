@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
@@ -20,7 +21,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
 
     private val layoutInflater = LayoutInflater.from(context)
     interface MyAdapterListener {
-        fun goToMessage(user: User)
+        fun goToMessage(user: User, card: ConstraintLayout)
 
     }
     var onUserClick: ((User) -> Unit)? = null
@@ -30,6 +31,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessageChatMessage)
         val tvTimeStamp : TextView = itemView.findViewById(R.id.tvMessageTimeStamp)
         val imProfileImage: ImageView = itemView.findViewById(R.id.imMesssageImage)
+        val constMessage: ConstraintLayout = itemView.findViewById(R.id.constMessage)
 
     }
 
@@ -43,6 +45,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         val message = chatList[position].lastMessage
         val fromUser = chatList[position].fromUser
         holder.tvName.text = fromUser.firstName
+        holder.constMessage.transitionName = fromUser.userID
 
         if(message.fromID.toString() == CurrentUser.userID.toString()) {
             holder.tvMessage.text = "You: ${message.text} "
@@ -64,7 +67,7 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
             .into(holder.imProfileImage)
 
         holder.itemView.setOnClickListener {
-            listener.goToMessage(fromUser)
+            listener.goToMessage(fromUser, holder.constMessage)
         }
 
     }
