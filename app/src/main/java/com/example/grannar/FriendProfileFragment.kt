@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -13,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -49,6 +51,7 @@ class FriendProfileFragment : Fragment() {
     private var selectedUser: User? = null
     private var interestsTextViewList = mutableListOf<TextView>()
     private lateinit var appBar: MaterialToolbar
+    private lateinit var personalImageView: ImageView
 
 
 
@@ -74,6 +77,7 @@ class FriendProfileFragment : Fragment() {
         tvAge = view.findViewById(R.id.friendProfileAgeTextView)
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
+        personalImageView = view.findViewById(R.id.personalImageView)
 
         interestChips.add(view.findViewById(R.id.friendsInterest1Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest2Chip))
@@ -214,7 +218,17 @@ class FriendProfileFragment : Fragment() {
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
+
+        selectedUser.personalImageUrl?.let { imageUrl ->
+
+            Glide.with(this)
+                .load(selectedUser.personalImageUrl)
+                .into(personalImageView)
+        }
+
         setIcons(selectedUser)
+
+
 
     }
 

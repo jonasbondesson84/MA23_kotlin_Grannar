@@ -325,6 +325,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 callback(null)
             }
 
+
+
+
         }
     }
 
@@ -446,18 +449,18 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         userRef.update("perosnalImageUrl", imageUrl)
             .addOnSuccessListener {
                 Log.d("Firestore", "Perosnal image URL updated ")
-                saveImageUrlToPreferences(imageUrl)
+
 
             }
             .addOnFailureListener{ e ->
-                Log.e("Firestore", "Error updating perosnal image URL", e)
-            }
+               Log.e("Firestore", "Error updating perosnal image URL", e)
+           }
     }
 
-    private fun saveImageUrlToPreferences(imageUrl: String) {
-        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
-        sharedPreferences.edit().putString("personalImageUrl", imageUrl).apply()
-    }
+   // private fun saveImageUrlToPreferences(imageUrl: String) {
+       // val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
+    //    sharedPreferences.edit().putString("personalImageUrl", imageUrl).apply()
+  // }
 
 
     private fun saveAboutMe(newAboutMe: String) {
