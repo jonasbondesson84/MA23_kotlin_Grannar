@@ -214,7 +214,7 @@ class FriendProfileFragment : Fragment() {
         tvName.text = selectedUser.firstName
         tvGender.text = selectedUser.gender
         tvAge.text = selectedUser.getAgeSpan()
-        tvLocation.text = selectedUser.location.toString()
+        tvLocation.text = selectedUser.showDistanceSpan()
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
@@ -224,9 +224,12 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun showProfileImage(selectedUser: User){
-        Glide.with(this)
-            .load(selectedUser.profileImageURL)
-            .into(ivFriendProfile)
+
+        if (selectedUser.profileImageURL != null){
+            Glide.with(this)
+                .load(selectedUser.profileImageURL)
+                .into(ivFriendProfile)
+        }
 
     }
 
