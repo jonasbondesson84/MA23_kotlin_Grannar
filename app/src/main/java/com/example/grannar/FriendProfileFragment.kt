@@ -50,9 +50,8 @@ class FriendProfileFragment : Fragment() {
     private var interestChips = mutableListOf<Chip>()
     private var selectedUser: User? = null
     private lateinit var appBar: MaterialToolbar
-    private lateinit var ivFriendProfile: ImageView
-
-
+    private lateinit var personalImageView: ImageView
+    private lateinit var ivFriendProfile: ImageVie
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +75,7 @@ class FriendProfileFragment : Fragment() {
         tvAge = view.findViewById(R.id.friendProfileAgeTextView)
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
+        personalImageView = view.findViewById(R.id.personalImageView)
 
         interestChips.add(view.findViewById(R.id.friendsInterest1Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest2Chip))
@@ -218,6 +218,14 @@ class FriendProfileFragment : Fragment() {
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
+
+        selectedUser.personalImageUrl?.let { imageUrl ->
+
+            Glide.with(this)
+                .load(selectedUser.personalImageUrl)
+                .into(personalImageView)
+        }
+
         setIcons(selectedUser)
         showProfileImage(selectedUser)
 
@@ -230,6 +238,8 @@ class FriendProfileFragment : Fragment() {
                 .load(selectedUser.profileImageURL)
                 .into(ivFriendProfile)
         }
+
+
 
     }
 
