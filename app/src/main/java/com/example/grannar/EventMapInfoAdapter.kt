@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import java.text.SimpleDateFormat
@@ -22,8 +23,16 @@ class EventMapInfoAdapter(val context: Context): GoogleMap.InfoWindowAdapter {
         val infoWindow = layoutInflater.inflate(R.layout.item_event_map, null)
         val tvTitle = infoWindow.findViewById<TextView>(R.id.tvWindowTitle)
         val tvDesc = infoWindow.findViewById<TextView>(R.id.tvWindowDesc)
+        val constLayOut = infoWindow.findViewById<ConstraintLayout>(R.id.constraintEvent)
+
 
         val event = p0.tag as? Event
+
+        if (event != null) {
+            val eventLayoutPair = Pair(event, constLayOut)
+            p0.tag = eventLayoutPair
+            constLayOut.transitionName = event.docID
+        }
 
         tvTitle.text = event?.name
         val formattedDate =

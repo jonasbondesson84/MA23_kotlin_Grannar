@@ -1,13 +1,16 @@
 package com.example.grannar
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -16,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
@@ -49,6 +53,8 @@ class FriendProfileFragment : Fragment() {
     private var selectedUser: User? = null
     private var interestsTextViewList = mutableListOf<TextView>()
     private lateinit var appBar: MaterialToolbar
+    private lateinit var image: ImageView
+    private lateinit var layout: ConstraintLayout
 
 
 
@@ -69,6 +75,7 @@ class FriendProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_friend_profile, container, false)
 
+
         tvName = view.findViewById(R.id.friendProfileNameTextView)
         tvGender = view.findViewById(R.id.friendProfileGenderTextView)
         tvAge = view.findViewById(R.id.friendProfileAgeTextView)
@@ -81,6 +88,31 @@ class FriendProfileFragment : Fragment() {
         interestChips.add(view.findViewById(R.id.friendsInterest4Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest5Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest6Chip))
+        layout = view.findViewById(R.id.linearLayoutFriend)
+        val friendUid = args.userID
+        if (friendUid != null) {
+            getUserInfo(friendUid)
+            layout.transitionName = friendUid
+        }
+//            image = view.findViewById(R.id.friendProfileImageView)
+//        image.transitionName = friendUid
+//
+//        val animation = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+//        sharedElementEnterTransition = animation
+//        sharedElementReturnTransition = animation
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+
+        }
+        sharedElementReturnTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+        }
 
 
 
@@ -108,10 +140,7 @@ class FriendProfileFragment : Fragment() {
             }
         }
 
-        val friendUid = args.userID
-        if (friendUid != null) {
-            getUserInfo(friendUid)
-        }
+
 
         return view
     }

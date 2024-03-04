@@ -15,7 +15,9 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_border">
+        android:background="@drawable/rounded_border"
+        android:id="@+id/constraintEvent"
+        android:transitionGroup="true">
 
         <TextView
             android:id="@+id/tvWindowTitle"

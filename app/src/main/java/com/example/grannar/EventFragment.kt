@@ -9,7 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -75,6 +78,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -90,6 +94,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_event, container, false)
         db = Firebase.firestore
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
 
         etvFilterEvent = view.findViewById(R.id.etvSearchEvent)
         distanceChip = view.findViewById(R.id.distanceEventChip)
@@ -99,6 +105,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         val fabAddEvent: FloatingActionButton = view.findViewById(R.id.fabAddEvent)
         tabEvent = view.findViewById(R.id.tabEvent)
         tvEmptyList = view.findViewById(R.id.tvEmptyEventList)
+
 
         eventMap.onCreate(savedInstanceState)
         eventMap.getMapAsync(this)
@@ -258,10 +265,10 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
         val cameraUpdate =  CameraUpdateFactory.newLatLngZoom(userLocation, currentZoomLevel)
         map.moveCamera(cameraUpdate)
         map.setOnInfoWindowClickListener {
-            val event = it.tag as? Event
-            val eventID = event?.docID
+            val event = it.tag as? Pair<Event, ConstraintLayout>
+            Log.d("!!!", event.toString())
             if (event != null) {
-                goToEvent(event)
+                goToEvent(event.first, event.second )
             }
 
         }
@@ -366,13 +373,14 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
             }
     }
 
-    override fun goToEvent(event: Event) {
+    override fun goToEvent(event: Event, card: ConstraintLayout) {
         val eventID = event.docID
-        Log.d("!!!", eventID.toString())
         if(eventID != null) {
+            Log.d("!!!", event.toString()+ " "+ card)
+            val extra = FragmentNavigatorExtras(card to eventID)
             val action =
                 EventFragmentDirections.actionEventFragmentToEventInfoFragment(event.docID!!)
-            findNavController().navigate(action)
+            findNavController().navigate(action, extra)
         }
     }
 
