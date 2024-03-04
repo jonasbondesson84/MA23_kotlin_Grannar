@@ -110,7 +110,7 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/squareInterestConstraintLayout"
             android:layout_width="344dp"
             android:layout_height="72dp"
@@ -133,7 +133,6 @@
             android:ems="10"
             android:gravity="center"
             android:hint="Tell us more about yourself."
-            android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.54"
             app:layout_constraintStart_toStartOf="parent"
@@ -224,17 +223,6 @@
             android:layout_marginEnd="40dp"
             app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
-
-        <com.google.android.material.chip.Chip
-
-            android:id="@+id/interest1Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
-            android:textStyle="bold"
-            style="@style/SmallInterestChip.NonClickable" />
-
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest4Chip"

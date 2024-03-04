@@ -49,11 +49,9 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvAboutMe: TextView
     private var interestChips = mutableListOf<Chip>()
     private var selectedUser: User? = null
-    private var interestsTextViewList = mutableListOf<TextView>()
     private lateinit var appBar: MaterialToolbar
     private lateinit var personalImageView: ImageView
-
-
+    private lateinit var ivFriendProfile: ImageVie
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +83,8 @@ class FriendProfileFragment : Fragment() {
         interestChips.add(view.findViewById(R.id.friendsInterest4Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest5Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest6Chip))
+
+        ivFriendProfile = view.findViewById(R.id.friendProfileImageView)
 
 
 
@@ -214,7 +214,7 @@ class FriendProfileFragment : Fragment() {
         tvName.text = selectedUser.firstName
         tvGender.text = selectedUser.gender
         tvAge.text = selectedUser.getAgeSpan()
-        tvLocation.text = selectedUser.location.toString()
+        tvLocation.text = selectedUser.showDistanceSpan()
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
@@ -227,6 +227,17 @@ class FriendProfileFragment : Fragment() {
         }
 
         setIcons(selectedUser)
+        showProfileImage(selectedUser)
+
+    }
+
+    private fun showProfileImage(selectedUser: User){
+
+        if (selectedUser.profileImageURL != null){
+            Glide.with(this)
+                .load(selectedUser.profileImageURL)
+                .into(ivFriendProfile)
+        }
 
 
 
