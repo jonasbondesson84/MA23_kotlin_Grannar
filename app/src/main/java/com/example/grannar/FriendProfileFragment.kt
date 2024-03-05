@@ -51,7 +51,7 @@ class FriendProfileFragment : Fragment() {
     private var selectedUser: User? = null
     private lateinit var appBar: MaterialToolbar
     private lateinit var personalImageView: ImageView
-    private lateinit var ivFriendProfile: ImageVie
+    private lateinit var ivFriendProfile: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

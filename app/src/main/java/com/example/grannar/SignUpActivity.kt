@@ -16,6 +16,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.firebase.geofire.GeoFireUtils
@@ -372,6 +373,9 @@ Log.d("!!!", "the")
                         finish()
                     }
                 }
+            } else  {
+                Toast.makeText(this, signUp.exception?.message ?: "Error, try again", Toast.LENGTH_SHORT).show()
+                signUp.exception?.message?.let { Log.d("!!!", it) }
             }
         }
     }
