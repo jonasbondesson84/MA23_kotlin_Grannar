@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -189,7 +190,8 @@ class FriendsListFragment : Fragment(), SearchListAdapter.MyAdapterListener {
         }
     }
 
-    override fun goToUser(user: User) {
+    override fun goToUser(user: User, card: ConstraintLayout) {
 
     }
+
 }

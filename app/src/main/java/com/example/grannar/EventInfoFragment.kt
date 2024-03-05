@@ -1,5 +1,6 @@
 package com.example.grannar
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -20,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.toObject
@@ -56,6 +60,7 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
     private lateinit var locationMap: MapView
     private lateinit var googleMap: GoogleMap
     private var isSaved = false
+    private lateinit var constEvent: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +85,23 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         topBar = view.findViewById(R.id.topEventInfo)
         storage = Firebase.storage
         locationMap = view.findViewById(R.id.eventInfoMapView)
-
+        constEvent = view.findViewById(R.id.constraintEvent)
         locationMap.onCreate(savedInstanceState)
-
+        if (args.eventID != null) {
+            constEvent.transitionName = args.eventID
+        }
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+        }
+        sharedElementReturnTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = 500
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(resources.getColor(R.color.md_theme_background))
+        }
 
 
         topBar.setNavigationOnClickListener {
@@ -247,6 +266,9 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
             .placeholder(R.drawable.img_album)
             .error(R.drawable.img_album)
             .into(imEventImage)
+            .apply {
+                RequestOptions().dontTransform()
+            }
 
         if(event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false

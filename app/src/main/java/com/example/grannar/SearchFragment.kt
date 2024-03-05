@@ -13,9 +13,12 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +28,10 @@ import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
-
 import com.google.android.material.chip.ChipGroup
-
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
-
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -261,7 +262,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container, false)
-
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialElevationScale(/* growing= */ false)
+        reenterTransition = MaterialElevationScale(/* growing= */ true)
 
         val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
@@ -534,12 +538,13 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
-    override fun goToUser(user: User) {
+    override fun goToUser(user: User, card: ConstraintLayout) {
         val uid = user.userID
         if(uid != null) {
+            val extra = FragmentNavigatorExtras(card to uid)
             val action =
                 SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
-            findNavController().navigate(action)
+            findNavController().navigate(action, extra)
         }
     }
 
