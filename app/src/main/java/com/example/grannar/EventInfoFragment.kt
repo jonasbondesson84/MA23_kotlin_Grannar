@@ -259,7 +259,7 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
                 )
             }
         tvDate.text = formattedDate
-        tvLocation.text = event.geoHash
+        tvLocation.text = event.showDistanceSpan()
         Glide
             .with(requireContext())
             .load(event.imageURL)
