@@ -133,8 +133,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         val radiusInM = distanceInKilometers * 1000
         val tasks = getListOfDbQueries(radiusInM, center)
         queryForUsersByGeoHash(tasks, center, radiusInM)
-
-
     }
 
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
@@ -148,6 +146,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                     .orderBy("geoHash")
                     .startAt(b.startHash)
                     .endAt(b.endHash)
+                    .limit(30)
                 tasks.add(query.get())
             }
             return tasks
@@ -275,7 +274,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
         rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-
         tabFriends.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {

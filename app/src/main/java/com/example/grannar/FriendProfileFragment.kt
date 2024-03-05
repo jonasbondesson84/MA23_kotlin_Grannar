@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -51,11 +52,11 @@ class FriendProfileFragment : Fragment() {
     private lateinit var tvAboutMe: TextView
     private var interestChips = mutableListOf<Chip>()
     private var selectedUser: User? = null
-    private var interestsTextViewList = mutableListOf<TextView>()
     private lateinit var appBar: MaterialToolbar
     private lateinit var image: ImageView
     private lateinit var layout: ConstraintLayout
-
+    private lateinit var personalImageView: ImageView
+    private lateinit var ivFriendProfile: ImageView
 
 
 
@@ -81,6 +82,7 @@ class FriendProfileFragment : Fragment() {
         tvAge = view.findViewById(R.id.friendProfileAgeTextView)
         tvLocation = view.findViewById(R.id.friendProfileLocationTextView)
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
+        personalImageView = view.findViewById(R.id.personalImageView)
 
         interestChips.add(view.findViewById(R.id.friendsInterest1Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest2Chip))
@@ -113,6 +115,8 @@ class FriendProfileFragment : Fragment() {
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(resources.getColor(R.color.md_theme_background))
         }
+
+        ivFriendProfile = view.findViewById(R.id.friendProfileImageView)
 
 
 
@@ -239,11 +243,32 @@ class FriendProfileFragment : Fragment() {
         tvName.text = selectedUser.firstName
         tvGender.text = selectedUser.gender
         tvAge.text = selectedUser.getAgeSpan()
-        tvLocation.text = selectedUser.location.toString()
+        tvLocation.text = selectedUser.showDistanceSpan()
         tvAboutMe.text = selectedUser.aboutMe
         showInterests(selectedUser.interests)
 
+
+        selectedUser.personalImageUrl?.let { imageUrl ->
+
+            Glide.with(this)
+                .load(selectedUser.personalImageUrl)
+                .into(personalImageView)
+        }
+
         setIcons(selectedUser)
+        showProfileImage(selectedUser)
+
+    }
+
+    private fun showProfileImage(selectedUser: User){
+
+        if (selectedUser.profileImageURL != null){
+            Glide.with(this)
+                .load(selectedUser.profileImageURL)
+                .into(ivFriendProfile)
+        }
+
+
 
     }
 
