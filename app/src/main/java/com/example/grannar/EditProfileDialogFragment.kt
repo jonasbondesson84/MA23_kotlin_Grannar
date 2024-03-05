@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -117,6 +118,60 @@ class EditProfileDialogFragment : DialogFragment(){
 
     private fun updateUserInformation() {
         Log.d("!!!", "fun updateUserInfo")
+
+        val userID = CurrentUser.userID
+        if (userID != null) {
+            val userData = CurrentUser.loadUserInfo(userID)
+
+
+        val db = Firebase.firestore
+        Log.d("!!!", "Firestore instance ${db}")
+        val userRef = db.collection("users").document(userID)
+        Log.d("!!!", "${userRef}")
+
+        val firstName = view?.findViewById<TextInputEditText>(R.id.firstNameEditText)?.text.toString()
+        val surname = view?.findViewById<TextInputEditText>(R.id.surnameEditText)?.text.toString()
+        val age = view?.findViewById<TextInputEditText>(R.id.birthDateEditText)?.text?.toString() ?: ""
+        val genderRadioGroup = view?.findViewById<RadioGroup>(R.id.genderRadioGroup)
+        val checkedRadioButtonId = genderRadioGroup?.checkedRadioButtonId
+        val gender = when (checkedRadioButtonId) {
+            R.id.radioButtonMale -> "Male"
+            R.id.radioButtonFemale -> "Female"
+            R.id.radioButtonNonBinary -> "Non-Binary"
+            else -> null
+        }
+        val user = User(
+            userID,
+            firstName,
+            surname,
+            age,
+            gender,
+            location ?: LatLng(0.0, 0.0)
+        )
+
+
+        userRef.set(user).addOnCompleteListener { task ->
+            Log.d("!!!", "Task result: ${task.result}")
+            Log.d("!!!", "Task exception: ${task.exception}")
+            if (task.isSuccessful) {
+                Log.d("!!!", "${task.isSuccessful} Update successful")
+                dismiss()
+                Log.d("!!!", "${dismiss()}, dismiss")
+            } else {
+                Log.d("!!!", "Update failed", task.exception)
+                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            }
+        } else {
+            Log.d("!!!", "userID is null")
+        }
+    }
+
+
+
+ /*   private fun updateUserInformation() {
+        Log.d("!!!", "fun updateUserInfo")
         //val userID = "${CurrentUser.userID}"
 
         val userID = "wvoyMZOsavbU0SLaVFDjoRMtY6u1"
@@ -157,7 +212,8 @@ class EditProfileDialogFragment : DialogFragment(){
                     .show()
             }
         }
-    }
+    } */
+
 
     fun getBirthDate(): String? {
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
