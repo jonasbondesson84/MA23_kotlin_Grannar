@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, bundle ->
 
-            if ((destination.id == R.id.profileFragment || destination.id == R.id.friendsListFragment
+            if ((destination.id == R.id.profileFragment
                         || destination.id == R.id.messagesFragment) && !isLoggedIn()) {
 //                if (!isLoggedIn()) {
                 pendingDestination = destination

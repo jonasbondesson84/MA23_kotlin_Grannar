@@ -117,26 +117,28 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                 if (tab != null) {
                     when(tab.position) {
                         0 -> {
-                            rvEvents.visibility = View.VISIBLE
-                            eventMap.visibility = View.INVISIBLE
-                            adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
-                            rvEvents.adapter = adapter
-                            CurrentUser.tabEventItem = 0
-                            showEmptyMessage(eventsInRecyclerView)
+
+                                showEventList()
+
+
                         }
                         1 -> {
-                            rvEvents.visibility = View.INVISIBLE
-                            eventMap.visibility = View.VISIBLE
-                            CurrentUser.tabEventItem = 1
-                            showEmptyMessage(eventsInRecyclerView)
+                            if(CurrentUser.userID != null) {
+                                showMap()
+                            } else {
+                                openLogInFragment()
+
+                            }
+
                         }
                         2 -> {
-                            rvEvents.visibility = View.VISIBLE
-                            eventMap.visibility = View.INVISIBLE
-                            adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
-                            rvEvents.adapter = adapter
-                            CurrentUser.tabEventItem = 2
-                            showEmptyMessage(savedEvents)
+                            if(CurrentUser.userID != null) {
+                                showMyEvents()
+                            } else {
+                                openLogInFragment()
+
+                            }
+
 
                         }
                         else -> {
@@ -145,6 +147,31 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                     }
 
                 }
+            }
+
+            private fun showMyEvents() {
+                rvEvents.visibility = View.VISIBLE
+                eventMap.visibility = View.INVISIBLE
+                adapter = EventAdapter(view.context, savedEvents, this@EventFragment)
+                rvEvents.adapter = adapter
+                CurrentUser.tabEventItem = 2
+                showEmptyMessage(savedEvents)
+            }
+
+            private fun showMap() {
+                rvEvents.visibility = View.INVISIBLE
+                eventMap.visibility = View.VISIBLE
+                CurrentUser.tabEventItem = 1
+                showEmptyMessage(eventsInRecyclerView)
+            }
+
+            private fun showEventList() {
+                rvEvents.visibility = View.VISIBLE
+                eventMap.visibility = View.INVISIBLE
+                adapter = EventAdapter(view.context, eventsInRecyclerView, this@EventFragment)
+                rvEvents.adapter = adapter
+                CurrentUser.tabEventItem = 0
+                showEmptyMessage(eventsInRecyclerView)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -192,6 +219,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
 
         return view
     }
+
 
 
     private fun addEvent() {
@@ -328,6 +356,7 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     }
 
     private fun openLogInFragment() {
+        tabEvent.getTabAt(0)?.select()
         val dialogFragment = SignInDialogFragment()
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
     }
@@ -374,13 +403,17 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     }
 
     override fun goToEvent(event: Event, card: ConstraintLayout) {
-        val eventID = event.docID
-        if(eventID != null) {
-            Log.d("!!!", event.toString()+ " "+ card)
-            val extra = FragmentNavigatorExtras(card to eventID)
-            val action =
-                EventFragmentDirections.actionEventFragmentToEventInfoFragment(event.docID!!)
-            findNavController().navigate(action, extra)
+        if(CurrentUser.userID != null) {
+            val eventID = event.docID
+            if (eventID != null) {
+                Log.d("!!!", event.toString() + " " + card)
+                val extra = FragmentNavigatorExtras(card to eventID)
+                val action =
+                    EventFragmentDirections.actionEventFragmentToEventInfoFragment(event.docID!!)
+                findNavController().navigate(action, extra)
+            }
+        } else {
+            openLogInFragment()
         }
     }
 
@@ -393,18 +426,18 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
     }
 
     private fun getEventsWithinDistance(distanceInKilometers: Int){
-        val lat = CurrentUser.locLat
-        val lng = CurrentUser.locLng
+        val lat = CurrentUser.locLat ?: 59.334591
+        val lng = CurrentUser.locLng ?: 18.063240
         Log.d("!!!", "lat: $lat lng: $lng ")
 
 
-        if (lat != null && lng != null) {
+//        if (lat != null && lng != null) {
             val center = GeoLocation(lat, lng)
             val radiusInM = distanceInKilometers * 1000
             val tasks = getListOfDbQueries(radiusInM, center)
             queryForEventsByGeoHash(tasks, center, radiusInM)
 
-        }
+//        }
     }
     private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
 
