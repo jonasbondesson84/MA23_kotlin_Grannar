@@ -22,7 +22,7 @@ object CurrentUser {
     var profileImageURL: String? = null
     var interests: MutableList<Interest>? = mutableListOf()
     var aboutMe: String? = null
-    var imageURLs: MutableList<String>? = mutableListOf()
+    var personalImageUrl: String? = null
     var friendsList: MutableList<User>? = mutableListOf()
     var friendsUIDList: MutableList<String> = mutableListOf()
     var unreadMessageIDs: HashMap<String, Int> = hashMapOf()
@@ -52,7 +52,7 @@ object CurrentUser {
         this.profileImageURL = user.profileImageURL
         this.interests = user.interests
         this.aboutMe = user.aboutMe
-        this.imageURLs = user.imageURLs
+        this.personalImageUrl = user.personalImageUrl
         this.friendsList = user.friendsList
         this.friendsUIDList = user.friendsUIDList
         this.unreadMessageIDs = user.unreadMessages
@@ -80,7 +80,7 @@ object CurrentUser {
         this.profileImageURL = null
         this.interests = null
         this.aboutMe = null
-        this.imageURLs = null
+        this.personalImageUrl = null
         this.friendsList?.clear()
         this.friendsUIDList.clear()
         this.unreadMessageIDs.clear()
