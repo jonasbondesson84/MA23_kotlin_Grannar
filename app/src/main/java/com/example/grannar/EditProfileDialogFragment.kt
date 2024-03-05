@@ -115,11 +115,10 @@ class EditProfileDialogFragment : DialogFragment(){
 
     }
 
-
     private fun updateUserInformation() {
         Log.d("!!!", "fun updateUserInfo")
 
-        val userID = CurrentUser.userID
+        val userID = "wvoyMZOsavbU0SLaVFDjoRMtY6u1"
         if (userID != null) {
             val userData = CurrentUser.loadUserInfo(userID)
 
@@ -148,19 +147,22 @@ class EditProfileDialogFragment : DialogFragment(){
             gender,
             location ?: LatLng(0.0, 0.0)
         )
+            val userUpdates = mapOf(
+                "firstName" to firstName,
+                "surname" to surname,
+                "age" to age,
+                "gender" to gender
+            )
 
+        userRef.update(userUpdates).addOnCompleteListener { task ->
 
-        userRef.set(user).addOnCompleteListener { task ->
-            Log.d("!!!", "Task result: ${task.result}")
-            Log.d("!!!", "Task exception: ${task.exception}")
             if (task.isSuccessful) {
                 Log.d("!!!", "${task.isSuccessful} Update successful")
                 dismiss()
                 Log.d("!!!", "${dismiss()}, dismiss")
             } else {
                 Log.d("!!!", "Update failed", task.exception)
-                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
             }
             }
         } else {
