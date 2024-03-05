@@ -30,6 +30,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.UUID
 
 
@@ -106,7 +107,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 startActivityForResult(it, 0)
             }
         }
-        profileImageView = view.findViewById(R.id.profileImageView)
+        val profileImageView: CircleImageView = view.findViewById(R.id.profileImageView)
 
         val showName = view.findViewById<TextView>(R.id.profileNameEditText)
         val showGender = view.findViewById<TextView>(R.id.profileGenderEditText)
@@ -155,14 +156,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         getUserInfo { user ->
             if (isAdded) {
             if (user != null) {
+                val profileImageURL = user.profileImageURL
                 showName.text = user.firstName
                 showGender.text = user.gender
                 showAge.text = user.age
                 showLocation.text = user.location?.toString() ?: "none location to show"
-                Glide.with(requireActivity())
-                    .load(user.profileImageURL)
-                    .into(profileImageView!!)
-
+                if (!profileImageURL.isNullOrEmpty()) {
+                    Glide.with(requireActivity())
+                        .load(user.profileImageURL)
+                        .into(profileImageView!!)
+                }
                 aboutMeEditText.setText(user.aboutMe)
                 aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -177,6 +180,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 showGender.text = " "
                 showAge.text = " "
                 showLocation.text = " "
+                profileImageView.setImageResource(R.drawable.avatar)
             }
             }
         }

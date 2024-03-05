@@ -55,6 +55,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:onClick="isLoggedIn"
+                android:layout_gravity="end"
                 />
 
             </com.google.android.material.appbar.MaterialToolbar>
