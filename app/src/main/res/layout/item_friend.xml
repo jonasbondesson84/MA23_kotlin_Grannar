@@ -13,29 +13,27 @@
 
     <LinearLayout
 
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFFFF"
 
+        android:background="#FFFFFFFF"
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/friend_image"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"
             android:layout_marginEnd="10dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/avatar"
             app:civ_border_color="#E0E0E0"
-            app:civ_border_width="2dp"
-            />
+            app:civ_border_width="2dp" />
 
 
         <LinearLayout
@@ -133,54 +131,53 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
 
         <com.google.android.material.chip.Chip
 
             android:id="@+id/interest1Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="12sp"
-            android:textStyle="bold"
-            style="@style/SmallInterestChip.NonClickable" />
+            android:textStyle="bold" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/interest2Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            style="@style/SmallInterestChip.NonClickable" />
+            android:text="" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/interest3Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            style="@style/SmallInterestChip.NonClickable" />
+            android:text="" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/interest4Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            style="@style/SmallInterestChip.NonClickable" />
+            android:text="" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/interest5Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            style="@style/SmallInterestChip.NonClickable"
-           />
+            android:text="" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/interest6Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            style="@style/SmallInterestChip.NonClickable" />
+            android:text="" />
 
 
     </com.google.android.material.chip.ChipGroup>
