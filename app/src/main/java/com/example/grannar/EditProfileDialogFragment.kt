@@ -116,51 +116,38 @@ class EditProfileDialogFragment : DialogFragment() {
 
         val userID = CurrentUser.userID
         if (userID != null) {
-            val userData = CurrentUser.loadUserInfo(userID)
 
+        val db = Firebase.firestore
+        val userRef = db.collection("users").document(userID)
 
-            val db = Firebase.firestore
-            Log.d("!!!", "Firestore instance ${db}")
-            val userRef = db.collection("users").document(userID)
-            Log.d("!!!", "${userRef}")
+        val firstName = firstNameEditText.text.toString()
+        val surname = surNameEditText.text.toString()
+        val age = birthdayEditText.text?.toString() ?: ""
+        val genderRadioGroup = genderRadioGroup
+        val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
+        val gender = when (checkedRadioButtonId) {
+            R.id.radioButtonMale -> "Male"
+            R.id.radioButtonFemale -> "Female"
+            R.id.radioButtonNonBinary -> "Non-Binary"
+            else -> null
+        }
+            val userUpdates = mutableMapOf<String, Any>()
+            if (firstName.isNotBlank()) userUpdates["firstName"] = firstName
+            if (surname.isNotBlank()) userUpdates["surname"] = surname
+            if (age.isNotBlank()) userUpdates["age"] = age
+            if (gender != null) userUpdates["gender"] = gender
 
-            val firstName = firstNameEditText.text.toString()
-            val surname = surNameEditText.text.toString()
-            val age = birthdayEditText.text?.toString() ?: ""
-            val genderRadioGroup = genderRadioGroup
-            val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
-            val gender = when (checkedRadioButtonId) {
-                R.id.radioButtonMale -> "Male"
-                R.id.radioButtonFemale -> "Female"
-                R.id.radioButtonNonBinary -> "Non-Binary"
-                else -> null
-            }
-            val user = User(
-                userID,
-                firstName,
-                surname,
-                age,
-                gender,
-                location ?: LatLng(0.0, 0.0)
-            )
-            val userUpdates = mapOf(
-                "firstName" to firstName,
-                "surname" to surname,
-                "age" to age,
-                "gender" to gender
-            )
-
-            userRef.update(userUpdates).addOnCompleteListener { task ->
-
-                if (task.isSuccessful) {
-                    Log.d("!!!", "${task.isSuccessful} Update successful")
-                    dismiss()
-                    Log.d("!!!", "${dismiss()}, dismiss")
-                } else {
-                    Log.d("!!!", "Update failed", task.exception)
-                    Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
-                        .show()
+            if (userUpdates.isNotEmpty()) {
+                userRef.update(userUpdates).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        dismiss()
+                    } else {
+                        Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
+                    }
                 }
+            } else {
+                Log.d("!!!", "No new information provided")
+
             }
         }
     }
