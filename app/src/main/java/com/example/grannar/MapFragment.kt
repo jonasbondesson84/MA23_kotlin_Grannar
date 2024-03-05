@@ -95,7 +95,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun updateTextView(position: String) {
 
-        val textView = requireActivity().findViewById<TextView>(R.id.profileLocationEditText)
+        val textView = requireActivity().findViewById<TextView>(R.id.profileLocationTextView)
         textView.text = position
 
     }

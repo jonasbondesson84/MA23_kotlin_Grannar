@@ -65,8 +65,8 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            android:layout_width="360dp"
-            android:layout_height="94dp"
+            android:layout_width="352dp"
+            android:layout_height="72dp"
             android:layout_marginTop="180dp"
             android:background="@drawable/box"
             android:gravity="center"
@@ -85,23 +85,27 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/profileAgeEditText"
+                <TextView
+                    android:id="@+id/profileAgeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="3dp"
                     android:layout_weight="1"
-                    android:text="age" />
+                    android:gravity="center"
+                    android:text="age"
+                    android:textSize="20sp" />
 
-                <EditText
-                    android:id="@+id/profileGenderEditText"
+                <TextView
+                    android:id="@+id/profileGenderTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="3dp"
                     android:layout_weight="1"
-                    android:text="gender" />
+                    android:text="gender"
+                    android:textSize="20sp" />
+                android:gravity="center"
 
 
             </LinearLayout>
@@ -114,15 +118,16 @@
                 android:layout_marginTop="40dp"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/profileLocationEditText"
+                <TextView
+                    android:id="@+id/profileLocationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="3dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="location" />
+                    android:text="location"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -326,8 +331,8 @@
             app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
             app:layout_constraintEnd_toStartOf="@+id/profileImageView" />
 
-        <EditText
-            android:id="@+id/profileNameEditText"
+        <TextView
+            android:id="@+id/profileNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"

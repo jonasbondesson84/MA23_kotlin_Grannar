@@ -109,10 +109,10 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
         val profileImageView: CircleImageView = view.findViewById(R.id.profileImageView)
 
-        val showName = view.findViewById<TextView>(R.id.profileNameEditText)
-        val showGender = view.findViewById<TextView>(R.id.profileGenderEditText)
-        val showAge = view.findViewById<TextView>(R.id.profileAgeEditText)
-        val showLocation = view.findViewById<TextView>(R.id.profileLocationEditText)
+        val showName = view.findViewById<TextView>(R.id.profileNameTextView)
+        val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
+        val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
+        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
@@ -238,7 +238,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
-            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
             val uri = data?.data
             uri?.let {
                 personalImageView?.setImageURI(uri)
@@ -246,36 +245,15 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 uploadImageToFirebase()
             }
         } else {
-            Log.d("&&&", "OnActivityResult(), imageUri is null")
+
         }
     }
 
-
-     /*   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
-            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
-            val uri = data?.data
-            if (uri != null) {
-                val profileImageView: ImageView =
-                    view?.findViewById(R.id.profileImageView) ?: return
-                profileImageView.setImageURI(uri)
-
-                imageUri = uri // spara för uppladdning
-
-                uploadImageToFirebase()
-            }
-        } else {
-            Log.d("&&&", "OnActivityResult(), imageUri is null")
-        }
-    } */
 
     private fun uploadImageToFirebase() {
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
             val imageRef = storageRef.child("images/${CurrentUser.userID}/profileImage.jpg")
-
 
             imageRef.putFile(imageUri!!)
                 .continueWithTask { task ->
@@ -288,7 +266,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 }.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val downloadUri = task.result
-                        Log.d("&&&", "${downloadUri}")
                         db.collection("users").document(CurrentUser.userID!!)
                             .update("profileImageURL", downloadUri.toString())
                     } else {
@@ -305,13 +282,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                     ).show()
                 }
                 .addOnFailureListener { e ->
-                    Log.d("&&&", "error uploading profile img: ${e.message}")
-
                     Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT)
                         .show()
                 }
-        } else {
-            Log.d("&&&", "imageUri is null")
         }
     }
 
