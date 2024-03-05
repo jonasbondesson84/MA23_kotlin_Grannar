@@ -79,16 +79,17 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri:
-                                                                                       Uri? ->
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
-
                 val firebasePath = "userImage/${CurrentUser.userID}/${UUID.randomUUID()}.jpg"
                 uploadPersonalImageToFirebase(it)
             }
         }
     }
+
+
+
 
 
     override fun onCreateView(
@@ -152,6 +153,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
 
         getUserInfo { user ->
+            if (isAdded) {
             if (user != null) {
                 showName.text = user.firstName
                 showGender.text = user.gender
@@ -175,7 +177,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 showGender.text = " "
                 showAge.text = " "
                 showLocation.text = " "
-
+            }
             }
         }
 
@@ -228,8 +230,24 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+            Log.d("&&&", "OnActivityResult() Image URI: $imageUri")
+            val uri = data?.data
+            uri?.let {
+                personalImageView?.setImageURI(uri)
+                imageUri = uri // save for upload
+                uploadImageToFirebase()
+            }
+        } else {
+            Log.d("&&&", "OnActivityResult(), imageUri is null")
+        }
+    }
+
+
+     /*   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
@@ -247,7 +265,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         } else {
             Log.d("&&&", "OnActivityResult(), imageUri is null")
         }
-    }
+    } */
 
     private fun uploadImageToFirebase() {
         if (imageUri != null) {
