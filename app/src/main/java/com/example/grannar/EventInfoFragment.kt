@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
@@ -43,7 +44,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment.OnEditListener {
-
+    val db = com.google.firebase.ktx.Firebase.firestore
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null

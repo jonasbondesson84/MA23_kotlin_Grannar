@@ -24,6 +24,7 @@ import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 
 //import android.net.Uri
@@ -41,6 +42,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class FriendProfileFragment : Fragment() {
+    val db = com.google.firebase.ktx.Firebase.firestore
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
