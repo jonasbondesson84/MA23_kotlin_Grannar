@@ -2,6 +2,7 @@ package com.example.grannar
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface.OnClickListener
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.SoundPool.OnLoadCompleteListener
@@ -65,6 +66,7 @@ class EditProfileDialogFragment : DialogFragment(){
     private var location: LatLng? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: LatLng? = null
+    lateinit var locationImageButton: ImageButton
 
 
 
@@ -78,6 +80,7 @@ class EditProfileDialogFragment : DialogFragment(){
         genderRadioGroup = rootView.findViewById(R.id.genderRadioGroup)
         firstNameEditText = rootView.findViewById(R.id.firstNameEditText)
         surNameEditText = rootView.findViewById(R.id.surnameEditText)
+       locationImageButton = rootView.findViewById<ImageButton>(R.id.locationImageButton)
         birthdayEditText = rootView.findViewById(R.id.birthDateEditText)
         birthdayEditText.apply {
             setOnClickListener {
@@ -89,18 +92,11 @@ class EditProfileDialogFragment : DialogFragment(){
 
         rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
             Log.d("!!!", "Button clicked")
-//            mapFragment?.let {
-//                it.showMapForLocationSelection()
-//            }
-            //open mapdialog
-            //check for lastLocation()
-            getPermission()
-
 
         }
 
         rootView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-            onDismiss()
+            dismiss()
         }
 
 
@@ -118,7 +114,7 @@ class EditProfileDialogFragment : DialogFragment(){
     private fun updateUserInformation() {
         Log.d("!!!", "fun updateUserInfo")
 
-        val userID = "wvoyMZOsavbU0SLaVFDjoRMtY6u1"
+        val userID = CurrentUser.userID
         if (userID != null) {
             val userData = CurrentUser.loadUserInfo(userID)
 
@@ -128,11 +124,11 @@ class EditProfileDialogFragment : DialogFragment(){
         val userRef = db.collection("users").document(userID)
         Log.d("!!!", "${userRef}")
 
-        val firstName = view?.findViewById<TextInputEditText>(R.id.firstNameEditText)?.text.toString()
-        val surname = view?.findViewById<TextInputEditText>(R.id.surnameEditText)?.text.toString()
-        val age = view?.findViewById<TextInputEditText>(R.id.birthDateEditText)?.text?.toString() ?: ""
-        val genderRadioGroup = view?.findViewById<RadioGroup>(R.id.genderRadioGroup)
-        val checkedRadioButtonId = genderRadioGroup?.checkedRadioButtonId
+        val firstName = firstNameEditText.text.toString()
+        val surname = surNameEditText.text.toString()
+        val age = birthdayEditText.text?.toString() ?: ""
+        val genderRadioGroup = genderRadioGroup
+        val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
         val gender = when (checkedRadioButtonId) {
             R.id.radioButtonMale -> "Male"
             R.id.radioButtonFemale -> "Female"
@@ -171,143 +167,7 @@ class EditProfileDialogFragment : DialogFragment(){
     }
 
 
-
- /*   private fun updateUserInformation() {
-        Log.d("!!!", "fun updateUserInfo")
-        //val userID = "${CurrentUser.userID}"
-
-        val userID = "wvoyMZOsavbU0SLaVFDjoRMtY6u1"
-        val firstName = "LInnea"
-        val surname = "Frida"
-        val birthDate ="1990/01/01"
-        val gender="male"
-
-        val user = User(
-            userID,
-            firstName,
-            surname,
-            birthDate,
-            gender,
-            location
-            //firstNameEditText.text.toString(),
-            //surNameEditText.text.toString(),
-            //getBirthDate(),
-            //getGender(),
-            //location,
-        )
-
-        val db = Firebase.firestore
-        Log.d("!!!","FIrestore instance ${db}")
-        val userRef = db.collection("users").document(userID)
-        Log.d("!!!", "${userRef}")
-
-        userRef.set(user).addOnCompleteListener { task ->
-            Log.d("!!!", "Task result: ${task.result}")
-            Log.d("!!!", "Task exception: ${task.exception}")
-            if (task.isSuccessful) {
-                Log.d("!!!", "${task.isSuccessful} Update successful")
-                dismiss()
-                Log.d("!!!", "${dismiss()}, dissmiss")
-            } else {
-                Log.d("!!!", "Update failed", task.exception)
-                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    } */
-
-
-    fun getBirthDate(): String? {
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
-        return try {
-            LocalDate.parse(birthdayEditText.text.toString(), formatter).toString()
-        } catch (e: DateTimeParseException) {
-            // Handle the case where parsing fails, log an error, or return null
-            Log.e("User", "Error parsing birth date: ${birthdayEditText}", e)
-            null
-        }
-    }
-
-
-
-
-
-    private fun onDismiss() {
-        dismiss()
-    }
-
-    private fun calculateAge(birthDate: Date?): String? {
-
-        showDatePickerDialog()
-
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd",Locale.getDefault())
-        val birthDateStr = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(birthDate)
-        val localDate = LocalDate.parse(birthDateStr, formatter)
-        val today = LocalDate.now()
-        val age = Period.between(localDate, today).years
-        return age.toString()
-    }
-
-        private fun getPermission() {
-            Log.d("!!!", "getPermisson()")
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.d("!!!", "${requireContext()},")
-                getLastLocation()
-                Log.d("!!!", "${getLastLocation()},")
-            } else {
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    1
-                )
-                Log.d("!!!", "${requireActivity()},")
-            }
-        }
-
-
-            override fun onRequestPermissionsResult(
-                requestCode: Int,
-                permissions: Array<out String>,
-                grantResults: IntArray
-            ) {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-                if (requestCode == 1) {
-                    if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        getLastLocation()
-                    }
-                }
-            }
-
-            @SuppressLint("MissingPermission")
-            private fun getLastLocation() {
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    userLocation = LatLng(location.latitude, location.longitude)
-                    openMapFragment()
-
-                }
-            }
-
-            private fun openMapFragment() {
-                val dialogFragment = MapDialogFragment()
-                val args = Bundle()
-                userLocation?.let { args.putDouble("lat", it.latitude) }
-                userLocation?.let { args.putDouble("lng", it.longitude) }
-                dialogFragment.arguments = args
-
-                dialogFragment.show(childFragmentManager, "MapDialogFragment")
-            }
-
-            private fun showDatePickerDialog() {
+          private fun showDatePickerDialog() {
                 val calendar = Calendar.getInstance()
                 if (birthDate == null) {
 
@@ -337,17 +197,6 @@ class EditProfileDialogFragment : DialogFragment(){
                 }
 
             }
-
-
-            private fun getGender(): String {
-                val pickedRadioButtonID = genderRadioGroup.checkedRadioButtonId
-                return view?.findViewById<RadioButton>(pickedRadioButtonID)?.text.toString()
-            }
-
-     fun onDataPassed(data: LatLng) {
-        location = data
-        Log.d("!!!","Data från dialogfragment ${location}")
-    }
 
 
 
