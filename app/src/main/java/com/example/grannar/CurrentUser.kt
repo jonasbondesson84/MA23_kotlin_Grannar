@@ -75,6 +75,7 @@ object CurrentUser {
         this.location = null
         this.locLat = null
         this.locLng = null
+        this.geoHash = null
         this.email = null
         this.gender = null
         this.profileImageURL = null
