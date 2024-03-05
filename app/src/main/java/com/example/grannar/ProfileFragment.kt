@@ -44,7 +44,7 @@ import java.util.UUID
 
 
 private lateinit var userProfile: User
-val db = Firebase.firestore
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -59,7 +59,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class ProfileFragment : Fragment(), AddedInterestCallback {
     // TODO: Rename and change types of parameters
-
+    val db = Firebase.firestore
 
     private var param1: String? = null
     private var param2: String? = null
@@ -126,7 +126,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
 
-
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
 
@@ -151,8 +150,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
 
 
-
-
         signoutButton.setOnClickListener {
             if (isLoggedIn()) {
                 signOut()
@@ -166,18 +163,14 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
         getUserInfo { user ->
             if (user != null) {
-                showName.text = user?.firstName
-                showGender.text = user?.gender
-                showAge.text = user?.age
-                showLocation.text = user?.location?.toString() ?: "none location to show"
+                showName.text = user.firstName
+                showGender.text = user.gender
+                showAge.text = user.age
+                showLocation.text = user.location?.toString() ?: "none location to show"
                 Glide.with(requireActivity())
                     .load(user.profileImageURL)
                     .into(profileImageView!!)
-                Log.d("&&&", "Glide ${Glide.with(requireActivity())}")
-                Log.d("&&&", "load user img ${(user.profileImageURL)}")
-                Log.d("&&&", "into profile image view${(profileImageView!!)}")
 
-                //  showInterest(user.interests)
                 aboutMeEditText.setText(user.aboutMe)
                 aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -324,10 +317,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             } else {
                 callback(null)
             }
-
-
-
-
         }
     }
 

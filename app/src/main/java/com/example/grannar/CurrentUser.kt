@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 
 object CurrentUser {
@@ -111,6 +112,7 @@ object CurrentUser {
 //            }
     }
     fun getFriendList(user: User) {
+        val db = com.google.firebase.ktx.Firebase.firestore
         this.friendsList?.clear()
         for(userID in user.friendsUIDList) {
             db.collection("users").document(userID).get()

@@ -52,7 +52,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EditProfileDialogFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EditProfileDialogFragment : DialogFragment(){
+class EditProfileDialogFragment : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -69,18 +69,18 @@ class EditProfileDialogFragment : DialogFragment(){
     lateinit var locationImageButton: ImageButton
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val rootView: View = inflater.inflate(R.layout.dialog_fragment_edit_profile, container, false)
+        val rootView: View =
+            inflater.inflate(R.layout.dialog_fragment_edit_profile, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         genderRadioGroup = rootView.findViewById(R.id.genderRadioGroup)
         firstNameEditText = rootView.findViewById(R.id.firstNameEditText)
         surNameEditText = rootView.findViewById(R.id.surnameEditText)
-       locationImageButton = rootView.findViewById<ImageButton>(R.id.locationImageButton)
+        locationImageButton = rootView.findViewById<ImageButton>(R.id.locationImageButton)
         birthdayEditText = rootView.findViewById(R.id.birthDateEditText)
         birthdayEditText.apply {
             setOnClickListener {
@@ -119,30 +119,30 @@ class EditProfileDialogFragment : DialogFragment(){
             val userData = CurrentUser.loadUserInfo(userID)
 
 
-        val db = Firebase.firestore
-        Log.d("!!!", "Firestore instance ${db}")
-        val userRef = db.collection("users").document(userID)
-        Log.d("!!!", "${userRef}")
+            val db = Firebase.firestore
+            Log.d("!!!", "Firestore instance ${db}")
+            val userRef = db.collection("users").document(userID)
+            Log.d("!!!", "${userRef}")
 
-        val firstName = firstNameEditText.text.toString()
-        val surname = surNameEditText.text.toString()
-        val age = birthdayEditText.text?.toString() ?: ""
-        val genderRadioGroup = genderRadioGroup
-        val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
-        val gender = when (checkedRadioButtonId) {
-            R.id.radioButtonMale -> "Male"
-            R.id.radioButtonFemale -> "Female"
-            R.id.radioButtonNonBinary -> "Non-Binary"
-            else -> null
-        }
-        val user = User(
-            userID,
-            firstName,
-            surname,
-            age,
-            gender,
-            location ?: LatLng(0.0, 0.0)
-        )
+            val firstName = firstNameEditText.text.toString()
+            val surname = surNameEditText.text.toString()
+            val age = birthdayEditText.text?.toString() ?: ""
+            val genderRadioGroup = genderRadioGroup
+            val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
+            val gender = when (checkedRadioButtonId) {
+                R.id.radioButtonMale -> "Male"
+                R.id.radioButtonFemale -> "Female"
+                R.id.radioButtonNonBinary -> "Non-Binary"
+                else -> null
+            }
+            val user = User(
+                userID,
+                firstName,
+                surname,
+                age,
+                gender,
+                location ?: LatLng(0.0, 0.0)
+            )
             val userUpdates = mapOf(
                 "firstName" to firstName,
                 "surname" to surname,
@@ -150,57 +150,55 @@ class EditProfileDialogFragment : DialogFragment(){
                 "gender" to gender
             )
 
-        userRef.update(userUpdates).addOnCompleteListener { task ->
+            userRef.update(userUpdates).addOnCompleteListener { task ->
 
-            if (task.isSuccessful) {
-                Log.d("!!!", "${task.isSuccessful} Update successful")
-                dismiss()
-                Log.d("!!!", "${dismiss()}, dismiss")
-            } else {
-                Log.d("!!!", "Update failed", task.exception)
-                Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
+                if (task.isSuccessful) {
+                    Log.d("!!!", "${task.isSuccessful} Update successful")
+                    dismiss()
+                    Log.d("!!!", "${dismiss()}, dismiss")
+                } else {
+                    Log.d("!!!", "Update failed", task.exception)
+                    Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
-            }
-        } else {
-            Log.d("!!!", "userID is null")
         }
     }
 
 
-          private fun showDatePickerDialog() {
-                val calendar = Calendar.getInstance()
-                if (birthDate == null) {
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        if (birthDate == null) {
 
-                }
-                val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
+        }
+        val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
 
-                val calenderConstraints = CalendarConstraints.Builder()
-                    .setValidator(DateValidatorPointBackward.now())
+        val calenderConstraints = CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointBackward.now())
 
 
-                val datePicker =
-                    MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Birthdate")
-                        .setCalendarConstraints(calenderConstraints.build())
-                        .setSelection(defaultDateTimestamp)
-                        .build()
+        val datePicker =
+            MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Birthdate")
+                .setCalendarConstraints(calenderConstraints.build())
+                .setSelection(defaultDateTimestamp)
+                .build()
 
-                datePicker.show(childFragmentManager, "datePicker");
-                datePicker.addOnPositiveButtonClickListener {
-                    if (datePicker.selection != null) {
-                        val selectedDate = Date(datePicker.selection as Long)
-                        val formattedDate =
-                            SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(selectedDate)
-                        birthdayEditText.setText(formattedDate)
-                        birthDate = selectedDate
-                    }
-                }
-
+        datePicker.show(childFragmentManager, "datePicker");
+        datePicker.addOnPositiveButtonClickListener {
+            if (datePicker.selection != null) {
+                val selectedDate = Date(datePicker.selection as Long)
+                val formattedDate =
+                    SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(selectedDate)
+                birthdayEditText.setText(formattedDate)
+                birthDate = selectedDate
             }
+        }
+
+    }
 
 
-
-        companion object {
+    companion object {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
