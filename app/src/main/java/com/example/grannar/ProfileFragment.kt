@@ -209,11 +209,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     }
 
     private fun loadPersonalImageFromPreferences(){
-        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
-        val imageUrl = sharedPreferences.getString("personalImageUrl", null)
-        if(imageUrl != null) {
+       // val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
+       // val imageUrl = sharedPreferences.getString("personalImageUrl", null)
+        if(CurrentUser.personalImageUrl != null) {
             Glide.with(requireContext())
-                .load(imageUrl)
+                .load(CurrentUser.personalImageUrl)
                 .into(personalImageView!!)
         }
     }
@@ -432,7 +432,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             .addOnSuccessListener { taskSnapshot ->
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     updatePersonalImageUrlInFirestore(downloadUri.toString())
-                    Log.d("Upload", "Perosnal Image Uploaded: $downloadUri")
+                    Log.d("Upload", "Personal Image Uploaded: $downloadUri")
                     Glide.with(requireContext())
                         .load(downloadUri)
                         .into(personalImageView!!)
@@ -446,14 +446,14 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     private fun updatePersonalImageUrlInFirestore(imageUrl: String){
         val userRef = db.collection("users").document(CurrentUser.userID!!)
-        userRef.update("perosnalImageUrl", imageUrl)
+        userRef.update("personalImageUrl", imageUrl)
             .addOnSuccessListener {
-                Log.d("Firestore", "Perosnal image URL updated ")
+                Log.d("Firestore", "Personal image URL updated ")
 
 
             }
             .addOnFailureListener{ e ->
-               Log.e("Firestore", "Error updating perosnal image URL", e)
+               Log.e("Firestore", "Error updating personal image URL", e)
            }
     }
 
