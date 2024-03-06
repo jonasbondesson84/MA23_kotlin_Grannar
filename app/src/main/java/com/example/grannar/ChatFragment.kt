@@ -220,8 +220,8 @@ class ChatFragment : Fragment() {
             .with(requireContext())
             .load(selectedUser?.profileImageURL)
             .centerCrop()
-            .placeholder(R.drawable.baseline_add_a_photo_24)
-            .error(R.drawable.baseline_close_24)
+            .placeholder(R.drawable.img_album)
+            .error(R.drawable.img_album)
             .into(imImage)
     }
 

@@ -145,7 +145,8 @@ class SearchListAdapter(val context: Context, private val searchList: MutableLis
         if (selectedUser.profileImageURL != null){
             Glide.with(context)
                 .load(selectedUser.profileImageURL)
-                
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .centerCrop()
                 .into(holder.profileImageView)
         }else{

@@ -65,8 +65,8 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
                 .with(fromHolder.itemView.context)
                 .load(profileURL)
                 .centerCrop()
-                .placeholder(R.drawable.baseline_add_a_photo_24)
-                .error(R.drawable.baseline_close_24)
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .into(fromHolder.imImageFrom)
 
 
@@ -77,8 +77,8 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
                 .with(toHolder.itemView.context)
                 .load(CurrentUser.profileImageURL)
                 .centerCrop()
-                .placeholder(R.drawable.baseline_add_a_photo_24)
-                .error(R.drawable.baseline_close_24)
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .into(toHolder.imImageTo)
 
             toHolder.tvMessageTo.text = messages[position].text
