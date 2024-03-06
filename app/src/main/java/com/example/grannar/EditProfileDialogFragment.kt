@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -19,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
@@ -47,10 +46,10 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     private var param2: String? = null
 
 
-    lateinit var firstNameEditText: TextView
-    lateinit var surNameEditText: EditText
+    lateinit var firstNameEditText: TextInputEditText
+    lateinit var surNameEditText: TextInputEditText
     lateinit var genderRadioGroup: RadioGroup
-    lateinit var birthdayEditText: EditText
+    lateinit var birthdayEditText: TextInputEditText
     var birthDate: Date? = null
     private var location: LatLng? = null
     private var lat: Double? = null
@@ -73,6 +72,23 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         surNameEditText = rootView.findViewById(R.id.surnameEditText)
         locationImageButton = rootView.findViewById<ImageButton>(R.id.locationImageButton)
         birthdayEditText = rootView.findViewById(R.id.birthDateEditText)
+
+        firstNameEditText.setText(CurrentUser.firstName)
+        surNameEditText.setText(CurrentUser.surname)
+        birthdayEditText.setText(CurrentUser.age)
+        when(CurrentUser.gender) {
+            "Male" -> {
+                genderRadioGroup.check(R.id.radioButtonMale)
+            }
+            "Female" -> {
+                genderRadioGroup.check(R.id.radioButtonFemale)
+            }
+            "Non-Binary" -> {
+                genderRadioGroup.check(R.id.radioButtonNonBinary)
+            }
+        }
+
+
         birthdayEditText.apply {
             setOnClickListener {
                 showDatePickerDialog()
