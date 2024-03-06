@@ -254,6 +254,8 @@ class FriendProfileFragment : Fragment() {
 
             Glide.with(this)
                 .load(selectedUser.personalImageUrl)
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .into(personalImageView)
         }
 
@@ -267,6 +269,8 @@ class FriendProfileFragment : Fragment() {
         if (selectedUser.profileImageURL != null){
             Glide.with(this)
                 .load(selectedUser.profileImageURL)
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .into(ivFriendProfile)
         }
 

@@ -167,6 +167,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 if (!profileImageURL.isNullOrEmpty()) {
                     Glide.with(requireActivity())
                         .load(user.profileImageURL)
+                        .placeholder(R.drawable.img_album)
+                        .error(R.drawable.img_album)
                         .into(profileImageView!!)
                 }
                 aboutMeEditText.setText(user.aboutMe)
@@ -203,6 +205,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         if(CurrentUser.personalImageUrl != null) {
             Glide.with(requireContext())
                 .load(CurrentUser.personalImageUrl)
+                .placeholder(R.drawable.img_album)
+                .error(R.drawable.img_album)
                 .into(personalImageView)
         }
     }
@@ -387,6 +391,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                     Log.d("Upload", "Personal Image Uploaded: $downloadUri")
                     Glide.with(requireContext())
                         .load(downloadUri)
+                        .placeholder(R.drawable.img_album)
+                        .error(R.drawable.img_album)
                         .into(personalImageView!!)
                     CurrentUser.personalImageUrl = firebasePath
                 }

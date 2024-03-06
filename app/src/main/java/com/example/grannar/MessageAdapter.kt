@@ -63,7 +63,8 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
             .with(holder.itemView.context)
             .load(fromUser.profileImageURL)
             .centerCrop()
-            .placeholder(R.drawable.avatar)
+            .placeholder(R.drawable.img_album)
+            .error(R.drawable.img_album)
             .into(holder.imProfileImage)
 
         holder.itemView.setOnClickListener {
