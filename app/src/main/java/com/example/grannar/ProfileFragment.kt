@@ -238,7 +238,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
             val uri = data?.data
             uri?.let {
-                personalImageView?.setImageURI(uri)
+                //personalImageView?.setImageURI(uri)
                 imageUri = uri // save for upload
                 uploadImageToFirebase()
             }
