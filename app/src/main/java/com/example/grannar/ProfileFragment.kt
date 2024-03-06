@@ -57,7 +57,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
-    private var personalImageView: ImageView? = null
+    private lateinit var personalImageView: ImageView
     private var profileImageView: ImageView? = null
     private var interestChips = mutableListOf<Chip>()
     private val MAX_INTERESTS = 6
@@ -69,9 +69,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     private var pendingDestination: NavDestination? = null
     private var pendingBundle: Bundle? = null
     private lateinit var signUpLauncher: ActivityResultLauncher<Intent>
-
-
-
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -113,7 +111,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
         val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
-        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+        personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
@@ -152,7 +150,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         }
 
 
-
         getUserInfo { user ->
             if (isAdded) {
             if (user != null) {
@@ -184,7 +181,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             }
             }
         }
-
         return view
     }
 
@@ -192,18 +188,15 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        personalImageView = view.findViewById(R.id.personalImageView)
-        loadPersonalImageFromPreferences()
+        loadPersonalImage()
 
     }
 
-    private fun loadPersonalImageFromPreferences(){
-       // val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
-       // val imageUrl = sharedPreferences.getString("personalImageUrl", null)
+    private fun loadPersonalImage(){
         if(CurrentUser.personalImageUrl != null) {
             Glide.with(requireContext())
                 .load(CurrentUser.personalImageUrl)
-                .into(personalImageView!!)
+                .into(personalImageView)
         }
     }
 
@@ -211,11 +204,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         super.onResume()
         showInterestsWithColor(CurrentUser.interests)
     }
-
-    //funktioner
-
-
-
 
     private fun isLoggedIn(): Boolean {
         val auth = FirebaseAuth.getInstance()
@@ -231,7 +219,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         CurrentUser.clearUser()
         Toast.makeText(requireContext(), "You have Logged Out", Toast.LENGTH_SHORT)
             .show()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -341,15 +328,12 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                     chip.setOnClickListener {
                         startAddInterestDialog()
                     }
-//                    }
 
                 } else {
                     chip.visibility = View.INVISIBLE
-
                 }
             }
         }
-
     }
 
     private fun deleteInterest(index: Int) {
@@ -383,21 +367,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     fun openGallery() {
         getContent.launch("image/*")
     }
-//private fun uploadImageToFirebaseStorage(imageUri: Uri, firebasePath: String) {
-   // val storageRef = FirebaseStorage.getInstance().getReference(firebasePath)
-  //  storageRef.putFile(imageUri)
-       // .addOnSuccessListener{
-          //  storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-              //  Log.d("ProfileFragment", "Bild uppladdad: $downloadUri")
-             //   Glide.with(this@ProfileFragment)
-                 //   .load(downloadUri.toString())
-                  //  .into(personalImageView!!)
-         //   }
-       // }
-     //   .addOnFailureListener {
-          //  Toast.makeText(context, "Uppladdning misslyckades: ${it.message}", Toast.LENGTH_SHORT).show()
-      //  }
-//}
+
 
     private fun uploadPersonalImageToFirebase(imageUri: Uri) {
         val firebasePath = "images/${CurrentUser.userID}/personalImages/${UUID.randomUUID()}.jpg"
@@ -411,6 +381,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                     Glide.with(requireContext())
                         .load(downloadUri)
                         .into(personalImageView!!)
+                    CurrentUser.personalImageUrl = firebasePath
                 }
             }
             .addOnFailureListener { e ->
@@ -432,10 +403,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
            }
     }
 
-   // private fun saveImageUrlToPreferences(imageUrl: String) {
-       // val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Activity.MODE_PRIVATE)
-    //    sharedPreferences.edit().putString("personalImageUrl", imageUrl).apply()
-  // }
+
 
 
     private fun saveAboutMe(newAboutMe: String) {
