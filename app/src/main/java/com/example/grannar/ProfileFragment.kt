@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDestination
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
@@ -230,6 +231,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         CurrentUser.clearUser()
         Toast.makeText(requireContext(), "You have Logged Out", Toast.LENGTH_SHORT)
             .show()
+        findNavController().navigate(R.id.searchFragment)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
