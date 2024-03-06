@@ -112,7 +112,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val showName = view.findViewById<TextView>(R.id.profileNameTextView)
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
-        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
+//        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
         val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
@@ -160,7 +160,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 showName.text = user.firstName
                 showGender.text = user.gender
                 showAge.text = user.age
-                showLocation.text = user.location?.toString() ?: "none location to show"
+//                showLocation.text = user.location?.toString() ?: "none location to show"
                 if (!profileImageURL.isNullOrEmpty()) {
                     Glide.with(requireActivity())
                         .load(user.profileImageURL)
@@ -179,7 +179,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 showName.text = " "
                 showGender.text = " "
                 showAge.text = " "
-                showLocation.text = " "
+//                showLocation.text = " "
                 profileImageView.setImageResource(R.drawable.avatar)
             }
             }

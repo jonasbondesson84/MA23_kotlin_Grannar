@@ -1,43 +1,27 @@
 package com.example.grannar
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.DialogInterface.OnClickListener
-import android.content.pm.PackageManager
-import android.content.res.Configuration
-import android.media.SoundPool.OnLoadCompleteListener
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextMenu
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -52,8 +36,12 @@ private const val ARG_PARAM2 = "param2"
  * A simple [Fragment] subclass.
  * Use the [EditProfileDialogFragment.newInstance] factory method to
  * create an instance of this fragment.
+ *
  */
-class EditProfileDialogFragment : DialogFragment() {
+interface OnDataEditPassListener{
+    fun onDataPassed(data: LatLng)
+}
+class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -65,6 +53,8 @@ class EditProfileDialogFragment : DialogFragment() {
     lateinit var birthdayEditText: EditText
     var birthDate: Date? = null
     private var location: LatLng? = null
+    private var lat: Double? = null
+    private var lng: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: LatLng? = null
     lateinit var locationImageButton: ImageButton
@@ -93,6 +83,7 @@ class EditProfileDialogFragment : DialogFragment() {
 
         rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
             Log.d("!!!", "Button clicked")
+            showMapDialogFragment()
 
         }
 
@@ -137,6 +128,8 @@ class EditProfileDialogFragment : DialogFragment() {
             if (surname.isNotBlank()) userUpdates["surname"] = surname
             if (age.isNotBlank()) userUpdates["age"] = age
             if (gender != null) userUpdates["gender"] = gender
+            if (lat != null) userUpdates["locLat"] = lat!!
+            if (lng != null) userUpdates["locLng"] = lng!!
 
             if (userUpdates.isNotEmpty()) {
                 userRef.update(userUpdates).addOnCompleteListener { task ->
@@ -151,6 +144,17 @@ class EditProfileDialogFragment : DialogFragment() {
 
             }
         }
+    }
+    private fun showMapDialogFragment() {
+        Log.d("!!!", "the")
+        val dialogFragment = MapDialogFragment()
+        val args = Bundle()
+        CurrentUser.locLat?.let { args.putDouble("lat", it) }
+        CurrentUser.locLng?.let { args.putDouble("lng", it) }
+        args.putBoolean("editMode", true)
+        dialogFragment.arguments = args
+        dialogFragment.setOnDataEditPassListener(this)
+        dialogFragment.show(childFragmentManager, "MapDialogFragment")
     }
 
 
@@ -204,5 +208,10 @@ class EditProfileDialogFragment : DialogFragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onDataPassed(data: LatLng) {
+        lat = data.latitude
+        lng = data.longitude
     }
 }

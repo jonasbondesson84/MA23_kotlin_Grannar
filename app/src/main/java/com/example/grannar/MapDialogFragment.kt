@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var onDataPassListener: OnDataPassListener? = null
+    private var onDataEditPassListener: OnDataEditPassListener? = null
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
@@ -30,6 +31,7 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
 
         val userLocationLat = arguments?.getDouble("lat")
         val userLocationLng = arguments?.getDouble("lng")
+        val editMode = arguments?.getBoolean("editMode", false)
 
         userLocation = userLocationLat?.let { userLocationLng?.let { it1 -> LatLng(it, it1) } }
         Log.d("!!!",userLocation.toString())
@@ -44,7 +46,11 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
 
         view.findViewById<Button>(R.id.mapAddButton).setOnClickListener {
             if(setLocation != null) {
-                onDataPassListener?.onDataPassed(setLocation!!)
+                if(editMode == true) {
+                    onDataEditPassListener?.onDataPassed(setLocation!!)
+                } else {
+                    onDataPassListener?.onDataPassed(setLocation!!)
+                }
                 dismiss()
 
             }
@@ -65,7 +71,9 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
                 val cameraUpdate = userLocation?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) } ?: CameraUpdateFactory.newLatLngZoom(latLng, 15f)
             googleMap.moveCamera(cameraUpdate)
             var marker: Marker? = null
-
+            if(editMode == true) {
+                marker = googleMap.addMarker(MarkerOptions().position(userLocation ?: latLng))
+            }
             googleMap.setOnMapClickListener { latLng ->
                 marker?.remove()
                 marker = googleMap.addMarker(MarkerOptions().position(latLng))
@@ -83,12 +91,15 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
         super.onAttach(context)
         if (context is OnDataPassListener) {
             onDataPassListener = context
-        } else {
-            throw RuntimeException("$context must implement OnDataPassListener")
+        } else if (context is OnDataEditPassListener){
+            onDataEditPassListener = context }
+        else {
+            //throw RuntimeException("$context must implement OnDataPassListener")
         }
     }
     override fun onDetach() {
         super.onDetach()
+        onDataEditPassListener = null
         onDataPassListener = null // Avregistrera lyssnare för att undvika minnesläckor
     }
     override fun onResume() {
@@ -118,6 +129,14 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
 
+    }
+
+    fun setOnDataPassListener(listener: OnDataPassListener) {
+        onDataPassListener = listener
+    }
+
+    fun setOnDataEditPassListener(listener: OnDataEditPassListener) {
+        onDataEditPassListener = listener
     }
 
     private fun getUserLocation() {
