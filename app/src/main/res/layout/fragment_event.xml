@@ -22,20 +22,22 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearchEvent"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
         android:hint="Search Event"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toStartOf="@+id/tvFindEvents"
         app:layout_constraintTop_toBottomOf="@id/tvFindEvents"
-
         app:startIconContentDescription="Search"
         app:startIconDrawable="@drawable/baseline_search_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etvSearchEvent"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 

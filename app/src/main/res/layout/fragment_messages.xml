@@ -23,7 +23,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ilMessageSearchFriends"
         android:layout_width="0dp"
-        android:layout_height="63dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:hint="Search"
         app:endIconMode="clear_text"
@@ -37,10 +37,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etvMessageSearchFriends"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
