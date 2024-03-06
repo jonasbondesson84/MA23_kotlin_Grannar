@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -35,6 +36,9 @@ class AddInterestDialogFragment(): DialogFragment() {
         tvInterestName = view.findViewById(R.id.tvInterestName)
         autoCompleteTextView = view.findViewById(R.id.dropDown)
         autoCompleteTextView.setAdapter(adapter)
+        autoCompleteTextView.setOnClickListener {
+            hideKeyboard(autoCompleteTextView)
+        }
 
 
         view.findViewById<Button>(R.id.interestCancelButton).setOnClickListener {
@@ -54,7 +58,7 @@ class AddInterestDialogFragment(): DialogFragment() {
     }
 
     private fun saveInterest() {
-        Log.d("!!!", "${autoCompleteTextView.text.toString()}")
+
         val categoryName =autoCompleteTextView.text.toString()
 
 
@@ -74,7 +78,7 @@ class AddInterestDialogFragment(): DialogFragment() {
                 )
                 docRef.update(updates).addOnSuccessListener {
                     Log.d("!!!", "Updated")
-                    //CurrentUser.loadUserInfo(uid)
+
                     interestCallback?.interestAdded()
                     dismiss()
                 }
@@ -82,6 +86,11 @@ class AddInterestDialogFragment(): DialogFragment() {
 
 
         }
+    }
+    fun hideKeyboard(view: View) {
+        val inputMethodManager =
+            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
     fun setAddedInterestCallback(callback: AddedInterestCallback){
         interestCallback = callback
