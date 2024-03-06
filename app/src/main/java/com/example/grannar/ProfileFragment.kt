@@ -33,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.util.UUID
 
 
-private lateinit var userProfile: User
+
 
 
 
