@@ -14,7 +14,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="12dp"
-        android:layout_marginVertical="12dp"
+        android:layout_marginVertical="16dp"
         app:civ_border_color="#E0E0E0"
         app:civ_border_width="2dp"
         android:src="@drawable/avatar"
@@ -31,7 +31,8 @@
 
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@+id/imEventImage"
-        app:layout_constraintTop_toTopOf="@+id/imEventImage">
+        app:layout_constraintTop_toTopOf="@+id/imEventImage"
+        app:layout_constraintBottom_toBottomOf="@+id/imEventImage">
 
         <TextView
             android:id="@+id/tvEventName"
@@ -50,6 +51,13 @@
             android:layout_marginTop="4dp"
             android:padding="4dp"
             android:text="Här är eventdate" />
+        <TextView
+            android:id="@+id/tvEventDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:padding="4dp"
+            android:text="Här är distance" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

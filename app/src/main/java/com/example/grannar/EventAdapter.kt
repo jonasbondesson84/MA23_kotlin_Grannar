@@ -28,6 +28,7 @@ class EventAdapter(val context: Context, private val eventList: MutableList<Even
         val tvDate: TextView = itemView.findViewById(R.id.tvEventDate)
         val imEvent: ImageView = itemView.findViewById(R.id.imEventImage)
         val constEvent: ConstraintLayout = itemView.findViewById(R.id.constraintEvent)
+        val tvDistance: TextView = itemView.findViewById(R.id.tvEventDistance)
 
 
     }
@@ -49,6 +50,8 @@ class EventAdapter(val context: Context, private val eventList: MutableList<Even
                 )
             }
         holder.tvDate.text = formattedDate
+        holder.tvDistance.text = event.showDistanceSpan()
+
         holder.constEvent.transitionName = event.docID
         holder.itemView.setOnClickListener {
             listener.goToEvent(event, holder.constEvent )

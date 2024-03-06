@@ -156,7 +156,7 @@ class ChatFragment : Fragment() {
         for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
 
             var item = messages[i]
-            if(item.unread == true && item.toID == CurrentUser.userID.toString()) {
+            if(item.unread && item.toID == CurrentUser.userID.toString()) {
                 docID?.let { item.docID?.let { it1 ->
                     db.collection("messages").document(it).collection("message").document(
                         it1
