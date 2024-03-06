@@ -71,12 +71,12 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
             val firstName = firstNameEditText.text.toString()
             val surName = surNameEditText.text.toString()
 
-            if(firstName.length >2) {
+            if(firstName.length >=2) {
                 imFirstNameCheck.visibility = View.VISIBLE
             } else {
                 imFirstNameCheck.visibility = View.INVISIBLE
             }
-            if(surName.length >2) {
+            if(surName.length >=2) {
                 imSurNameCheck.visibility = View.VISIBLE
             } else {
                 imSurNameCheck.visibility = View.INVISIBLE

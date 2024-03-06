@@ -37,6 +37,7 @@
             android:id="@+id/tvInterestName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
             android:hint="@string/interest" />
     </com.google.android.material.textfield.TextInputLayout>
 
