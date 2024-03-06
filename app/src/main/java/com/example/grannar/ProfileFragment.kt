@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -150,6 +149,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 Log.d("!!!", "user is not loged in")
             }
         }
+        aboutMeEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus->
+            if(!hasFocus) {
+                saveAboutMe(aboutMeEditText.text.toString())
+            }
+        }
 
 
 
@@ -167,14 +171,15 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                         .into(profileImageView!!)
                 }
                 aboutMeEditText.setText(user.aboutMe)
-                aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        Log.d("!!!", "savebutton")
-                        saveAboutMe(aboutMeEditText.text.toString())
-                        return@setOnEditorActionListener true
-                    }
-                    false
-                }
+
+//                aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
+//                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                        Log.d("!!!", "savebutton")
+//                        saveAboutMe(aboutMeEditText.text.toString())
+//                        return@setOnEditorActionListener true
+//                    }
+//                    false
+//                }
             } else {
                 showName.text = " "
                 showGender.text = " "
@@ -443,11 +448,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         userRef.update("aboutMe", newAboutMe)
             .addOnSuccessListener {
                 Log.d("!!!", "success about me ${db}")
-                Toast.makeText(
-                    requireContext(),
-                    "About me updated successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    requireContext(),
+//                    "About me updated successfully",
+//                    Toast.LENGTH_SHORT
+//                ).show()
             }.addOnFailureListener {
                 Log.d("!!!", "Error updating About Me ${db}")
                 Toast.makeText(requireContext(), "Failed to update About Me", Toast.LENGTH_SHORT)
