@@ -37,6 +37,7 @@
             android:id="@+id/etvEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
             android:hint="Event name" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -54,6 +55,7 @@
             android:id="@+id/etvEventDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
             android:hint="Event Description" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -94,7 +96,7 @@
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:id="@+id/imEventAddImage"
         android:layout_marginTop="12dp"
         android:layout_marginHorizontal="20dp"
