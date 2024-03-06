@@ -69,7 +69,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
     private var pendingDestination: NavDestination? = null
     private var pendingBundle: Bundle? = null
     private lateinit var signUpLauncher: ActivityResultLauncher<Intent>
-    
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
