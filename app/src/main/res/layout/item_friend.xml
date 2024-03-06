@@ -50,6 +50,13 @@
                 android:text="Name"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textSize="20sp" />
+            <TextView
+                android:id="@+id/friend_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/age"
