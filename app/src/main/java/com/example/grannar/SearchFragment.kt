@@ -72,7 +72,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     private lateinit var tabFriends: TabLayout
     private var onMyFriends = false
     private var friendsList = mutableListOf<User>()
-    private var filteredFriendsList = mutableListOf<User>()
+
     private var filterString = ""
     private var searchString = ""
 
@@ -86,8 +86,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
-        //getUsersWithinDistance(5)
-        getUsersList()
+        getUsersWithinDistance(5)
+        //getUsersList()
 
     }
 
