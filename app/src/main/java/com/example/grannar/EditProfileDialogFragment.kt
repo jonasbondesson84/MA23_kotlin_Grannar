@@ -18,6 +18,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -58,7 +59,7 @@ class EditProfileDialogFragment : DialogFragment() {
     private var param2: String? = null
 
 
-    lateinit var firstNameEditText: EditText
+    lateinit var firstNameEditText: TextView
     lateinit var surNameEditText: EditText
     lateinit var genderRadioGroup: RadioGroup
     lateinit var birthdayEditText: EditText
