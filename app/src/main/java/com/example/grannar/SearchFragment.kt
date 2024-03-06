@@ -34,7 +34,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -267,7 +266,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         exitTransition = MaterialElevationScale(/* growing= */ false)
         reenterTransition = MaterialElevationScale(/* growing= */ true)
 
-        val btnGetuser = view.findViewById<Button>(R.id.btnGetUser)
+
         val rvSearchList = view.findViewById<RecyclerView>(R.id.rvSearchList)
         tabFriends = view.findViewById(R.id.tabFriends)
         tilSearch = view.findViewById(R.id.tilSearchInterest)
@@ -321,13 +320,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         })
 
 
-        btnGetuser.setOnClickListener {
-            val auth = Firebase.auth
-            CurrentUser.clearUser()
-            auth.signOut()
-            adapter.notifyDataSetChanged()
-            Log.d("!!!", CurrentUser.friendsList?.size.toString())
-        }
+
         etvSearch = view.findViewById(R.id.etvSearchInterest)
         addTextChangeListener()
         tvNoSearchResult = view.findViewById(R.id.tvEmptySearchList)
