@@ -325,7 +325,7 @@ Log.d("!!!", "the")
         userLocation?.let { args.putDouble("lat", it.latitude) }
         userLocation?.let { args.putDouble("lng", it.longitude) }
         dialogFragment.arguments = args
-
+        dialogFragment.setOnDataPassListener(this)
         dialogFragment.show(supportFragmentManager, "MapDialogFragment")
     }
 
