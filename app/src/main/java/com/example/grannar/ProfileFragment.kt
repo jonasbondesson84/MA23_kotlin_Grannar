@@ -111,7 +111,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
 
 //        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
-        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+        personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
 
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
