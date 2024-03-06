@@ -6,7 +6,16 @@
     android:layout_height="wrap_content"
     android:background="#FFFFFFFF">
 
-    <ImageView
+<!--    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--        android:id="@+id/friend_image"-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/avatar"-->
+<!--        app:civ_border_color="#E0E0E0"-->
+<!--        app:civ_border_width="2dp" />-->
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imChatFromImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -14,7 +23,10 @@
         android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/avatar" />
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/avatar"
+        app:civ_border_color="#E0E0E0"
+        app:civ_border_width="2dp"/>
 
     <LinearLayout
         android:layout_width="0dp"
