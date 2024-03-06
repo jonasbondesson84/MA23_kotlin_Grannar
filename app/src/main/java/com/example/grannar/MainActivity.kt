@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
 
 
     private fun setMenuItems(bottomNav: BottomNavigationView, navController: NavController){
-        bottomNav.setOnNavigationItemSelectedListener { item ->
+        bottomNav.setOnItemSelectedListener{ item ->
             when (item.itemId) {
                 R.id.searchFragment -> {
                     navController.navigate(R.id.searchFragment)
