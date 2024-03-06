@@ -28,8 +28,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
                 app:navigationIcon="@drawable/baseline_arrow_back_24"
-                 app:menu="@menu/friends_info_menu"
-                />
+                 app:menu="@menu/friends_info_menu"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 
