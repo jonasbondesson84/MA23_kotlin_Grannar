@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -73,6 +75,37 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var dataPassListener: OnEditListener? = null
     private var successPassListener: OnSaveListener? = null
 
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+
+                btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
+
+
+
+        }
+
+        override fun afterTextChanged(s: Editable?) {}
+
+    }
+    private fun checkIfAllDataIsCorrect(): Boolean {
+
+        Log.d("!!!", etvName.text.isNullOrBlank().toString())
+        Log.d("!!!", etvDesc.text.isNullOrBlank().toString())
+        Log.d("!!!", dateTime.toString())
+        Log.d("!!!", lat.toString())
+        Log.d("!!!", lng.toString())
+
+        return (!etvName.text.isNullOrBlank() &&
+                !etvDesc.text.isNullOrBlank() &&
+                dateTime != null &&
+                lat != null &&
+                lng != null
+                )
+    }
+
 
 
 
@@ -87,6 +120,10 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         etvDesc = view.findViewById(R.id.etvEventDescription)
         imAddImage = view.findViewById(R.id.imEventAddImage)
         btnAddEvent = view.findViewById(R.id.eventAddButton)
+
+        etvName.addTextChangedListener(textWatcher)
+        etvDate.addTextChangedListener(textWatcher)
+        etvDesc.addTextChangedListener(textWatcher)
 
         if(arguments != null) {
             editMode = true
@@ -179,6 +216,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
                  lat = latLng.latitude
                  lng = latLng.longitude
                  geohash = GeoFireUtils.getGeoHashForLocation(GeoLocation(latLng.latitude, latLng.longitude))
+                btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
 //
 //                location = mutableMapOf(
 //                    "geohash" to hash,
