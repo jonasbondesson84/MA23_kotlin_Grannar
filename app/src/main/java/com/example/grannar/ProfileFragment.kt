@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -34,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.util.UUID
 
 
-private lateinit var userProfile: User
+
 
 
 
@@ -110,8 +109,10 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val showName = view.findViewById<TextView>(R.id.profileNameTextView)
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
-        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
-        personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+
+//        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
+        val personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
+
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
@@ -148,6 +149,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 Log.d("!!!", "user is not loged in")
             }
         }
+        aboutMeEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus->
+            if(!hasFocus) {
+                saveAboutMe(aboutMeEditText.text.toString())
+            }
+        }
 
 
         getUserInfo { user ->
@@ -157,26 +163,27 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 showName.text = user.firstName
                 showGender.text = user.gender
                 showAge.text = user.age
-                showLocation.text = user.location?.toString() ?: "none location to show"
+//                showLocation.text = user.location?.toString() ?: "none location to show"
                 if (!profileImageURL.isNullOrEmpty()) {
                     Glide.with(requireActivity())
                         .load(user.profileImageURL)
                         .into(profileImageView!!)
                 }
                 aboutMeEditText.setText(user.aboutMe)
-                aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        Log.d("!!!", "savebutton")
-                        saveAboutMe(aboutMeEditText.text.toString())
-                        return@setOnEditorActionListener true
-                    }
-                    false
-                }
+
+//                aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
+//                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                        Log.d("!!!", "savebutton")
+//                        saveAboutMe(aboutMeEditText.text.toString())
+//                        return@setOnEditorActionListener true
+//                    }
+//                    false
+//                }
             } else {
                 showName.text = " "
                 showGender.text = " "
                 showAge.text = " "
-                showLocation.text = " "
+//                showLocation.text = " "
                 profileImageView.setImageResource(R.drawable.avatar)
             }
             }
@@ -411,11 +418,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         userRef.update("aboutMe", newAboutMe)
             .addOnSuccessListener {
                 Log.d("!!!", "success about me ${db}")
-                Toast.makeText(
-                    requireContext(),
-                    "About me updated successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    requireContext(),
+//                    "About me updated successfully",
+//                    Toast.LENGTH_SHORT
+//                ).show()
             }.addOnFailureListener {
                 Log.d("!!!", "Error updating About Me ${db}")
                 Toast.makeText(requireContext(), "Failed to update About Me", Toast.LENGTH_SHORT)
