@@ -162,7 +162,8 @@ class EventFragment : Fragment(), EventAdapter.MyAdapterListener, DistanceSlider
                 rvEvents.visibility = View.INVISIBLE
                 eventMap.visibility = View.VISIBLE
                 CurrentUser.tabEventItem = 1
-                showEmptyMessage(eventsInRecyclerView)
+                tvEmptyList.visibility = View.INVISIBLE
+                //showEmptyMessage(eventsInRecyclerView)
             }
 
             private fun showEventList() {
