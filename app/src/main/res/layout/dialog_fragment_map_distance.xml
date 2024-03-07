@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distanceDialogMapView" />
+        app:layout_constraintTop_toBottomOf="@+id/distanceDialogCard" />
 
     <TextView
         android:id="@+id/tvDistanceHeader"
@@ -37,19 +37,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/distanceDialogCard"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvDistanceHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardCornerRadius="20dp"
+        app:strokeColor="#026B5D"
+        app:strokeWidth="2dp"
+        >
     <com.google.android.gms.maps.MapView
         android:id="@+id/distanceDialogMapView"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDistanceHeader" />
+        android:layout_height="match_parent"
+        />
 
-
+    </com.google.android.material.card.MaterialCardView>
     <Button
         android:id="@+id/distanceMapSetButton"
         android:layout_width="wrap_content"
