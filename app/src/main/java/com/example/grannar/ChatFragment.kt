@@ -3,6 +3,8 @@ package com.example.grannar
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +55,22 @@ class ChatFragment : Fragment() {
     private lateinit var rvChatMessage: RecyclerView
     private var fromProfileImageURL = ""
     private lateinit var constMessage: ConstraintLayout
+    private lateinit var btnSend: Button
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            val message = etvMessageText.text.toString()
+            if(message.isNotBlank()) {
+                btnSend.isEnabled = true
+            }
+
+
+        }
+
+        override fun afterTextChanged(s: Editable?) {}
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +128,8 @@ class ChatFragment : Fragment() {
 //        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
 //        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
-        val btnSend: Button = view.findViewById(R.id.btnSendMessage)
+        etvMessageText.addTextChangedListener(textWatcher)
+        btnSend = view.findViewById(R.id.btnSendMessage)
         btnSend.setOnClickListener {
             addNewMessage()
 
