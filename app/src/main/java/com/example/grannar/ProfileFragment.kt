@@ -100,7 +100,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
-        interestChips.clear() // Need clear to remove old items when user uses back button
+
         interestChips.add(view.findViewById(R.id.profileInterest1Chip))
         interestChips.add(view.findViewById(R.id.profileInterest2Chip))
         interestChips.add(view.findViewById(R.id.profileInterest3Chip))
