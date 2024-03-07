@@ -12,20 +12,16 @@ import android.text.TextWatcher
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.firebase.geofire.GeoFireUtils
-import com.firebase.geofire.GeoLocation
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -42,8 +38,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
-class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
+interface OnGetLocationPassListener{
+    fun onLocationPassed(data: LatLng)
+}
+class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback, OnGetLocationPassListener {
    // private var onSaveEventListener: OnSavedEventListener? = null
     interface OnEditListener {
         fun onDataPass(eventID: String)
@@ -52,6 +50,7 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         fun onSuccessPass(success: Boolean)
 
     }
+
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
@@ -70,15 +69,39 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var imageUri: Uri? = null
     private var editMode = false
     private var imageChanged = false
-    private lateinit var mapView: MapView
+    //private lateinit var mapView: MapView
     private lateinit var btnAddEvent: Button
     private var dataPassListener: OnEditListener? = null
     private var successPassListener: OnSaveListener? = null
+    private lateinit var btnLocation: ImageButton
+    private lateinit var imNameCheck: ImageView
+    private lateinit var imDescCheck: ImageView
+    private lateinit var imDateCheck: ImageView
+    private lateinit var imLocCheck: ImageView
 
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            val name = etvName.text.toString()
+            val desc = etvDesc.text.toString()
+            val date = etvDate.text.toString()
+            if(name.isNotEmpty()) {
+                imNameCheck.visibility = View.VISIBLE
+            } else {
+                imNameCheck.visibility = View.INVISIBLE
+            }
+            if(desc.isNotEmpty()) {
+                imDescCheck.visibility = View.VISIBLE
+            }else {
+                imDescCheck.visibility = View.INVISIBLE
+            }
+            if(date.isNotEmpty()) {
+                imDateCheck.visibility = View.VISIBLE
+            } else {
+                imDateCheck.visibility = View.INVISIBLE
+            }
 
 
                 btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
@@ -120,10 +143,19 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         etvDesc = view.findViewById(R.id.etvEventDescription)
         imAddImage = view.findViewById(R.id.imEventAddImage)
         btnAddEvent = view.findViewById(R.id.eventAddButton)
+        btnLocation = view.findViewById(R.id.addEventLocationButton)
+        imNameCheck = view.findViewById(R.id.imNameCheck)
+        imDescCheck = view.findViewById(R.id.imDescCheck)
+        imDateCheck = view.findViewById(R.id.imDateCheck)
+        imLocCheck = view.findViewById(R.id.imLocCheck)
 
         etvName.addTextChangedListener(textWatcher)
         etvDate.addTextChangedListener(textWatcher)
         etvDesc.addTextChangedListener(textWatcher)
+
+        btnLocation.setOnClickListener {
+            showMapDialogFragment()
+        }
 
         if(arguments != null) {
             editMode = true
@@ -187,49 +219,60 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(view)
-        mapView = view.findViewById(R.id.dialogEventMapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync { googleMap ->
-
-            val latLng = com.google.android.gms.maps.model.LatLng(
-                59.334591,
-                18.063240
-            )
-            val cameraUpdate = userLocation?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) } ?: CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-            googleMap.moveCamera(cameraUpdate)
-            var marker: Marker? = null
-            if(editMode) {
-                lat = arguments?.getDouble("lat")?.toDouble()
-                lng = arguments?.getDouble("lng")?.toDouble()
-                val savedLatLng = lat?.let {
-                    lng?.let { it1 -> LatLng(it, it1) }
-                }
-
-                marker = savedLatLng?.let { MarkerOptions().position(it) }
-                    ?.let { googleMap.addMarker(it) }
-            }
-
-            googleMap.setOnMapClickListener { latLng ->
-                marker?.remove()
-                marker = googleMap.addMarker(MarkerOptions().position(latLng))
-//                setLocation = latLng
-                 lat = latLng.latitude
-                 lng = latLng.longitude
-                 geohash = GeoFireUtils.getGeoHashForLocation(GeoLocation(latLng.latitude, latLng.longitude))
-                btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
+//        mapView = view.findViewById(R.id.dialogEventMapView)
+//        mapView.onCreate(savedInstanceState)
+//        mapView.getMapAsync { googleMap ->
 //
-//                location = mutableMapOf(
-//                    "geohash" to hash,
-//                    "lat" to lat,
-//                    "lng" to lng
-//                )
-
-            }
-        }
+//            val latLng = com.google.android.gms.maps.model.LatLng(
+//                59.334591,
+//                18.063240
+//            )
+//            val cameraUpdate = userLocation?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) } ?: CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+//            googleMap.moveCamera(cameraUpdate)
+//            var marker: Marker? = null
+//            if(editMode) {
+//                lat = arguments?.getDouble("lat")?.toDouble()
+//                lng = arguments?.getDouble("lng")?.toDouble()
+//                val savedLatLng = lat?.let {
+//                    lng?.let { it1 -> LatLng(it, it1) }
+//                }
+//
+//                marker = savedLatLng?.let { MarkerOptions().position(it) }
+//                    ?.let { googleMap.addMarker(it) }
+//            }
+//
+//            googleMap.setOnMapClickListener { latLng ->
+//                marker?.remove()
+//                marker = googleMap.addMarker(MarkerOptions().position(latLng))
+////                setLocation = latLng
+//                 lat = latLng.latitude
+//                 lng = latLng.longitude
+//                 geohash = GeoFireUtils.getGeoHashForLocation(GeoLocation(latLng.latitude, latLng.longitude))
+//                btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
+////
+////                location = mutableMapOf(
+////                    "geohash" to hash,
+////                    "lat" to lat,
+////                    "lng" to lng
+////                )
+//
+//            }
+//        }
 
         return builder.create()
 
 
+    }
+    private fun showMapDialogFragment() {
+        Log.d("!!!", "the")
+        val dialogFragment = MapDialogFragment()
+        val args = Bundle()
+        CurrentUser.locLat?.let { args.putDouble("lat", it) }
+        CurrentUser.locLng?.let { args.putDouble("lng", it) }
+        args.putBoolean("editMode", true)
+        dialogFragment.arguments = args
+        dialogFragment.setOnLocationPassListener(this)
+        dialogFragment.show(childFragmentManager, "MapDialogFragment")
     }
 
     private fun setData(arguments: Bundle) {
@@ -240,6 +283,12 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
         val formattedDate =
             SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(dateTime)
         etvDate.setText(formattedDate)
+        lat = arguments.getDouble("lat")
+        lng = arguments.getDouble("lng")
+        if(lat != null) {
+            imLocCheck.visibility = View.VISIBLE
+        }
+        btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
         val imageURL = arguments.getString("imageURL")
         Glide
             .with(requireContext())
@@ -397,27 +446,27 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
     }
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+//        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+//        mapView.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView.onDestroy()
+//        mapView.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
+//        mapView.onSaveInstanceState(outState)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+//        mapView.onLowMemory()
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -444,6 +493,14 @@ class AddEventDialogFragment: DialogFragment(), OnMapReadyCallback {
 
     fun setOnSuccessListener(listener: OnSaveListener) {
         successPassListener = listener
+    }
+
+    override fun onLocationPassed(data: LatLng) {
+        Log.d("!!!", data.toString())
+        lat = data.latitude
+        lng = data.longitude
+        btnAddEvent.isEnabled = checkIfAllDataIsCorrect()
+        imLocCheck.visibility = View.VISIBLE
     }
 
 //    override fun onAttach(context: Context) {

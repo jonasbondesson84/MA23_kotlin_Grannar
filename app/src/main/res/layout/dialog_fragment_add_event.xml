@@ -9,6 +9,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imNameCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/tilEventName"
+        app:layout_constraintBottom_toBottomOf="@+id/tilEventName"
+        app:layout_constraintStart_toEndOf="@+id/tilEventName"
+        app:srcCompat="@drawable/baseline_done_24" />
 
 
     <TextView
@@ -26,9 +37,9 @@
         android:id="@+id/tilEventName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDialogAddEventHeader">
@@ -40,13 +51,24 @@
             android:inputType="textCapSentences"
             android:hint="Event name" />
     </com.google.android.material.textfield.TextInputLayout>
+    <ImageView
+        android:id="@+id/imDescCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/tilEventDescription"
+        app:layout_constraintBottom_toBottomOf="@+id/tilEventDescription"
+        app:layout_constraintStart_toEndOf="@+id/tilEventDescription"
+        app:srcCompat="@drawable/baseline_done_24" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEventDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilEventName">
@@ -58,14 +80,25 @@
             android:inputType="textCapSentences"
             android:hint="Event Description" />
     </com.google.android.material.textfield.TextInputLayout>
+    <ImageView
+        android:id="@+id/imDateCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/tilEventDate"
+        app:layout_constraintBottom_toBottomOf="@+id/tilEventDate"
+        app:layout_constraintStart_toEndOf="@+id/tilEventDate"
+        app:srcCompat="@drawable/baseline_done_24" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEventDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-
+        android:layout_marginEnd="40dp"
+app:errorEnabled="true"
         app:endIconDrawable="@drawable/baseline_calendar_today_24"
         app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,18 +115,42 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.gms.maps.MapView
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:id="@+id/dialogEventMapView"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/tilEventDate"
-        android:layout_marginTop="12dp"
+<!--    <com.google.android.gms.maps.MapView-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:id="@+id/dialogEventMapView"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tilEventDate"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        />-->
+    <ImageView
+        android:id="@+id/imLocCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/addEventLocationButton"
+        app:layout_constraintBottom_toBottomOf="@+id/addEventLocationButton"
+        app:layout_constraintStart_toEndOf="@+id/addEventLocationButton"
+        app:srcCompat="@drawable/baseline_done_24" />
+    <ImageButton
+        android:id="@+id/addEventLocationButton"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:background="#056E5D"
+        android:tint="#00FFFFFF"
+        app:srcCompat="@drawable/baseline_add_location_alt_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilEventDate"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         />
-
     <ImageView
         android:layout_width="0dp"
         android:layout_height="150dp"
@@ -102,7 +159,7 @@
         android:layout_marginHorizontal="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialogEventMapView"
+        app:layout_constraintTop_toBottomOf="@+id/addEventLocationButton"
         android:src="@drawable/baseline_add_photo_alternate_24"
         />
 
