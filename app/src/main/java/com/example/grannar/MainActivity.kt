@@ -2,11 +2,8 @@ package com.example.grannar
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -45,7 +42,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
             var badge = bottomNav.getOrCreateBadge(R.id.messagesFragment)
             badge.isVisible = (unread > 0)
 // An icon only badge will be displayed unless a number or text is set:
-            badge.number = CurrentUser.unreadMessageNumber.value!! 
+            badge.number = CurrentUser.unreadMessageNumber.value!!
 
         }
 
