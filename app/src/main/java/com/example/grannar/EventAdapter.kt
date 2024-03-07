@@ -14,14 +14,17 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class EventAdapter(val context: Context, private val eventList: MutableList<Event>, private val listener: EventAdapter.MyAdapterListener): RecyclerView.Adapter<EventAdapter.ViewHolder>() {
+class EventAdapter(
+    val context: Context,
+    private val eventList: MutableList<Event>,
+    private val listener: EventAdapter.MyAdapterListener
+) : RecyclerView.Adapter<EventAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
+
     interface MyAdapterListener {
         fun goToEvent(event: Event, card: ConstraintLayout)
     }
-
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvEventName)
@@ -29,12 +32,10 @@ class EventAdapter(val context: Context, private val eventList: MutableList<Even
         val imEvent: ImageView = itemView.findViewById(R.id.imEventImage)
         val constEvent: ConstraintLayout = itemView.findViewById(R.id.constraintEvent)
         val tvDistance: TextView = itemView.findViewById(R.id.tvEventDistance)
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventAdapter.ViewHolder {
-        val itemView = layoutInflater.inflate(R.layout.item_event,parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_event, parent, false)
 
         return ViewHolder(itemView)
     }
@@ -51,11 +52,7 @@ class EventAdapter(val context: Context, private val eventList: MutableList<Even
             }
         holder.tvDate.text = formattedDate
         holder.tvDistance.text = event.showDistanceSpan()
-
         holder.constEvent.transitionName = event.docID
-        holder.itemView.setOnClickListener {
-            listener.goToEvent(event, holder.constEvent )
-        }
         Glide
             .with(holder.itemView.context)
             .load(event.imageURL)
@@ -68,8 +65,10 @@ class EventAdapter(val context: Context, private val eventList: MutableList<Even
                 RequestOptions().dontTransform()
             }
 
+        holder.itemView.setOnClickListener {
+            listener.goToEvent(event, holder.constEvent)
+        }
     }
-
 
     override fun getItemCount(): Int {
         return eventList.size

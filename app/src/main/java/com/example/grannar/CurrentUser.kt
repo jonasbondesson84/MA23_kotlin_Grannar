@@ -1,6 +1,5 @@
 package com.example.grannar
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
@@ -27,16 +26,11 @@ object CurrentUser {
     var friendsList: MutableList<User>? = mutableListOf()
     var friendsUIDList: MutableList<String> = mutableListOf()
     var unreadMessageIDs: HashMap<String, Int> = hashMapOf()
-    private val _unreadMessagesNumber = MutableLiveData<Int>( 0)
+    private val _unreadMessagesNumber = MutableLiveData<Int>(0)
     val unreadMessageNumber: LiveData<Int> = _unreadMessagesNumber
     var savedEvent: MutableList<String> = mutableListOf()
-
     var tabFriendItem = 0
     var tabEventItem = 0
-
-
-
-
 
     fun setUser(user: User) {
         clearUser()
@@ -45,8 +39,8 @@ object CurrentUser {
         this.surname = user.surname
         this.age = user.age
         this.location = user.location
-        this.locLat= user.locLat
-        this.locLng= user.locLng
+        this.locLat = user.locLat
+        this.locLng = user.locLng
         this.geoHash = user.geoHash
         this.email = user.email
         this.gender = user.gender
@@ -65,7 +59,6 @@ object CurrentUser {
 
     private fun getUnreadMessages(user: User) {
         this._unreadMessagesNumber.value = user.unreadMessages.size
-        Log.d("!!!", user.unreadMessages.size.toString())
     }
 
     fun clearUser() {
@@ -93,34 +86,25 @@ object CurrentUser {
     fun loadUserInfo(uid: String) {
         val db = Firebase.firestore
         db.collection("users").document(uid).addSnapshotListener { user, error ->
-            if(user != null) {
+            if (user != null) {
                 val currentUser = user.toObject<User>()
-                if(currentUser != null) {
+                if (currentUser != null) {
                     setUser(currentUser)
 
                 }
             }
         }
-//        db.collection("users").document(uid).get()
-//            .addOnSuccessListener {document ->
-//                if (document != null) {
-//                    val currentUser = document.toObject<User>()
-//                    if (currentUser != null) {
-//                        setUser(currentUser)
-//                    }
-//                }
-//
-//            }
     }
+
     fun getFriendList(user: User) {
         val db = com.google.firebase.ktx.Firebase.firestore
         this.friendsList?.clear()
-        for(userID in user.friendsUIDList) {
+        for (userID in user.friendsUIDList) {
             db.collection("users").document(userID).get()
-                .addOnSuccessListener {document->
-                    if(document != null) {
+                .addOnSuccessListener { document ->
+                    if (document != null) {
                         val friend = document.toObject<User>()
-                        if(friend != null) {
+                        if (friend != null) {
                             this.friendsList?.add(friend)
                         }
                     }

@@ -39,30 +39,6 @@
         </action>
     </fragment>
     <fragment
-        android:id="@+id/friendsListFragment"
-        android:name="com.example.grannar.FriendsListFragment"
-        android:label="fragment_friends_list"
-        tools:layout="@layout/fragment_friends_list" >
-        <action
-            android:id="@+id/action_friendsListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <action
-            android:id="@+id/action_friendsListFragment_to_friendProfileFragment"
-            app:destination="@id/friendProfileFragment" >
-            <argument
-                android:name="userID"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_friendsListFragment_to_chatFragment"
-            app:destination="@id/chatFragment" >
-            <argument
-                android:name="userID"
-                app:argType="string"
-                />
-        </action>
-    </fragment>
-    <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.grannar.ProfileFragment"
         android:label="fragment_profile"

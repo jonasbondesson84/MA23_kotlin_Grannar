@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,16 +55,15 @@ class ChatFragment : Fragment() {
     private var fromProfileImageURL = ""
     private lateinit var constMessage: ConstraintLayout
     private lateinit var btnSend: Button
+
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val message = etvMessageText.text.toString()
-            if(message.isNotBlank()) {
+            if (message.isNotBlank()) {
                 btnSend.isEnabled = true
             }
-
-
         }
 
         override fun afterTextChanged(s: Editable?) {}
@@ -91,19 +89,13 @@ class ChatFragment : Fragment() {
         db = Firebase.firestore
         tvName = view.findViewById(R.id.tvChatName)
         imImage = view.findViewById(R.id.imChatImage)
-        val bottomNavigationView: BottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+        val bottomNavigationView: BottomNavigationView =
+            requireActivity().findViewById(R.id.bottomNavigationView)
         bottomNavigationView.menu.findItem(R.id.messagesFragment).isChecked = true
+
         constMessage = view.findViewById(R.id.constMessage)
+        constMessage.transitionName = args.userID
 
-
-            constMessage.transitionName = args.userID
-
-//            image = view.findViewById(R.id.friendProfileImageView)
-//        image.transitionName = friendUid
-//
-//        val animation = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-//        sharedElementEnterTransition = animation
-//        sharedElementReturnTransition = animation
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment
             duration = 500
@@ -125,8 +117,6 @@ class ChatFragment : Fragment() {
         rvChatMessage.layoutManager = LinearLayoutManager(view.context)
         adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
         rvChatMessage.adapter = adapter
-//        adapter = ChatAdapter(view.context, messages, fromProfileImageURL)
-//        rvChatMessage.adapter = adapter
         etvMessageText = view.findViewById(R.id.etvMessageText)
         etvMessageText.addTextChangedListener(textWatcher)
         btnSend = view.findViewById(R.id.btnSendMessage)
@@ -147,14 +137,14 @@ class ChatFragment : Fragment() {
 
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
-//            val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
-//            findNavController().navigate(action)
         }
         val scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                val firstVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
                 updateLastRead(firstVisibleItemPosition, lastVisibleItemPosition)
             }
@@ -166,7 +156,8 @@ class ChatFragment : Fragment() {
     }
 
     private fun goToProfile() {
-        val action = ChatFragmentDirections.actionChatFragmentToFriendProfileFragment(args.userID.toString())
+        val action =
+            ChatFragmentDirections.actionChatFragmentToFriendProfileFragment(args.userID.toString())
         findNavController().navigate(action)
     }
 
@@ -175,42 +166,24 @@ class ChatFragment : Fragment() {
         for (i in firstVisibleItemPosition..lastVisibleItemPosition) {
 
             var item = messages[i]
-            if(item.unread && item.toID == CurrentUser.userID.toString()) {
-                docID?.let { item.docID?.let { it1 ->
-                    db.collection("messages").document(it).collection("message").document(
-                        it1
-                    ).update("unread", false).addOnSuccessListener {
-                        item.unread = false
-                    }
+            if (item.unread && item.toID == CurrentUser.userID.toString()) {
+                docID?.let {
+                    item.docID?.let { it1 ->
+                        db.collection("messages").document(it).collection("message").document(
+                            it1
+                        ).update("unread", false).addOnSuccessListener {
+                            item.unread = false
+                        }
 
-                } }
+                    }
+                }
             }
-            if(i == messages.size-1) {
+            if (i == messages.size - 1) {
                 markAsRead()
             }
 
         }
     }
-
-
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        // Skapa en callback för hantering av bakåtknappen
-//        val callback = object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                // Lägg till argument och navigera tillbaka
-//                val action = ChatFragmentDirections.actionChatFragmentToMessagesFragment()
-//                findNavController().navigate(action)
-//                //findNavController().popBackStack()
-//            }
-//        }
-//
-//        // Lägg till callbacken till FragmentActivity
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-//    }
-
-
 
 
     private fun getUserInfo(friendUid: String, view: View) {
@@ -246,7 +219,6 @@ class ChatFragment : Fragment() {
 
 
     private fun getOldMessages() {
-        Log.d("!!!", docID.toString())
         docID?.let {
             db.collection("messages").document(it).collection("message")
                 .addSnapshotListener { snapshot, e ->
@@ -254,28 +226,11 @@ class ChatFragment : Fragment() {
                         return@addSnapshotListener
                     } else {
                         if (snapshot != null) {
-//                            for(document in snapshot.documentChanges) {
-//                                if(document.type == DocumentChange.Type.ADDED) {
-//                                    val newMessage = document.document.toObject<Message>()
-//                                    Log.d("!!!", newMessage.toString())
-////                                    if(newMessage != null) {
-//
-//                                    messages.add(newMessage)
-//                                    messages.sortBy { it.timeStamp }
-//                                        Log.d("!!!", "new message added")
-//                                        adapter.notifyItemInserted(messages.size-1)
-//                                        rvChatMessage.scrollToPosition(messages.size-1)
-//                                //rvChatMessage.scrollToPosition(getFirstUnread()-1)
-//                                        markAsRead()
-////                                    }
-//                                }
-//                            }
-                            for(document in snapshot) {
+                            for (document in snapshot) {
                                 messages.clear()
                                 for (document in snapshot.documents) {
                                     val newMessage = document?.toObject<Message>()
                                     if (newMessage != null) {
-                                        //set lastRead position
                                         messages.add(newMessage)
                                     }
 
@@ -283,46 +238,27 @@ class ChatFragment : Fragment() {
                             }
                             messages.sortBy { it.timeStamp }
                             adapter.notifyDataSetChanged()
-                            Log.d("!!!", "new message")
                             rvChatMessage.scrollToPosition(messages.size - 1)
-                            //markAsRead()
                         }
 
                     }
 
                 }
-
         }
 
     }
 
     private fun markAsRead() {
         var newHashMap = mutableMapOf<String, Int>()
-        for(unreadMessage in CurrentUser.unreadMessageIDs) {
-            if(unreadMessage.key != args.userID.toString()) {
+        for (unreadMessage in CurrentUser.unreadMessageIDs) {
+            if (unreadMessage.key != args.userID.toString()) {
                 newHashMap[unreadMessage.key] = unreadMessage.value
             }
-
         }
         db.collection("users").document(CurrentUser.userID.toString())
             .update("unreadMessages", newHashMap).addOnSuccessListener {
-                Log.d("!!!", "hurra")
             }
-        Log.d("!!!", newHashMap.toString())
     }
-
-    private fun getFirstUnread(): Int {
-        for(message in messages) {
-            if(message.toID == CurrentUser.userID.toString() && message.unread) {
-                return messages.indexOf(message)
-            }
-
-        }
-        return messages.size
-
-    }
-
-
 
     private fun addNewMessage() {
         saveMessageToDataBase()
@@ -337,10 +273,8 @@ class ChatFragment : Fragment() {
                 if (document.exists()) {
                     docExist = true
                     docID = CurrentUser.userID.toString() + "_" + args.userID.toString()
-                    Log.d("!!!", "here")
                     getOldMessages()
                 }
-                Log.d("!!!", "Doc exists: $docExist")
             }
         if (!docExist) {
             db.collection("messages")
@@ -371,17 +305,14 @@ class ChatFragment : Fragment() {
 
 
     private fun saveMessageToDataBase() {
-        Log.d("!!!", "docexist : $docExist")
         if (docExist) {
             saveMessage()
         } else {
             createDoc()
         }
-
     }
 
     private fun saveMessage() {
-        Log.d("!!!", docID.toString())
         docID?.let {
             db.collection("messages").document(it).collection("message")
                 .add(
@@ -405,23 +336,17 @@ class ChatFragment : Fragment() {
         val updates = hashMapOf<String, Any>(
             "unreadMessages.${CurrentUser.userID}" to 1
         )
-        Log.d("!!!", updates.toString())
-            db.collection("users").document(args.userID.toString())
-                .update(updates).addOnSuccessListener {
-                    Log.d("!!!", "added unread")
-                }
-                .addOnFailureListener {
-                    Log.d("!!!", it.toString())
-                }
+        db.collection("users").document(args.userID.toString())
+            .update(updates).addOnSuccessListener {
+            }
     }
 
 
-    fun hideKeyboard(view: View) {
+    private fun hideKeyboard(view: View) {
         val inputMethodManager =
             view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
-
 
 
     companion object {

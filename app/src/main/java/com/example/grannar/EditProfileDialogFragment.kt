@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,26 +36,25 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-interface OnDataEditPassListener{
+interface OnDataEditPassListener {
     fun onDataPassed(data: LatLng)
 }
+
 class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
 
-    lateinit var firstNameEditText: TextInputEditText
-    lateinit var surNameEditText: TextInputEditText
-    lateinit var genderRadioGroup: RadioGroup
-    lateinit var birthdayEditText: TextInputEditText
-    var birthDate: Date? = null
-    private var location: LatLng? = null
+    private lateinit var firstNameEditText: TextInputEditText
+    private lateinit var surNameEditText: TextInputEditText
+    private lateinit var genderRadioGroup: RadioGroup
+    private lateinit var birthdayEditText: TextInputEditText
+    private var birthDate: Date? = null
     private var lat: Double? = null
     private var lng: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var userLocation: LatLng? = null
-    lateinit var locationImageButton: ImageButton
+    private lateinit var locationImageButton: ImageButton
 
 
     override fun onCreateView(
@@ -76,13 +74,15 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         firstNameEditText.setText(CurrentUser.firstName)
         surNameEditText.setText(CurrentUser.surname)
         birthdayEditText.setText(CurrentUser.age)
-        when(CurrentUser.gender) {
+        when (CurrentUser.gender) {
             "Male" -> {
                 genderRadioGroup.check(R.id.radioButtonMale)
             }
+
             "Female" -> {
                 genderRadioGroup.check(R.id.radioButtonFemale)
             }
+
             "Non-Binary" -> {
                 genderRadioGroup.check(R.id.radioButtonNonBinary)
             }
@@ -98,9 +98,7 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         }
 
         rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
-            Log.d("!!!", "Button clicked")
             showMapDialogFragment()
-
         }
 
         rootView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
@@ -109,36 +107,30 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
 
         rootView.findViewById<Button>(R.id.saveButton).setOnClickListener {
-            Log.d("!!!", "Savebutton clicked")
             updateUserInformation()
         }
-
-
 
         return rootView
 
     }
 
     private fun updateUserInformation() {
-        Log.d("!!!", "fun updateUserInfo")
 
         val userID = CurrentUser.userID
         if (userID != null) {
-
-        val db = Firebase.firestore
-        val userRef = db.collection("users").document(userID)
-
-        val firstName = firstNameEditText.text.toString()
-        val surname = surNameEditText.text.toString()
-        val age = birthdayEditText.text?.toString() ?: ""
-        val genderRadioGroup = genderRadioGroup
-        val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
-        val gender = when (checkedRadioButtonId) {
-            R.id.radioButtonMale -> "Male"
-            R.id.radioButtonFemale -> "Female"
-            R.id.radioButtonNonBinary -> "Non-Binary"
-            else -> null
-        }
+            val db = Firebase.firestore
+            val userRef = db.collection("users").document(userID)
+            val firstName = firstNameEditText.text.toString()
+            val surname = surNameEditText.text.toString()
+            val age = birthdayEditText.text?.toString() ?: ""
+            val genderRadioGroup = genderRadioGroup
+            val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
+            val gender = when (checkedRadioButtonId) {
+                R.id.radioButtonMale -> "Male"
+                R.id.radioButtonFemale -> "Female"
+                R.id.radioButtonNonBinary -> "Non-Binary"
+                else -> null
+            }
             val userUpdates = mutableMapOf<String, Any>()
             if (firstName.isNotBlank()) userUpdates["firstName"] = firstName
             if (surname.isNotBlank()) userUpdates["surname"] = surname
@@ -152,17 +144,18 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                     if (task.isSuccessful) {
                         dismiss()
                     } else {
-                        Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Failed to update user information",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
-            } else {
-                Log.d("!!!", "No new information provided")
-
             }
         }
     }
+
     private fun showMapDialogFragment() {
-        Log.d("!!!", "the")
         val dialogFragment = MapDialogFragment()
         val args = Bundle()
         CurrentUser.locLat?.let { args.putDouble("lat", it) }
@@ -176,22 +169,15 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
-        if (birthDate == null) {
-
-        }
         val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
-
         val calenderConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
-
-
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Birthdate")
                 .setCalendarConstraints(calenderConstraints.build())
                 .setSelection(defaultDateTimestamp)
                 .build()
-
         datePicker.show(childFragmentManager, "datePicker");
         datePicker.addOnPositiveButtonClickListener {
             if (datePicker.selection != null) {
@@ -205,6 +191,10 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
     }
 
+    override fun onDataPassed(data: LatLng) {
+        lat = data.latitude
+        lng = data.longitude
+    }
 
     companion object {
         /**
@@ -224,10 +214,5 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    override fun onDataPassed(data: LatLng) {
-        lat = data.latitude
-        lng = data.longitude
     }
 }
