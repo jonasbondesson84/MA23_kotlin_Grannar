@@ -21,7 +21,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
@@ -32,10 +31,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.UUID
-
-
-
-
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -100,15 +95,12 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         val showGender = view.findViewById<TextView>(R.id.profileGenderTextView)
         val showAge = view.findViewById<TextView>(R.id.profileAgeTextView)
 
-//        val showLocation = view.findViewById<TextView>(R.id.profileLocationTextView)
         personalImageView = view.findViewById<ImageView>(R.id.personalImageView)
 
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
 
-        Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
-        Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
-
+        interestChips.clear() // Need clear to remove old items when user uses back button
         interestChips.add(view.findViewById(R.id.profileInterest1Chip))
         interestChips.add(view.findViewById(R.id.profileInterest2Chip))
         interestChips.add(view.findViewById(R.id.profileInterest3Chip))
@@ -116,19 +108,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         interestChips.add(view.findViewById(R.id.profileInterest5Chip))
         interestChips.add(view.findViewById(R.id.profileInterest6Chip))
 
-        Log.d("!!!", "${CurrentUser.interests?.size}")
-
         val button: ImageButton = view.findViewById(R.id.chooseImageButton)
         button.setOnClickListener {
             openGallery()
         }
 
         val editProfileTextBtn: ImageButton = view.findViewById(R.id.editImageButton)
-        editProfileTextBtn.setOnClickListener{
+        editProfileTextBtn.setOnClickListener {
             val dialogFragment = EditProfileDialogFragment()
             dialogFragment.show(childFragmentManager, "editprofileDialog")
         }
-
 
         signoutButton.setOnClickListener {
             if (isLoggedIn()) {
@@ -137,50 +126,39 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             }
         }
 
-
-        aboutMeEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus->
-            if(!hasFocus) {
+        aboutMeEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
                 saveAboutMe(aboutMeEditText.text.toString())
             }
         }
 
         getUserInfo { user ->
             if (isAdded) {
-            if (user != null) {
-                val profileImageURL = user.profileImageURL
-                showName.text = user.firstName
-                showGender.text = user.gender
-                showAge.text = user.age
-//                showLocation.text = user.location?.toString() ?: "none location to show"
-                if (!profileImageURL.isNullOrEmpty()) {
-                    Glide.with(requireActivity())
-                        .load(user.profileImageURL)
-                        .placeholder(R.drawable.img_album)
-                        .error(R.drawable.img_album)
-                        .into(profileImageView)
-                }
-                aboutMeEditText.setText(user.aboutMe)
+                if (user != null) {
+                    val profileImageURL = user.profileImageURL
+                    showName.text = user.firstName
+                    showGender.text = user.gender
+                    showAge.text = user.age
 
-//                aboutMeEditText.setOnEditorActionListener { _, actionId, _ ->
-//                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                        Log.d("!!!", "savebutton")
-//                        saveAboutMe(aboutMeEditText.text.toString())
-//                        return@setOnEditorActionListener true
-//                    }
-//                    false
-//                }
-            } else {
-                showName.text = " "
-                showGender.text = " "
-                showAge.text = " "
-//                showLocation.text = " "
-                profileImageView.setImageResource(R.drawable.avatar)
-            }
+                    if (!profileImageURL.isNullOrEmpty()) {
+                        Glide.with(requireActivity())
+                            .load(user.profileImageURL)
+                            .placeholder(R.drawable.img_album)
+                            .error(R.drawable.img_album)
+                            .into(profileImageView)
+                    }
+                    aboutMeEditText.setText(user.aboutMe)
+
+                } else {
+                    showName.text = " "
+                    showGender.text = " "
+                    showAge.text = " "
+                    profileImageView.setImageResource(R.drawable.avatar)
+                }
             }
         }
         return view
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -189,8 +167,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     }
 
-    private fun loadPersonalImage(){ //ladda och visa intressebilden med hjälp av Glide.
-        if(CurrentUser.personalImageUrl != null) {
+    private fun loadPersonalImage() { //ladda och visa intressebilden med hjälp av Glide.
+        if (CurrentUser.personalImageUrl != null) {
             Glide.with(requireContext())
                 .load(CurrentUser.personalImageUrl)
                 .placeholder(R.drawable.img_album)
@@ -206,10 +184,9 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     private fun isLoggedIn(): Boolean {
         val auth = FirebaseAuth.getInstance()
-        if (auth.currentUser != null){
+        if (auth.currentUser != null) {
             return true
-        }
-        else return false
+        } else return false
     }
 
     private fun signOut() {
@@ -227,7 +204,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
             val uri = data?.data
             uri?.let {
-                //personalImageView?.setImageURI(uri)
                 imageUri = uri // save for upload
                 uploadImageToFirebase()
             }
@@ -296,11 +272,18 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             interests?.forEachIndexed { index, interest ->
 
                 interestChips[index].text = interest.name
-                val backgroundColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryColorId(interest.category))
+                val backgroundColor = ContextCompat.getColor(
+                    requireContext(),
+                    CategoryManager.getCategoryColorId(interest.category)
+                )
                 interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
                 interestChips[index].isVisible = true
                 interestChips[index].setTextColor(
-                    AppCompatResources.getColorStateList(requireContext(), CategoryManager.getCategoryTextColorID(interest.category)))
+                    AppCompatResources.getColorStateList(
+                        requireContext(),
+                        CategoryManager.getCategoryTextColorID(interest.category)
+                    )
+                )
                 interestChips[index].setChipIconResource(R.drawable.baseline_close_24)
                 interestChips[index].setOnClickListener {
                     deleteInterest(index)
@@ -318,7 +301,8 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             if (i >= numberToBeVisible) {
                 if (i == MAX_INTERESTS - 1) {
                     chip.text = "Add Interest"
-                    val backgroundColor = ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
+                    val backgroundColor =
+                        ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
                     chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
                     chip.setTextColor(Color.WHITE)
                     chip.isVisible = true
@@ -375,7 +359,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             .addOnSuccessListener { taskSnapshot ->
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     updatePersonalImageUrlInFirestore(downloadUri.toString())
-                    Log.d("Upload", "Personal Image Uploaded: $downloadUri")
                     Glide.with(requireContext())
                         .load(downloadUri)
                         .placeholder(R.drawable.img_album)
@@ -385,12 +368,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to upload personal image: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Failed to upload personal image: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.e("Upload", "Failed to upload personal image", e)
             }
     }
 
-    private fun updatePersonalImageUrlInFirestore(imageUrl: String){ //uppdaterar bildens url i db
+    private fun updatePersonalImageUrlInFirestore(imageUrl: String) { //uppdaterar bildens url i db
         val userRef = db.collection("users").document(CurrentUser.userID!!)
         userRef.update("personalImageUrl", imageUrl)
             .addOnSuccessListener {
@@ -398,20 +385,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
 
             }
-            .addOnFailureListener{ e ->
-               Log.e("Firestore", "Error updating personal image URL", e)
-           }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error updating personal image URL", e)
+            }
     }
 
     private fun saveAboutMe(newAboutMe: String) {
         val userRef = db.collection("users").document(CurrentUser.userID!!)
         userRef.update("aboutMe", newAboutMe)
             .addOnSuccessListener {
-//                Toast.makeText(
-//                    requireContext(),
-//                    "About me updated successfully",
-//                    Toast.LENGTH_SHORT
-//                ).show()
+
             }.addOnFailureListener {
                 Toast.makeText(requireContext(), "Failed to update About Me", Toast.LENGTH_SHORT)
                     .show()
