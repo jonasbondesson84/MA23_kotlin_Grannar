@@ -33,8 +33,9 @@ class SignInDialogFragment() : DialogFragment() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            signInButton.isEnabled = Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.isNotEmpty()
-            if(Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            signInButton.isEnabled =
+                Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.isNotEmpty()
+            if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 emailTextLayout.error = null
             } else {
                 emailTextLayout.error = "No email-address"
@@ -74,11 +75,8 @@ class SignInDialogFragment() : DialogFragment() {
 
         signUpTextView.setOnClickListener {
             signInResultListener.onSignUpPress()
-
-
             dismiss()
         }
-
 
 
         val builder = AlertDialog.Builder(requireActivity())
@@ -93,7 +91,7 @@ class SignInDialogFragment() : DialogFragment() {
 
 
         val auth = FirebaseAuth.getInstance()
-        if(!email.isEmpty() && !password.isEmpty()) {
+        if (!email.isEmpty() && !password.isEmpty()) {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     //Gets userInfo from database, needs to be done here to set with signInResultListener in addOnSuccessListener
@@ -110,17 +108,16 @@ class SignInDialogFragment() : DialogFragment() {
                             dismiss()
 
                         }
-                    //urrentUser.loadUserInfo(auth.uid.toString())
-
-//                signInResultListener.onSignInSuccess()
-//                dismiss()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Wrong Password or Username.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Wrong Password or Username.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("!!!", "Failure logging in!")
                 }
         }
     }
-
 
 }
