@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
     private var onDataPassListener: OnDataPassListener? = null
     private var onDataEditPassListener: OnDataEditPassListener? = null
+    private var onLocationPassListener: OnGetLocationPassListener? = null
 
     private var setLocation: LatLng? = null
     private var userLocation: LatLng? = null
@@ -51,6 +52,7 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
                 } else {
                     onDataPassListener?.onDataPassed(setLocation!!)
                 }
+                onLocationPassListener?.onLocationPassed(setLocation!!)
                 dismiss()
 
             }
@@ -93,6 +95,9 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
             onDataPassListener = context
         } else if (context is OnDataEditPassListener){
             onDataEditPassListener = context }
+        else if(context is OnGetLocationPassListener) {
+            onLocationPassListener = context
+        }
         else {
             //throw RuntimeException("$context must implement OnDataPassListener")
         }
@@ -100,6 +105,7 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
     override fun onDetach() {
         super.onDetach()
         onDataEditPassListener = null
+        onLocationPassListener = null
         onDataPassListener = null // Avregistrera lyssnare för att undvika minnesläckor
     }
     override fun onResume() {
@@ -138,6 +144,10 @@ class MapDialogFragment: DialogFragment(), OnMapReadyCallback {
     fun setOnDataEditPassListener(listener: OnDataEditPassListener) {
         onDataEditPassListener = listener
     }
+    fun setOnLocationPassListener(listener: OnGetLocationPassListener) {
+        onLocationPassListener = listener
+    }
+
 
     private fun getUserLocation() {
 //
