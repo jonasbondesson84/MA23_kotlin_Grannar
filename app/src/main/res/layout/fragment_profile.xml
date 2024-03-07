@@ -48,7 +48,6 @@
             android:layout_height="wrap_content"
             tools:context=".ProfileFragment">
 
-
             <RelativeLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="0dp"
@@ -148,7 +147,6 @@
                             android:text="gender"
                             android:textSize="18sp" />
 
-
                     </LinearLayout>
                 </LinearLayout>
 
@@ -165,7 +163,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.975"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/squareInterestConstraintLayout"
@@ -227,7 +224,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
 
-
                 <com.google.android.material.chip.Chip
                     android:id="@+id/profileInterest5Chip"
                     style="@style/SmallInterestChip.Icon"
@@ -245,11 +241,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-
                     android:layout_marginEnd="28dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profileInterest2Chip" />
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -341,7 +335,8 @@
                 app:layout_constraintTop_toTopOf="@+id/frameImageView"
                 app:layout_constraintVertical_bias="1.0" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
+    
 </androidx.constraintlayout.widget.ConstraintLayout>
