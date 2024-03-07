@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,384 +17,326 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:contentInsetStartWithNavigation="0dp"
             app:contentInsetStart="0dp"
-            >
+            app:contentInsetStartWithNavigation="0dp">
 
             <ImageButton
                 android:id="@+id/signoutButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_logout"
+                android:layout_gravity="end"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="isLoggedIn"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:onClick="isLoggedIn"
-                android:layout_gravity="end"
-                />
+                android:src="@drawable/ic_logout" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".ProfileFragment">
-
-
-
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/box"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.49"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-
-            <LinearLayout
-                android:id="@+id/linTop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/relativeLayout"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="0dp"
-                android:orientation="horizontal">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profileImageView"
-                    android:layout_width="152dp"
-                    android:layout_height="128dp"
-                    android:layout_marginVertical="8dp"
-                    android:src="@drawable/avatar"
-                    app:civ_border_color="#00201B"
-                    app:civ_border_width="2dp"
-                    app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.708"
-                    tools:src="@tools:sample/avatars" />
-
-                <ImageButton
-                    android:id="@+id/profileImageButton"
-                    android:layout_width="31dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:backgroundTint="#00FFFFFF"
-                    android:src="@drawable/baseline_add_a_photo_24"
-                    android:tint="#A8313435"
-                    android:layout_marginStart="-30dp"
-                    android:layout_marginTop="90dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
-                    app:layout_constraintStart_toEndOf="@+id/profileImageView" />
-
-<!--                <TextView-->
-<!--                    android:id="@+id/profileNameTextView"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginBottom="0dp"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="Name"-->
-<!--                    android:maxWidth="200dp"-->
-<!--                    android:textSize="30sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/profileImageView"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintHorizontal_bias="0.183"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/profileImageView" />-->
-
-                <!--                <TextView-->
-                <!--                    android:id="@+id/profileLocationTextView"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginStart="13dp"-->
-                <!--                    android:layout_marginTop="3dp"-->
-                <!--                    android:layout_weight="1"-->
-                <!--                    android:gravity="center"-->
-                <!--                    android:text="location"-->
-                <!--                    android:textSize="20sp" />-->
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/linTop"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="1dp"
-                    android:gravity="top"
-                    android:orientation="vertical"
-                    android:layout_marginVertical="4dp">
-
-                    <TextView
-                        android:id="@+id/profileNameTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="0dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_weight="1"
-                        android:text="Name"
-                        android:maxWidth="200dp"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="@+id/profileImageView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.183"
-                        app:layout_constraintStart_toEndOf="@+id/profileImageView" />
-                    <TextView
-                        android:id="@+id/profileAgeTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="3dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="age"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/profileGenderTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_weight="1"
-                        android:text="gender"
-                        android:textSize="18sp" />
-
-
-
-
-
-
-                </LinearLayout>
-            </LinearLayout>
-<!--            <ImageButton-->
-<!--                android:id="@+id/editImageButton"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:src="@drawable/baseline_edit_24"-->
-<!--                android:backgroundTint="#00FFFFFF"-->
-
-<!--                />-->
-
-
-
-
-        </RelativeLayout>
-        <ImageButton
-            android:id="@+id/editImageButton"
-            android:layout_width="47dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:backgroundTint="#00FFFFFF"
-            android:src="@drawable/baseline_edit_24"
-            app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.975"
-            app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/squareInterestConstraintLayout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/box"
-            android:gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.552"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" >
+            tools:context=".ProfileFragment">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/profileInterest1Chip"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                style="@style/SmallInterestChip.Icon"
-                android:layout_marginStart="28dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
-                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/profileInterest2Chip"
-                style="@style/SmallInterestChip.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:background="@drawable/box"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-
+                app:layout_constraintHorizontal_bias="0.49"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/profileInterest3Chip"
-                style="@style/SmallInterestChip.Icon"
+                <LinearLayout
+                    android:id="@+id/linTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="0dp"
+                    android:orientation="horizontal">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profileImageView"
+                        android:layout_width="152dp"
+                        android:layout_height="128dp"
+                        android:layout_marginVertical="8dp"
+                        android:src="@drawable/avatar"
+                        app:civ_border_color="#00201B"
+                        app:civ_border_width="2dp"
+                        app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.708"
+                        tools:src="@tools:sample/avatars" />
+
+                    <ImageButton
+                        android:id="@+id/profileImageButton"
+                        android:layout_width="31dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-30dp"
+                        android:layout_marginTop="90dp"
+                        android:layout_marginBottom="4dp"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/baseline_add_a_photo_24"
+                        android:tint="#A8313435"
+                        app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
+                        app:layout_constraintStart_toEndOf="@+id/profileImageView" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linTop"
+                        android:layout_marginVertical="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="1dp"
+                        android:gravity="top"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profileNameTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="0dp"
+                            android:layout_weight="1"
+                            android:maxWidth="200dp"
+                            android:text="Name"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.183"
+                            app:layout_constraintStart_toEndOf="@+id/profileImageView"
+                            app:layout_constraintTop_toTopOf="@+id/profileImageView" />
+
+                        <TextView
+                            android:id="@+id/profileAgeTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="3dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="age"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/profileGenderTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_weight="1"
+                            android:text="gender"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/editImageButton"
+                android:layout_width="47dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/baseline_edit_24"
+                app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.975"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/squareInterestConstraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/box"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.552"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profileInterest1Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
+                    app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profileInterest2Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profileInterest3Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="28dp"
+                    app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
+                    app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
+
+                <com.google.android.material.chip.Chip
+
+                    android:id="@+id/profileInterest4Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profileInterest5Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/profileInterest6Chip"
+                    style="@style/SmallInterestChip.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="28dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profileInterest2Chip" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <EditText
+                android:id="@+id/profileAbout_meEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="29dp"
+                android:background="@drawable/box"
+                android:ems="10"
+                android:gravity="top|start"
+                android:hint="Tell us more about yourself."
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="4"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.54"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout" />
+
+            <TextView
+                android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="28dp"
-                app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
-                app:layout_constraintTop_toTopOf="@+id/squareInterestConstraintLayout" />
-
-            <com.google.android.material.chip.Chip
-
-                android:id="@+id/profileInterest4Chip"
-                style="@style/SmallInterestChip.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="28dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="10dp"
-                android:text=""
-                android:textSize="12sp"
+                android:text="Interest"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.147"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+                app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/profileInterest5Chip"
-                style="@style/SmallInterestChip.Icon"
+            <TextView
+                android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="8dp"
+                android:text="About me:"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/profileAbout_meEditText"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
-                app:layout_constraintTop_toBottomOf="@+id/profileInterest1Chip" />
+                app:layout_constraintHorizontal_bias="0.132"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout"
+                app:layout_constraintVertical_bias="1.0" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/profileInterest6Chip"
-                style="@style/SmallInterestChip.Icon"
+
+            <ImageView
+                android:id="@+id/frameImageView"
+                android:layout_width="0dp"
+                android:layout_height="206dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/box"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.565"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileAbout_meEditText" />
+
+            <ImageView
+                android:id="@+id/personalImageView"
+                android:layout_width="324dp"
+                android:layout_height="190dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/img_album"
+                app:civ_border_color="#00201B"
+                app:civ_border_width="3dp"
+                app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
+                app:layout_constraintEnd_toEndOf="@+id/frameImageView"
+                app:layout_constraintHorizontal_bias="0.437"
+                app:layout_constraintStart_toStartOf="@+id/frameImageView"
+                app:layout_constraintTop_toTopOf="@+id/frameImageView"
+                app:layout_constraintVertical_bias="0.437" />
+
+            <ImageButton
+                android:id="@+id/chooseImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-
-                android:layout_marginEnd="28dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileInterest2Chip" />
-
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/baseline_add_a_photo_24"
+                app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
+                app:layout_constraintEnd_toEndOf="@+id/frameImageView"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/frameImageView"
+                app:layout_constraintTop_toTopOf="@+id/frameImageView"
+                app:layout_constraintVertical_bias="1.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <EditText
-            android:id="@+id/profileAbout_meEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="29dp"
-            android:background="@drawable/box"
-            android:ems="10"
-            android:gravity="top|start"
-            android:paddingVertical="4dp"
-            android:paddingHorizontal="8dp"
-            android:layout_marginHorizontal="20dp"
-
-            android:hint="Tell us more about yourself."
-            android:inputType="textMultiLine|textCapSentences"
-            android:minLines="4"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.54"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Interest"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/squareInterestConstraintLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.147"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="About me:"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/profileAbout_meEditText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.132"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout"
-            app:layout_constraintVertical_bias="1.0" />
-
-
-        <ImageView
-            android:id="@+id/frameImageView"
-            android:layout_width="0dp"
-            android:layout_height="206dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/box"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.565"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileAbout_meEditText"/>
-
-        <ImageView
-            android:id="@+id/personalImageView"
-            android:layout_width="324dp"
-            android:layout_height="190dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/img_album"
-            app:civ_border_color="#00201B"
-            app:civ_border_width="3dp"
-            app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
-            app:layout_constraintEnd_toEndOf="@+id/frameImageView"
-            app:layout_constraintHorizontal_bias="0.437"
-            app:layout_constraintStart_toStartOf="@+id/frameImageView"
-            app:layout_constraintTop_toTopOf="@+id/frameImageView"
-            app:layout_constraintVertical_bias="0.437" />
-
-
-
-        <ImageButton
-            android:id="@+id/chooseImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#00FFFFFF"
-            android:src="@drawable/baseline_add_a_photo_24"
-            app:layout_constraintBottom_toBottomOf="@+id/frameImageView"
-            app:layout_constraintEnd_toEndOf="@+id/frameImageView"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/frameImageView"
-            app:layout_constraintTop_toTopOf="@+id/frameImageView"
-            app:layout_constraintVertical_bias="1.0" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+    
 </androidx.constraintlayout.widget.ConstraintLayout>
