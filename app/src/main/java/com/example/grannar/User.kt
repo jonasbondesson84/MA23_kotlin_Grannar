@@ -35,11 +35,9 @@ data class User(
     var friendsUIDList: MutableList<String> = mutableListOf(),
     var unreadMessages: HashMap<String, Int> = hashMapOf(),
     var savedEvents: MutableList<String> = mutableListOf()
-   //
+    //
 
-    ) {
-   // constructor() : this("", null, null, null, null, null, null, null, null, null, null, null, null)
-
+) {
 
     @Exclude
     fun getBirthDate(): LocalDate {
@@ -55,63 +53,80 @@ data class User(
             in 2..10 -> {
                 return "1 - 10"
             }
-            in 11 .. 20 -> {
+
+            in 11..20 -> {
                 return "11 - 20"
             }
-            in 21 .. 30 -> {
+
+            in 21..30 -> {
                 return "21 - 30"
             }
-            in 31 .. 40 -> {
+
+            in 31..40 -> {
                 return "31 - 40"
             }
-            in 41 .. 50 -> {
+
+            in 41..50 -> {
                 return "41 - 50"
             }
-            in 51 .. 60 -> {
+
+            in 51..60 -> {
                 return "51 - 60"
             }
-            in 61 .. 70 -> {
+
+            in 61..70 -> {
                 return "61 - 70"
             }
+
             else -> return "70+"
         }
 
     }
 
-    fun showDistanceSpan():String {
+    fun showDistanceSpan(): String {
         val distance = round(calculateDistance())
         Log.d("!!!", distance.toString())
-        when(distance) {
-            in 0.0 .. 9.9 -> {
+        when (distance) {
+            in 0.0..9.9 -> {
                 return "0 - 10 km"
             }
-            in 10.0 .. 19.9 -> {
+
+            in 10.0..19.9 -> {
                 return "10 - 20 km"
             }
-            in 20.0 .. 29.9 -> {
+
+            in 20.0..29.9 -> {
                 return "20 - 30 km"
             }
-            in 30.0 .. 39.9 -> {
+
+            in 30.0..39.9 -> {
                 return "30 - 40 km"
             }
-            in 40.0 .. 49.9 -> {
+
+            in 40.0..49.9 -> {
                 return "40 - 50 km"
             }
-            in 50.0 .. 59.9 -> {
+
+            in 50.0..59.9 -> {
                 return "50 - 60 km"
             }
-            in 60.0 .. 69.9 -> {
+
+            in 60.0..69.9 -> {
                 return "60 - 70 km"
             }
-            in 70.0 .. 79.9 -> {
+
+            in 70.0..79.9 -> {
                 return "70 - 80 km"
             }
-            in 80.0 .. 89.9 -> {
+
+            in 80.0..89.9 -> {
                 return "80 - 90 km"
             }
-            in 90.0 .. 99.9 -> {
+
+            in 90.0..99.9 -> {
                 return "90 - 100 km"
             }
+
             else -> {
                 return "100+ km"
             }
@@ -127,7 +142,6 @@ data class User(
         val lat2 = this.locLat ?: 0.0
         val lon2 = this.locLng ?: 0.0
 
-
         val latDistance = Math.toRadians(lat2 - lat1)
         val lonDistance = Math.toRadians(lon2 - lon1)
         val a = sin(latDistance / 2) * sin(latDistance / 2) +
@@ -136,12 +150,6 @@ data class User(
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         val distance = R * c  //distance in km
 
-
         return distance
     }
-
-
-
-
-
 }
