@@ -70,6 +70,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        // när en bild har valts så skapas en uri
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
@@ -188,7 +189,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     }
 
-    private fun loadPersonalImage(){
+    private fun loadPersonalImage(){ //ladda och visa intressebilden med hjälp av Glide.
         if(CurrentUser.personalImageUrl != null) {
             Glide.with(requireContext())
                 .load(CurrentUser.personalImageUrl)
@@ -362,11 +363,11 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
 
     fun openGallery() {
-        getContent.launch("image/*")
+        getContent.launch("image/*") // öppnar galleriet för att välja en bild.
     }
 
 
-    private fun uploadPersonalImageToFirebase(imageUri: Uri) {
+    private fun uploadPersonalImageToFirebase(imageUri: Uri) { //laddar upp bildens uri till db
         val firebasePath = "images/${CurrentUser.userID}/personalImages/${UUID.randomUUID()}.jpg"
         val storageRef = FirebaseStorage.getInstance().getReference(firebasePath)
 
@@ -389,7 +390,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             }
     }
 
-    private fun updatePersonalImageUrlInFirestore(imageUrl: String){
+    private fun updatePersonalImageUrlInFirestore(imageUrl: String){ //uppdaterar bildens url i db
         val userRef = db.collection("users").document(CurrentUser.userID!!)
         userRef.update("personalImageUrl", imageUrl)
             .addOnSuccessListener {
