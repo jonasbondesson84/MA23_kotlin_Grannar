@@ -54,21 +54,13 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
     private var param1: String? = null
     private var param2: String? = null
-
-    private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
     private lateinit var personalImageView: ImageView
     private var profileImageView: ImageView? = null
     private var interestChips = mutableListOf<Chip>()
     private val MAX_INTERESTS = 6
-
     private lateinit var selectedImageUri: Uri
     private lateinit var getContent: ActivityResultLauncher<String>
-
-
-    private var pendingDestination: NavDestination? = null
-    private var pendingBundle: Bundle? = null
-    private lateinit var signUpLauncher: ActivityResultLauncher<Intent>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,10 +78,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
             }
         }
     }
-
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -116,7 +104,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
 
         val aboutMeEditText = view.findViewById<EditText>(R.id.profileAbout_meEditText)
         val signoutButton = view.findViewById<ImageButton>(R.id.signoutButton)
-
 
         Log.d("!!!", "Nr of interests:  ${CurrentUser.interests?.size}")
         Log.d("!!!", "Nr of interests:  ${CurrentUser.firstName}")
@@ -145,17 +132,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
         signoutButton.setOnClickListener {
             if (isLoggedIn()) {
                 signOut()
-                Log.d("!!!", "User is signing out")
             } else {
-                Log.d("!!!", "user is not loged in")
             }
         }
+
+
         aboutMeEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus->
             if(!hasFocus) {
                 saveAboutMe(aboutMeEditText.text.toString())
             }
         }
-
 
         getUserInfo { user ->
             if (isAdded) {
@@ -170,7 +156,7 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                         .load(user.profileImageURL)
                         .placeholder(R.drawable.img_album)
                         .error(R.drawable.img_album)
-                        .into(profileImageView!!)
+                        .into(profileImageView)
                 }
                 aboutMeEditText.setText(user.aboutMe)
 
@@ -268,8 +254,6 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
                         val downloadUri = task.result
                         db.collection("users").document(CurrentUser.userID!!)
                             .update("profileImageURL", downloadUri.toString())
-                    } else {
-
                     }
                 }
                 .addOnSuccessListener {
@@ -418,21 +402,16 @@ class ProfileFragment : Fragment(), AddedInterestCallback {
            }
     }
 
-
-
-
     private fun saveAboutMe(newAboutMe: String) {
         val userRef = db.collection("users").document(CurrentUser.userID!!)
         userRef.update("aboutMe", newAboutMe)
             .addOnSuccessListener {
-                Log.d("!!!", "success about me ${db}")
 //                Toast.makeText(
 //                    requireContext(),
 //                    "About me updated successfully",
 //                    Toast.LENGTH_SHORT
 //                ).show()
             }.addOnFailureListener {
-                Log.d("!!!", "Error updating About Me ${db}")
                 Toast.makeText(requireContext(), "Failed to update About Me", Toast.LENGTH_SHORT)
                     .show()
             }

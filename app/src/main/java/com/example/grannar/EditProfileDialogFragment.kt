@@ -42,20 +42,15 @@ interface OnDataEditPassListener{
 }
 class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
 
     lateinit var firstNameEditText: TextInputEditText
     lateinit var surNameEditText: TextInputEditText
     lateinit var genderRadioGroup: RadioGroup
     lateinit var birthdayEditText: TextInputEditText
-    var birthDate: Date? = null
-    private var location: LatLng? = null
+    private var birthDate: Date? = null
     private var lat: Double? = null
     private var lng: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var userLocation: LatLng? = null
     lateinit var locationImageButton: ImageButton
 
 
@@ -88,7 +83,6 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
             }
         }
 
-
         birthdayEditText.apply {
             setOnClickListener {
                 showDatePickerDialog()
@@ -98,9 +92,7 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         }
 
         rootView.findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
-            Log.d("!!!", "Button clicked")
             showMapDialogFragment()
-
         }
 
         rootView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
@@ -109,22 +101,15 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
 
         rootView.findViewById<Button>(R.id.saveButton).setOnClickListener {
-            Log.d("!!!", "Savebutton clicked")
             updateUserInformation()
         }
 
-
-
         return rootView
-
     }
 
     private fun updateUserInformation() {
-        Log.d("!!!", "fun updateUserInfo")
-
         val userID = CurrentUser.userID
         if (userID != null) {
-
         val db = Firebase.firestore
         val userRef = db.collection("users").document(userID)
 
@@ -155,9 +140,6 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                         Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
                     }
                 }
-            } else {
-                Log.d("!!!", "No new information provided")
-
             }
         }
     }
@@ -176,14 +158,10 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
-        if (birthDate == null) {
-
-        }
         val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
 
         val calenderConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
-
 
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
@@ -192,7 +170,7 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                 .setSelection(defaultDateTimestamp)
                 .build()
 
-        datePicker.show(childFragmentManager, "datePicker");
+        datePicker.show(parentFragmentManager, "datePicker");
         datePicker.addOnPositiveButtonClickListener {
             if (datePicker.selection != null) {
                 val selectedDate = Date(datePicker.selection as Long)
