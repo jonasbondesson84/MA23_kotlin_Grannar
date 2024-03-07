@@ -17,26 +17,32 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
-class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,private val listener: MessageAdapter.MyAdapterListener): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(
+    context: Context,
+    private val chatList: MutableList<Chats>,
+    private val listener: MessageAdapter.MyAdapterListener
+) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
+
     interface MyAdapterListener {
         fun goToMessage(user: User, card: ConstraintLayout)
 
     }
+
     var onUserClick: ((User) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvMessageName)
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessageChatMessage)
-        val tvTimeStamp : TextView = itemView.findViewById(R.id.tvMessageTimeStamp)
+        val tvTimeStamp: TextView = itemView.findViewById(R.id.tvMessageTimeStamp)
         val imProfileImage: ImageView = itemView.findViewById(R.id.imMesssageImage)
         val constMessage: ConstraintLayout = itemView.findViewById(R.id.constMessage)
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageAdapter.ViewHolder {
-        val itemView = layoutInflater.inflate(R.layout.item_messages,parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_messages, parent, false)
 
         return ViewHolder(itemView)
     }
@@ -47,14 +53,14 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvName.text = fromUser.firstName
         holder.constMessage.transitionName = fromUser.userID
 
-        if(message.fromID.toString() == CurrentUser.userID.toString()) {
+        if (message.fromID.toString() == CurrentUser.userID.toString()) {
             holder.tvMessage.text = "You: ${message.text} "
         } else {
             holder.tvMessage.text = "${fromUser.firstName}: ${message.text}"
 
         }
         holder.tvTimeStamp.text = setTimeText(message.timeStamp)
-        if(message.unread && message.toID == CurrentUser.userID.toString()) {
+        if (message.unread && message.toID == CurrentUser.userID.toString()) {
             showAsUnread(holder)
         } else {
             showAsRead(holder)
@@ -79,32 +85,35 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
         holder.tvTimeStamp.setTypeface(null, Typeface.BOLD)
     }
 
-    private fun showAsRead(holder: ViewHolder){
+    private fun showAsRead(holder: ViewHolder) {
         holder.tvMessage.setTypeface(null, Typeface.NORMAL)
         holder.tvName.setTypeface(null, Typeface.NORMAL)
         holder.tvTimeStamp.setTypeface(null, Typeface.NORMAL)
     }
 
 
-
     private fun setTimeText(timeStamp: Date?): String {
         val formatter = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val sendTimeStamp = formatter.format(timeStamp)
 
-        val sendDateTime = formatter.parse(sendTimeStamp).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val sendDateTime = formatter.parse(sendTimeStamp).toInstant().atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
         val currentDateTime = LocalDateTime.now()
 
         val timeDifference = Duration.between(sendDateTime, currentDateTime)
-        when(timeDifference.toMinutes()) {
-            in 0 .. 1 -> {
+        when (timeDifference.toMinutes()) {
+            in 0..1 -> {
                 return "now"
             }
-            in 1 .. 60 -> {
+
+            in 1..60 -> {
                 return "${timeDifference.toMinutes()} minutes ago"
             }
-            in 60 .. 1440 -> {
+
+            in 60..1440 -> {
                 return "${timeDifference.toHours()} hours ago"
             }
+
             else -> {
                 val formatterDays = SimpleDateFormat("EEE, dd MMM, yyyy", Locale.getDefault())
 
@@ -117,6 +126,6 @@ class MessageAdapter(context: Context, private val chatList: MutableList<Chats>,
     }
 
     override fun getItemCount(): Int {
-       return chatList.size
+        return chatList.size
     }
 }
