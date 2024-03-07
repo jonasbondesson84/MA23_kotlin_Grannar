@@ -15,16 +15,21 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
-class ChatAdapter(context: Context, private val messages: MutableList<Message>, private val profileURL: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(
+    context: Context,
+    private val messages: MutableList<Message>,
+    private val profileURL: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
-    private var loadedUser: User? = null
+
     inner class ViewHolderFromCurrentUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMessageFrom: TextView = itemView.findViewById(R.id.tvChatFromMessage)
         val tvTimeStampFrom: TextView = itemView.findViewById(R.id.tvChatFromTimeStamp)
         val imImageFrom: ImageView = itemView.findViewById(R.id.imChatFromImage)
 
     }
+
     inner class ViewHolderToCurrentUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvMessageTo: TextView = itemView.findViewById(R.id.tvChatToMessage)
         val tvTimeStampTo: TextView = itemView.findViewById(R.id.tvChatToTimeStamp)
@@ -33,15 +38,28 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType == 1) {
-            ViewHolderFromCurrentUser(layoutInflater.inflate(R.layout.item_message_from_currentuser, parent, false))
-        }else {
-            ViewHolderToCurrentUser(layoutInflater.inflate(R.layout.item_message_to_currentuser, parent, false))
-    }
+        return if (viewType == 1) {
+            ViewHolderFromCurrentUser(
+                layoutInflater.inflate(
+                    R.layout.item_message_from_currentuser,
+                    parent,
+                    false
+                )
+            )
+        } else {
+            ViewHolderToCurrentUser(
+                layoutInflater.inflate(
+                    R.layout.item_message_to_currentuser,
+                    parent,
+                    false
+                )
+            )
+        }
 
     }
+
     override fun getItemViewType(position: Int): Int {
-        return if(messages[position].fromID == CurrentUser.userID) {
+        return if (messages[position].fromID == CurrentUser.userID) {
             0
         } else 1
 
@@ -49,13 +67,12 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        if(getItemViewType(position) == 1) {
+        if (getItemViewType(position) == 1) {
             val fromHolder = holder as ViewHolderFromCurrentUser
             fromHolder.tvMessageFrom.text = messages[position].text
 
             val timeStamp = messages[position].timeStamp
-            //setTimeText(timeStamp)
-            val timeText: String = if(timeStamp != null) {
+            val timeText: String = if (timeStamp != null) {
                 setTimeText(timeStamp)
             } else {
                 "null"
@@ -68,9 +85,6 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
                 .placeholder(R.drawable.img_album)
                 .error(R.drawable.img_album)
                 .into(fromHolder.imImageFrom)
-
-
-//            fromHolder.tvTimeStampFrom.text = DateFormat.getDateTimeInstance().format(timeStamp).toString()
         } else {
             val toHolder = holder as ViewHolderToCurrentUser
             Glide
@@ -85,7 +99,7 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
 
             val timeStamp = messages[position].timeStamp
 
-            val timeText = if(timeStamp != null) {
+            val timeText = if (timeStamp != null) {
                 setTimeText(timeStamp)
             } else {
                 "null"
@@ -97,49 +111,37 @@ class ChatAdapter(context: Context, private val messages: MutableList<Message>, 
 
     }
 
-    private fun showImage(loadedUser: User, fromHolder: ChatAdapter.ViewHolderFromCurrentUser) {
-        Glide
-            .with(fromHolder.itemView.context)
-            .load(loadedUser)
-            .centerCrop()
-            .placeholder(R.drawable.baseline_add_a_photo_24)
-            .error(R.drawable.baseline_close_24)
-            .into(fromHolder.imImageFrom)
-    }
-
     private fun setTimeText(timeStamp: Date?): String {
         val formatter = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val sendTimeStamp = formatter.format(timeStamp)
 
-        val sendDateTime = formatter.parse(sendTimeStamp).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val sendDateTime = formatter.parse(sendTimeStamp).toInstant().atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
         val currentDateTime = LocalDateTime.now()
 
         val timeDifference = Duration.between(sendDateTime, currentDateTime)
-        when(timeDifference.toMinutes()) {
-            in 0 .. 1 -> {
+        when (timeDifference.toMinutes()) {
+            in 0..1 -> {
                 return "now"
             }
-            in 1 .. 60 -> {
+
+            in 1..60 -> {
                 return "${timeDifference.toMinutes()} minutes ago"
             }
-            in 60 .. 1440 -> {
+
+            in 60..1440 -> {
                 return "${timeDifference.toHours()} hours ago"
             }
+
             else -> {
                 val formatterDays = SimpleDateFormat("EEE, dd MMM, yyyy", Locale.getDefault())
 
                 return formatterDays.format(timeStamp)
             }
         }
-
-        return timeDifference.seconds.toString()
-
     }
 
     override fun getItemCount(): Int {
         return messages.size
     }
-
-
-
 }

@@ -12,8 +12,6 @@ import kotlin.math.sqrt
 class Event(
     @DocumentId var docID: String? = null,
     var name: String? = null,
-//    var locationLat: Double? = null,
-//    var locationLng: Double? = null,
     var location: Map<String, Any>? = null,
     var startDateTime: Date? = null,
     var description: String? = null,

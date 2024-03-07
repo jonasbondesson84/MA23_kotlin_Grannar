@@ -13,7 +13,7 @@ object CategoryManager {
          "Exercise" to R.color.exerciseCategory,
          "Other" to R.color.otherCategory)
 
-    val categorieFonts = mapOf<String, Int>(
+    private val categoryFonts = mapOf<String, Int>(
         "Sport" to R.color.sportCategoryText,
         "Nature" to R.color.natureCategoryText,
         "Animals" to R.color.animalsCategoryText,
@@ -33,6 +33,6 @@ object CategoryManager {
     }
 
     fun getCategoryTextColorID(categoryName: String?): Int{
-        return categorieFonts[categoryName] ?: R.color.otherCategoryText
+        return categoryFonts[categoryName] ?: R.color.otherCategoryText
     }
 }

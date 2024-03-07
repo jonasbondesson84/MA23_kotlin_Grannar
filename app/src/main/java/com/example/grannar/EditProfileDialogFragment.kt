@@ -1,7 +1,6 @@
 package com.example.grannar
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,22 +36,22 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-interface OnDataEditPassListener{
+interface OnDataEditPassListener {
     fun onDataPassed(data: LatLng)
 }
+
 class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     // TODO: Rename and change types of parameters
 
-    lateinit var firstNameEditText: TextInputEditText
-    lateinit var surNameEditText: TextInputEditText
-    lateinit var genderRadioGroup: RadioGroup
-    lateinit var birthdayEditText: TextInputEditText
+    private lateinit var firstNameEditText: TextInputEditText
+    private lateinit var surNameEditText: TextInputEditText
+    private lateinit var genderRadioGroup: RadioGroup
+    private lateinit var birthdayEditText: TextInputEditText
     private var birthDate: Date? = null
     private var lat: Double? = null
     private var lng: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    lateinit var locationImageButton: ImageButton
-
+    private lateinit var locationImageButton: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,13 +70,15 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         firstNameEditText.setText(CurrentUser.firstName)
         surNameEditText.setText(CurrentUser.surname)
         birthdayEditText.setText(CurrentUser.age)
-        when(CurrentUser.gender) {
+        when (CurrentUser.gender) {
             "Male" -> {
                 genderRadioGroup.check(R.id.radioButtonMale)
             }
+
             "Female" -> {
                 genderRadioGroup.check(R.id.radioButtonFemale)
             }
+
             "Non-Binary" -> {
                 genderRadioGroup.check(R.id.radioButtonNonBinary)
             }
@@ -108,22 +109,23 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     }
 
     private fun updateUserInformation() {
+      
         val userID = CurrentUser.userID
         if (userID != null) {
-        val db = Firebase.firestore
-        val userRef = db.collection("users").document(userID)
+            val db = Firebase.firestore
+            val userRef = db.collection("users").document(userID)
+            val firstName = firstNameEditText.text.toString()
+            val surname = surNameEditText.text.toString()
+            val age = birthdayEditText.text?.toString() ?: ""
+            val genderRadioGroup = genderRadioGroup
+            val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
+            val gender = when (checkedRadioButtonId) {
+                R.id.radioButtonMale -> "Male"
+                R.id.radioButtonFemale -> "Female"
+                R.id.radioButtonNonBinary -> "Non-Binary"
+                else -> null
+            }
 
-        val firstName = firstNameEditText.text.toString()
-        val surname = surNameEditText.text.toString()
-        val age = birthdayEditText.text?.toString() ?: ""
-        val genderRadioGroup = genderRadioGroup
-        val checkedRadioButtonId = genderRadioGroup.checkedRadioButtonId
-        val gender = when (checkedRadioButtonId) {
-            R.id.radioButtonMale -> "Male"
-            R.id.radioButtonFemale -> "Female"
-            R.id.radioButtonNonBinary -> "Non-Binary"
-            else -> null
-        }
             val userUpdates = mutableMapOf<String, Any>()
             if (firstName.isNotBlank()) userUpdates["firstName"] = firstName
             if (surname.isNotBlank()) userUpdates["surname"] = surname
@@ -137,14 +139,18 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                     if (task.isSuccessful) {
                         dismiss()
                     } else {
-                        Toast.makeText(context, "Failed to update user information", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Failed to update user information",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
         }
     }
+
     private fun showMapDialogFragment() {
-        Log.d("!!!", "the")
         val dialogFragment = MapDialogFragment()
         val args = Bundle()
         CurrentUser.locLat?.let { args.putDouble("lat", it) }
@@ -159,7 +165,6 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
-
         val calenderConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
 
@@ -170,7 +175,8 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                 .setSelection(defaultDateTimestamp)
                 .build()
 
-        datePicker.show(parentFragmentManager, "datePicker");
+        datePicker.show(childFragmentManager, "datePicker");
+
         datePicker.addOnPositiveButtonClickListener {
             if (datePicker.selection != null) {
                 val selectedDate = Date(datePicker.selection as Long)
@@ -183,6 +189,10 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
 
     }
 
+    override fun onDataPassed(data: LatLng) {
+        lat = data.latitude
+        lng = data.longitude
+    }
 
     companion object {
         /**
@@ -202,10 +212,5 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    override fun onDataPassed(data: LatLng) {
-        lat = data.latitude
-        lng = data.longitude
     }
 }

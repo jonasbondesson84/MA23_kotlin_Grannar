@@ -2,7 +2,6 @@ package com.example.grannar
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,30 +107,31 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         topBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        topBar.setOnMenuItemClickListener {menuItem->
-            when(menuItem.itemId) {
-                R.id.deleteEvent-> {
+        topBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.deleteEvent -> {
                     showDeleteDialog()
                     true
                 }
-                R.id.saveEvent-> {
-                    if(isSaved) {
+
+                R.id.saveEvent -> {
+                    if (isSaved) {
                         removeEvent()
                     } else {
                         saveEvent()
                     }
                     true
                 }
+
                 R.id.editEvent -> {
                     editEvent()
                     true
                 }
+
                 else -> false
             }
         }
-
         getEventInfo(args.eventID.toString())
-
 
         return view
     }
@@ -139,9 +139,6 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
     private fun editEvent() {
         val dialogFragment = AddEventDialogFragment()
         val args = Bundle()
-//        userLocation?.let { args.putDouble("lat", it.latitude) }
-//        userLocation?.let { args.putDouble("lng", it.longitude) }
-
         args.putString("name", selectedEvent?.name)
         args.putString("desc", selectedEvent?.description)
         selectedEvent?.locLat?.let { args.putDouble("lat", it) }
@@ -150,6 +147,7 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         args.putSerializable("startDateTime", selectedEvent?.startDateTime)
         args.putString("createdByUID", selectedEvent?.createdByUID)
         args.putString("docID", selectedEvent?.docID)
+
         dialogFragment.arguments = args
         dialogFragment.setOnDataPassListener(this)
 
@@ -160,17 +158,18 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         db.collection("users").document(CurrentUser.userID.toString())
             .update("savedEvents", FieldValue.arrayRemove(selectedEvent?.docID.toString()))
             .addOnSuccessListener {
-//                CurrentUser.savedEvent.remove(selectedEvent?.docID.toString())
                 isSaved = false
                 updateIcon()
             }
     }
 
-    private fun updateIcon()  {
-        if(isSaved) {
-            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
+    private fun updateIcon() {
+        if (isSaved) {
+            topBar.menu.getItem(1).icon =
+                ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
         } else {
-            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_border_24, null)
+            topBar.menu.getItem(1).icon =
+                ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_border_24, null)
         }
     }
 
@@ -178,10 +177,8 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         db.collection("users").document(CurrentUser.userID.toString())
             .update("savedEvents", FieldValue.arrayUnion(selectedEvent?.docID.toString()))
             .addOnSuccessListener {
-//                CurrentUser.savedEvent.add(selectedEvent?.docID.toString())
                 isSaved = true
                 updateIcon()
-                Log.d("!!!", "saved event")
             }
     }
 
@@ -202,15 +199,17 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
     }
 
     private fun deleteItem() {
-        if(selectedEvent != null) {
-            selectedEvent!!.docID?.let { db.collection("Events").document(it)
-                .delete()
-                .addOnCompleteListener {task->
-                    if(task.isSuccessful) {
-                        deleteImage()
-                    }
+        if (selectedEvent != null) {
+            selectedEvent!!.docID?.let {
+                db.collection("Events").document(it)
+                    .delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            deleteImage()
+                        }
 
-            } }
+                    }
+            }
 
         }
     }
@@ -227,18 +226,9 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
     }
 
     private fun getEventInfo(eventID: String) {
-//        db.collection("Events").document(eventID).addSnapshotListener { event, error ->
-//            if(event != null) {
-//                val thisEvent = event.toObject<Event>()
-//                if (thisEvent != null) {
-//                    selectedEvent = thisEvent
-//                    showEventData(thisEvent)
-//                }
-//            }
-//        }
         db.collection("Events").document(eventID).get()
-            .addOnSuccessListener {document->
-                if(document != null) {
+            .addOnSuccessListener { document ->
+                if (document != null) {
                     val event = document.toObject<Event>()
                     if (event != null) {
                         selectedEvent = event
@@ -271,16 +261,17 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
                 RequestOptions().dontTransform()
             }
 
-        if(event.createdByUID != CurrentUser.userID) {
+        if (event.createdByUID != CurrentUser.userID) {
             topBar.menu.getItem(0).isVisible = false
             topBar.menu.getItem(1).isVisible = false
         } else {
             topBar.menu.getItem(2).isVisible = false
         }
 
-        if(event.docID in CurrentUser.savedEvent) {
+        if (event.docID in CurrentUser.savedEvent) {
             isSaved = true
-            topBar.menu.getItem(1).icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
+            topBar.menu.getItem(1).icon =
+                ResourcesCompat.getDrawable(resources, R.drawable.baseline_favorite_24, null)
         }
         locationMap.getMapAsync { googleMap ->
             googleMap.clear()
@@ -302,27 +293,6 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EventInfoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EventInfoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-
-
-    }
     override fun onResume() {
         super.onResume()
         locationMap.onResume()
@@ -356,4 +326,25 @@ class EventInfoFragment : Fragment(), OnMapReadyCallback, AddEventDialogFragment
         getEventInfo(eventID)
     }
 
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment EventInfoFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            EventInfoFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+
+
+    }
 }

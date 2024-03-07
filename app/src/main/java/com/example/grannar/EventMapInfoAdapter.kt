@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.Marker
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class EventMapInfoAdapter(val context: Context): GoogleMap.InfoWindowAdapter {
+class EventMapInfoAdapter(val context: Context) : GoogleMap.InfoWindowAdapter {
 
     private val layoutInflater = LayoutInflater.from(context)
 
@@ -24,7 +24,6 @@ class EventMapInfoAdapter(val context: Context): GoogleMap.InfoWindowAdapter {
         val tvTitle = infoWindow.findViewById<TextView>(R.id.tvWindowTitle)
         val tvDesc = infoWindow.findViewById<TextView>(R.id.tvWindowDesc)
         val constLayOut = infoWindow.findViewById<ConstraintLayout>(R.id.constraintEvent)
-
 
         val event = p0.tag as? Event
 
@@ -42,7 +41,6 @@ class EventMapInfoAdapter(val context: Context): GoogleMap.InfoWindowAdapter {
                 )
             }
         tvDesc.text = formattedDate
-
 
         return infoWindow
     }
