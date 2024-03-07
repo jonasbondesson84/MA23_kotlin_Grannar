@@ -33,9 +33,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-interface OnDataPassListener{
+
+interface OnDataPassListener {
     fun onDataPassed(data: LatLng)
 }
+
 class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     lateinit var firstNameEditText: EditText
     lateinit var surNameEditText: EditText
@@ -58,7 +60,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     private lateinit var btnSignUp: Button
 
     var birthDate: Date? = null
-    //var mapFragment: MapFragment? = null
+
     private var location: LatLng? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: LatLng? = null
@@ -71,17 +73,16 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
             val firstName = firstNameEditText.text.toString()
             val surName = surNameEditText.text.toString()
 
-            if(firstName.length >=2) {
+            if (firstName.length >= 2) {
                 imFirstNameCheck.visibility = View.VISIBLE
             } else {
                 imFirstNameCheck.visibility = View.INVISIBLE
             }
-            if(surName.length >=2) {
+            if (surName.length >= 2) {
                 imSurNameCheck.visibility = View.VISIBLE
             } else {
                 imSurNameCheck.visibility = View.INVISIBLE
             }
-
 
             btnSignUp.isEnabled = checkIfAllDataIsCorrect()
 
@@ -115,7 +116,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val email = emailEditText.text.toString()
-            if(Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 emailTextLayout.error = null
                 imEmailCheck.visibility = View.VISIBLE
             } else {
@@ -139,14 +140,14 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val password = passwordEditText.text.toString()
             val confirmationPassword = confirmPasswordEditText.text.toString()
-            if(password.length > 7) {
+            if (password.length > 7) {
                 passwordTextLayout.error = null
                 imPasswordCheck.visibility = View.VISIBLE
             } else {
                 passwordTextLayout.error = "Password must be at least 8 characters long"
                 imPasswordCheck.visibility = View.INVISIBLE
             }
-            if(password == confirmationPassword && confirmationPassword.length > 7) {
+            if (password == confirmationPassword && confirmationPassword.length > 7) {
                 confPWTextLayout.error = null
                 imConfirmPWCheck.visibility = View.VISIBLE
             } else {
@@ -162,8 +163,6 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         }
 
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -201,9 +200,6 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         birthdayEditText.addTextChangedListener(textWatcher)
 
         btnSignUp = findViewById(R.id.signUpButton)
-        //mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as MapFragment?
-
-
 
         genderRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             Log.d("!!!", "what")
@@ -219,16 +215,9 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
             isFocusableInTouchMode = false
         }
 
-        findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener{
+        findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
             Log.d("!!!", "Button clicked")
-//            mapFragment?.let {
-//                it.showMapForLocationSelection()
-//            }
-            //open mapdialog
-            //check for lastLocation()
             getPermission()
-
-
         }
 
         findViewById<Button>(R.id.cancelSignUpButton).setOnClickListener {
@@ -237,26 +226,6 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
 
         findViewById<Button>(R.id.signUpButton).setOnClickListener {
             signUp()
-//            val password = passwordEditText.text.toString()
-//            val confirmationPassword = confirmPasswordEditText.text.toString()
-//
-//            if (checkInformation()) {
-//                if (checkPassword(password, confirmationPassword)) {
-//                    signUp()
-//                } else {
-//                    Snackbar.make(
-//                        confirmPasswordEditText,
-//                        "Passwords don't match",
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                }
-//            } else {
-//                Snackbar.make(
-//                    confirmPasswordEditText,
-//                    "Please fill out all fields",
-//                    Snackbar.LENGTH_SHORT
-//                ).show()
-//            }
         }
     }
 
@@ -293,10 +262,10 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == 1) {
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastLocation()
-            }else {
+            } else {
                 userLocation = LatLng(
                     59.334591,
                     18.063240
@@ -308,18 +277,22 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
 
 
     private fun getLastLocation() {
-    if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED) {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            userLocation = LatLng(location.latitude, location.longitude)
-            showMapDialogFragment()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                userLocation = LatLng(location.latitude, location.longitude)
+                showMapDialogFragment()
 
+            }
         }
-    }
     }
 
     private fun showMapDialogFragment() {
-Log.d("!!!", "the")
+        Log.d("!!!", "the")
         val dialogFragment = MapDialogFragment()
         val args = Bundle()
         userLocation?.let { args.putDouble("lat", it.latitude) }
@@ -328,8 +301,6 @@ Log.d("!!!", "the")
         dialogFragment.setOnDataPassListener(this)
         dialogFragment.show(supportFragmentManager, "MapDialogFragment")
     }
-
-
 
 
     private fun signUp() {
@@ -342,8 +313,8 @@ Log.d("!!!", "the")
         val birthDateString = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(birthDate)
         val lat = location?.latitude
         val lng = location?.longitude
-        var geoHash: String? =  null
-        if (lat != null && lng != null){
+        var geoHash: String? = null
+        if (lat != null && lng != null) {
             geoHash = GeoFireUtils.getGeoHashForLocation(GeoLocation(lat, lng))
         }
 
@@ -352,7 +323,6 @@ Log.d("!!!", "the")
                 val newUser = User(
                     docID = "",
                     userID = auth.currentUser?.uid,
-                    //location = location,
                     locLat = location?.latitude,
                     locLng = location?.longitude,
                     geoHash = geoHash,
@@ -409,39 +379,15 @@ Log.d("!!!", "the")
 
     }
 
-
     private fun getGender(): String {
         val pickedRadioButtonID = genderRadioGroup.checkedRadioButtonId
         return findViewById<RadioButton>(pickedRadioButtonID).text.toString()
-    }
-
-    private fun checkInformation(): Boolean {
-        if (
-            firstNameEditText.text.isEmpty() ||
-            surNameEditText.text.isEmpty() ||
-            passwordEditText.text.isEmpty() ||
-            confirmPasswordEditText.text.isEmpty() ||
-            emailEditText.text.isEmpty() ||
-            genderRadioGroup.checkedRadioButtonId == -1 ||
-            birthDate == null ||
-            location == null
-
-        ) {
-            return false
-        }
-        return true
-    }
-
-    private fun checkPassword(password: String, confirmationPassword: String): Boolean {
-        return password == confirmationPassword
     }
 
     override fun onDataPassed(data: LatLng) {
         location = data
         imLocationCheck.visibility = View.VISIBLE
         btnSignUp.isEnabled = checkIfAllDataIsCorrect()
-        Log.d("!!!","Data från dialogfragment ${location}")
+        Log.d("!!!", "Data från dialogfragment ${location}")
     }
-
-
 }
