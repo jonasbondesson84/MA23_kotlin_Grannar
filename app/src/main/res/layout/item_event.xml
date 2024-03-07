@@ -2,22 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintEvent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFFFF"
-    android:id="@+id/constraintEvent"
     android:transitionGroup="true">
-
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imEventImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginStart="12dp"
         android:layout_marginVertical="16dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/avatar"
         app:civ_border_color="#E0E0E0"
         app:civ_border_width="2dp"
-        android:src="@drawable/avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,12 +26,10 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
-
-
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/imEventImage"
         app:layout_constraintStart_toEndOf="@+id/imEventImage"
-        app:layout_constraintTop_toTopOf="@+id/imEventImage"
-        app:layout_constraintBottom_toBottomOf="@+id/imEventImage">
+        app:layout_constraintTop_toTopOf="@+id/imEventImage">
 
         <TextView
             android:id="@+id/tvEventName"
@@ -51,6 +48,7 @@
             android:layout_marginTop="4dp"
             android:padding="4dp"
             android:text="Här är eventdate" />
+
         <TextView
             android:id="@+id/tvEventDistance"
             android:layout_width="wrap_content"
