@@ -1,6 +1,6 @@
 package com.example.grannar
 
-import android.util.Log
+
 import com.google.firebase.firestore.DocumentId
 import java.util.Date
 import kotlin.math.atan2
@@ -24,7 +24,6 @@ class Event(
 ) {
     fun showDistanceSpan(): String {
         val distance = round(calculateDistance())
-        Log.d("!!!", distance.toString())
         when (distance) {
             in 0.0..9.9 -> {
                 return "0 - 10 km"
