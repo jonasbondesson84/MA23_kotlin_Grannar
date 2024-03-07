@@ -3,7 +3,6 @@ package com.example.grannar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-//import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -145,21 +144,6 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
                 }
 
-            }
-
-
-    }
-
-
-    fun getUserData(userID: String) {
-        val db = Firebase.firestore
-        var selectedUser: User? = null
-        db.collection("users").document(userID).get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    val selectedUser = document.toObject<User>()
-
-                }
             }
 
     }
