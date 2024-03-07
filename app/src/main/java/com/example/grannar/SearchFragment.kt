@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,14 +50,16 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SearchFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInResultListener, DistanceSliderListener {
+class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener, SignInResultListener,
+    DistanceSliderListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var searchList = mutableListOf<User>() // The whole downloaded list to filter
     private var listInRecyclerView = mutableListOf<User>() // The list that is in the recyclerView
-    private var listAfterCategoryFilter = mutableListOf<User>() // The downloaded list but filter from dialog
-    private lateinit var db : FirebaseFirestore
+    private var listAfterCategoryFilter =
+        mutableListOf<User>() // The downloaded list but filter from dialog
+    private lateinit var db: FirebaseFirestore
     private lateinit var adapter: SearchListAdapter
     private lateinit var etvSearch: EditText
     private lateinit var filterChip: Chip
@@ -87,45 +88,11 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         db = Firebase.firestore
         adapter = SearchListAdapter(requireContext(), listInRecyclerView, this)
         getUsersWithinDistance(5)
-        //getUsersList()
+
 
     }
 
-
-
-    fun getUsersList() {
-        val auth = FirebaseAuth.getInstance()
-        val userIdToRemove = auth.currentUser?.uid
-
-        Log.d("!!!","Current-User: ${CurrentUser.userID}")
-        searchList.clear()
-        Log.d("!!!", db.toString())
-
-        val query = if (userIdToRemove != null){
-            db.collection("users").whereNotEqualTo("userID", userIdToRemove)
-        }else{
-            db.collection("users")
-        }
-
-        query.get().addOnSuccessListener { result ->
-            for ((i, document) in result.withIndex()) {
-                Log.d("!!!", "${document.id} => ${document.data}")
-                val user = document.toObject<User>()
-                Log.d("!!!", "UserID: ${CurrentUser.userID}")
-                searchList.add(user)
-
-
-            }
-
-            setListInRecyclerView(true)
-        }
-            .addOnFailureListener { exception ->
-                Log.d("!!!", "Error getting documents: ", exception)
-            }
-
-    }
-
-    fun getUsersWithinDistance(distanceInKilometers: Int){
+    fun getUsersWithinDistance(distanceInKilometers: Int) {
         val lat = CurrentUser.locLat
         val lng = CurrentUser.locLng
         val center = GeoLocation(lat ?: 59.334591, lng ?: 18.063240)
@@ -134,24 +101,31 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         queryForUsersByGeoHash(tasks, center, radiusInM)
     }
 
-    private fun getListOfDbQueries(radiusInM: Int, center: GeoLocation):  MutableList<Task<QuerySnapshot>>{
+    private fun getListOfDbQueries(
+        radiusInM: Int,
+        center: GeoLocation
+    ): MutableList<Task<QuerySnapshot>> {
 
-            // Get all surrounding geo hashes within radius
-            val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM.toDouble())
-            val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
-            // Query for all users with the same hash as in the list
-            for (b in bounds) {
-                val query = db.collection("users")
-                    .orderBy("geoHash")
-                    .startAt(b.startHash)
-                    .endAt(b.endHash)
-                    .limit(30)
-                tasks.add(query.get())
-            }
-            return tasks
+        // Get all surrounding geo hashes within radius
+        val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM.toDouble())
+        val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
+        // Query for all users with the same hash as in the list
+        for (b in bounds) {
+            val query = db.collection("users")
+                .orderBy("geoHash")
+                .startAt(b.startHash)
+                .endAt(b.endHash)
+                .limit(30)
+            tasks.add(query.get())
+        }
+        return tasks
     }
 
-    private fun queryForUsersByGeoHash(tasks: MutableList<Task<QuerySnapshot>>, center: GeoLocation, radiusInM: Int){
+    private fun queryForUsersByGeoHash(
+        tasks: MutableList<Task<QuerySnapshot>>,
+        center: GeoLocation,
+        radiusInM: Int
+    ) {
         Tasks.whenAllComplete(tasks)
             .addOnSuccessListener {
                 val matchingDocuments: MutableList<DocumentSnapshot> = ArrayList()
@@ -178,10 +152,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
     }
 
-    private fun createUsersAndFilRecycler(matchingDocuments: MutableList<DocumentSnapshot>){
+    private fun createUsersAndFilRecycler(matchingDocuments: MutableList<DocumentSnapshot>) {
         val loggedInUserID = FirebaseAuth.getInstance().currentUser?.uid
         searchList.clear()
-        for (document in matchingDocuments){
+        for (document in matchingDocuments) {
 
             val user = document.toObject<User>()
             if (user != null && user.userID != loggedInUserID) {
@@ -195,9 +169,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
 
-
-
-    private fun filterListOnInterestCategory(listToFilter: MutableList<User>):List<User>{
+    private fun filterListOnInterestCategory(listToFilter: MutableList<User>): List<User> {
 
         val filteredList = if (selectedCategories.isEmpty() && selectedGenders.isEmpty()) {
             listToFilter.toList() // Returns a copy of the original list if no filers is selected
@@ -222,19 +194,17 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             tempList.toList() // Returnera den filtrerade listan
         }
 
-        Log.d("!!!", "Filtered list size: ${filteredList.size}")
         return filteredList
     }
 
-    private fun filterListOnInterestName(listToFilter: List<User>): List<User>{
+    private fun filterListOnInterestName(listToFilter: List<User>): List<User> {
 
         val interestName = etvSearch.text.toString()
-        if (interestName.isEmpty()){
+        if (interestName.isEmpty()) {
             return listToFilter
-        }
-        else {
+        } else {
             val filteredList = listToFilter.filter { user ->
-                user.interests?.any {interest ->
+                user.interests?.any { interest ->
                     interest?.name?.lowercase()?.contains(interestName.lowercase()) ?: false
                 } == true
             }
@@ -242,10 +212,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
-    private fun setListInRecyclerView(categoryFilterChanged: Boolean){
+    private fun setListInRecyclerView(categoryFilterChanged: Boolean) {
 
         listInRecyclerView.clear()
-        if (categoryFilterChanged){
+        if (categoryFilterChanged) {
             listAfterCategoryFilter.clear()
             listAfterCategoryFilter = filterListOnInterestCategory(searchList).toMutableList()
         }
@@ -272,11 +242,16 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         tilSearch = view.findViewById(R.id.tilSearchInterest)
         rvSearchList.layoutManager = LinearLayoutManager(view.context)
         rvSearchList.adapter = adapter
-        rvSearchList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        rvSearchList.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                DividerItemDecoration.VERTICAL
+            )
+        )
         tabFriends.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    when(tab.position) {
+                    when (tab.position) {
                         0 -> {
                             distanceChip.visibility = View.VISIBLE
                             filterChip.visibility = View.VISIBLE
@@ -284,25 +259,32 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
                             etvSearch.setText(searchString)
                             tilSearch.hint = "Search Interest"
                             setListInRecyclerView(false)
-                            adapter = SearchListAdapter(requireContext(), listInRecyclerView, this@SearchFragment)
+                            adapter = SearchListAdapter(
+                                requireContext(),
+                                listInRecyclerView,
+                                this@SearchFragment
+                            )
                             rvSearchList.adapter = adapter
                             tvNoSearchResult.visibility = View.INVISIBLE
                             CurrentUser.tabFriendItem = 0
                         }
+
                         1 -> {
                             distanceChip.visibility = View.GONE
                             filterChip.visibility = View.GONE
                             onMyFriends = true
                             filterList(filterString)
-                            adapter = SearchListAdapter(view.context, friendsList, this@SearchFragment)
+                            adapter =
+                                SearchListAdapter(view.context, friendsList, this@SearchFragment)
                             rvSearchList.adapter = adapter
                             etvSearch.setText(filterString)
                             tilSearch.hint = "Search Friend"
                             tvNoSearchResult.visibility = View.INVISIBLE
                             CurrentUser.tabFriendItem = 1
                         }
+
                         else -> {
-                            Log.d("!!!", "no tab")
+
                         }
                     }
                 }
@@ -334,9 +316,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         distanceChip.text = "Distance: ${distanceSet.toInt()} km"
 
         distanceChip.setOnClickListener {
-            Log.d("!!!", "Chip chip")
 
-            //Fråga om permission
             val dialogFragment = DistanceMapDialogFragment(distanceSet)
             dialogFragment.setDistanceSliderListener(this)
             dialogFragment.show(parentFragmentManager, "distanceDialogFragment")
@@ -349,11 +329,11 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     override fun onResume() {
         super.onResume()
-        Log.d("!!!", CurrentUser.tabFriendItem.toString())
         tabFriends.getTabAt(CurrentUser.tabFriendItem)?.select()
     }
-    private fun addTextChangeListener(){
-        etvSearch.addTextChangedListener(object : TextWatcher{
+
+    private fun addTextChangeListener() {
+        etvSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Not using
             }
@@ -363,22 +343,18 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             }
 
             override fun afterTextChanged(s: Editable?) {
-                Log.d("!!!", onMyFriends.toString())
                 val textInSearchField = s.toString().lowercase().trim()
-                if(onMyFriends) {
+                if (onMyFriends) {
                     filterString = textInSearchField
                     filterList(textInSearchField)
-//                    friendsList.filter { it.contains(s.toString(), ignoreCase = true)}
-                }else {
+                } else {
                     searchString = textInSearchField
                     setListInRecyclerView(false)
                 }
 
             }
-
         })
     }
-
 
 
     private fun openDialogFragment() {
@@ -386,7 +362,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         dialogFragment.show(parentFragmentManager, "SignInDialogFragment")
     }
 
-    private fun openFilterDialog(){
+    private fun openFilterDialog() {
 
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_category_filter)
@@ -422,7 +398,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         dialog.show()
     }
 
-    private fun clearFilterChips(categoryChips: MutableList<Chip>, genderChips: List<Chip>){
+    private fun clearFilterChips(categoryChips: MutableList<Chip>, genderChips: List<Chip>) {
         selectedCategories.clear()
         categoryChips.forEach { checkBox ->
             checkBox.isChecked = false
@@ -434,7 +410,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
 
-    private fun createCategoryChips(chipGroup:ChipGroup ): MutableList<Chip>{
+    private fun createCategoryChips(chipGroup: ChipGroup): MutableList<Chip> {
         val categoryChips = mutableListOf<Chip>()
         val inflater = LayoutInflater.from(requireContext())
         CategoryManager.categories.forEach { (category, colorID) ->
@@ -443,7 +419,10 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             val backgroundColor = ContextCompat.getColor(requireContext(), colorID)
             chip.chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
 
-            val textColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryTextColorID(category))
+            val textColor = ContextCompat.getColor(
+                requireContext(),
+                CategoryManager.getCategoryTextColorID(category)
+            )
             chip.setTextColor(textColor)
             chip.isChecked = selectedCategories.contains(category)
             categoryChips.add(chip)
@@ -452,7 +431,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         return categoryChips
     }
 
-    private fun createGenderChips(chipGroup: ChipGroup): MutableList<Chip>{
+    private fun createGenderChips(chipGroup: ChipGroup): MutableList<Chip> {
         val genderChips = mutableListOf<Chip>()
         val inflater = LayoutInflater.from(requireContext())
         genders.forEach { gender ->
@@ -466,7 +445,11 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         return genderChips
     }
 
-    private fun setCategoryFilter(categoryChips: List<Chip>, genderChips: List<Chip>, dialog: Dialog){
+    private fun setCategoryFilter(
+        categoryChips: List<Chip>,
+        genderChips: List<Chip>,
+        dialog: Dialog
+    ) {
         selectedCategories.clear()
         categoryChips.forEach { chip ->
             if (chip.isChecked)
@@ -475,7 +458,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
         selectedGenders.clear()
         genderChips.forEach { chip ->
-            if (chip.isChecked){
+            if (chip.isChecked) {
                 selectedGenders.add(chip.text.toString())
             }
         }
@@ -484,18 +467,17 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         dialog.dismiss()
 
     }
-    private fun setFilterChipState(){
+
+    private fun setFilterChipState() {
         filterChip.isChecked = selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()
-        val numberOfFilters = if (selectedGenders.size + selectedCategories.size == 0){
-            ""
-        }else{
-            (selectedGenders.size + selectedCategories.size).toString()
-        }
+        val numberOfFilters =
+            if (selectedGenders.size + selectedCategories.size == 0) {
+                ""
+            } else {
+                (selectedGenders.size + selectedCategories.size).toString()
+            }
         filterChip.text = "${resources.getString(R.string.filter)} $numberOfFilters "
-
-        Log.d("!!!", "FilterChipState: ${selectedGenders.isNotEmpty() || selectedCategories.isNotEmpty()}")
     }
-
 
 
     companion object {
@@ -524,7 +506,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     override fun onSendMessageListener(user: User) {
         val uid = user.userID
-        if(uid != null) {
+        if (uid != null) {
             val action =
                 SearchFragmentDirections.actionSearchFragmentToChatFragment(uid)
             findNavController().navigate(action)
@@ -533,7 +515,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     override fun goToUser(user: User, card: ConstraintLayout) {
         val uid = user.userID
-        if(uid != null) {
+        if (uid != null) {
             val extra = FragmentNavigatorExtras(card to uid)
             val action =
                 SearchFragmentDirections.actionSearchFragmentToFriendProfileFragment(uid)
@@ -541,10 +523,8 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
         }
     }
 
-    override fun onSignInSuccess() { //MÅSTE FIXA SÅ DET UPPDATERAS NÄR MAN LOGGAR IN
-        //adapter.notifyDataSetChanged()
+    override fun onSignInSuccess() {
         getUsersWithinDistance(distanceSet.toInt())
-        Log.d("!!!", "onSigntInSuccess @ SearchFragment")
     }
 
     override fun onSignInFailure() {
@@ -552,8 +532,6 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
     }
 
     override fun onSignUpPress() {
-
-        Log.d("!!!", "SignUpPress")
 
     }
 
@@ -564,15 +542,16 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
 
     }
 
-    private fun addFriendsListToRecycler(listToAdd: List<User>){
+    private fun addFriendsListToRecycler(listToAdd: List<User>) {
         friendsList.clear()
         friendsList.addAll(listToAdd)
         adapter.notifyDataSetChanged()
         tvNoSearchResult.isVisible = listToAdd.isEmpty()
 
     }
-    private fun filterList(textToSearchFor: String?){
-        if (textToSearchFor != null){
+
+    private fun filterList(textToSearchFor: String?) {
+        if (textToSearchFor != null) {
             val filteredList = CurrentUser.friendsList?.filter { user ->
                 user.firstName?.lowercase()?.contains(textToSearchFor) ?: false
             }
@@ -580,7 +559,7 @@ class SearchFragment : Fragment(), SearchListAdapter.MyAdapterListener,  SignInR
             if (filteredList != null) {
                 addFriendsListToRecycler(filteredList)
             }
-        }else{
+        } else {
             CurrentUser.friendsList?.let { addFriendsListToRecycler(it) }
         }
     }

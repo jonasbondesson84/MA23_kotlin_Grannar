@@ -3,7 +3,6 @@ package com.example.grannar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,8 +56,6 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
     }
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,23 +72,14 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
         rvMessageList.layoutManager = LinearLayoutManager(view.context)
         rvMessageList.addItemDecoration(
-            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL
+            DividerItemDecoration(
+                requireContext(), LinearLayoutManager.VERTICAL
             )
         )
         adapter = MessageAdapter(view.context, chatsInRecyclerView, this)
         rvMessageList.adapter = adapter
 
-//        if(args.userID != null) {
-//            val action =
-//                MessagesFragmentDirections.actionMessagesFragmentToChatFragment(args.userID.toString())
-//            findNavController().navigate(action)
-//        }
-
-
-
-
         getMessagesForUser()
-
 
         adapter.onUserClick = {
 
@@ -100,10 +88,6 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
         etvSearchMessage = view.findViewById(R.id.etvMessageSearchFriends)
         addTextChangeListener()
-
-
-
-
 
         return view
     }
@@ -115,34 +99,33 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
     private fun getMessagesForUser() {
         db.collection("messages").whereArrayContains("participants", CurrentUser.userID.toString())
-            .addSnapshotListener {documents, error ->
-                if(error != null) {
-                    Log.d("!!!", "Error getting messages: $error")
+            .addSnapshotListener { documents, error ->
+                if (error != null) {
                     return@addSnapshotListener
                 }
-                documents?.forEach {document ->
-                    Log.d("!!!", document.data.toString())
+                documents?.forEach { document ->
                     val participants = document["participants"] as List<String>
-                    val fromID = participants.filterNot { it == CurrentUser.userID.toString() }.first()
+                    val fromID =
+                        participants.filterNot { it == CurrentUser.userID.toString() }.first()
                     db.collection("users").document(fromID)
                         .get()
-                        .addOnSuccessListener{userDoc ->
+                        .addOnSuccessListener { userDoc ->
                             val userInfo = userDoc.toObject<User>()
-                            Log.d("!!!", userInfo?.firstName.toString())
 
                             db.collection("messages").document(document.id).collection("message")
                                 .orderBy("timeStamp", Query.Direction.DESCENDING)
                                 .limit(1)
-                                .addSnapshotListener{document, e ->
+                                .addSnapshotListener { document, e ->
                                     if (document != null) {
-                                        for(doc in document.documentChanges) {
+                                        for (doc in document.documentChanges) {
                                             val lastMessage = doc.document.toObject<Message>()
                                             userInfo?.let {
-                                            val chat = Chats(
-                                                fromUser = it,
-                                                lastMessage = lastMessage
-                                            )
-                                                val chatContainingFromID = chats.find { chat -> chat.fromUser.userID == fromID }
+                                                val chat = Chats(
+                                                    fromUser = it,
+                                                    lastMessage = lastMessage
+                                                )
+                                                val chatContainingFromID =
+                                                    chats.find { chat -> chat.fromUser.userID == fromID }
                                                 if (chatContainingFromID != null) {
                                                     val index = chats.indexOf(chatContainingFromID)
                                                     chats[index].lastMessage = lastMessage
@@ -150,104 +133,44 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
                                                     chats.add(chat)
                                                 }
 
+                                            }
                                         }
-                                        }
-                                        }
-                                    chats.sortByDescending { it.lastMessage.timeStamp  }
-                                    //addChatsToRecycler(chats)
-                                    filterList(etvSearchMessage.text.toString())
-                                    Log.d("!!!", "New Chats sett in add chats!!!!")
-                                   // adapter.notifyDataSetChanged()
-                                            Log.d("!!!", document?.documentChanges.toString())
                                     }
+                                    chats.sortByDescending { it.lastMessage.timeStamp }
+
+                                    filterList(etvSearchMessage.text.toString())
                                 }
-
-
-                    }
+                        }
 
                 }
 
-
-    }
-
-
-//        private fun getMessagesForUser() {
-//        db.collection("messages").whereArrayContains("participants", CurrentUser.userID.toString())
-//            .get()
-//            .addOnSuccessListener {documents ->
-//                for(document in documents) {
-//                    Log.d("!!!", document.id)
-//                    val participants = document["participants"] as List<String>
-//                    val fromID = participants.filterNot { it == CurrentUser.userID.toString() }.first()
-//                    db.collection("users").document(fromID).get()
-//                        .addOnSuccessListener {userDoc->
-//                            val userInfo = userDoc.toObject<User>()
-//                            chats.clear()
-//
-//                            db.collection("messages").document(document.id).collection("message")
-//                                .orderBy("timeStamp", Query.Direction.DESCENDING)
-//                                .limit(1)
-//                                .get()
-//                                .addOnSuccessListener {messages->
-//                                    Log.d("!!!", messages.toString())
-//                                    for(message in messages) {
-//                                        val lastMessage = message.toObject<Message>()
-//                                        userInfo?.let {
-//                                            Chats(
-//                                                fromUser = it,
-//                                                lastMessage = lastMessage
-//                                            )
-//                                        }?.let { chats.add(it) }
-//                                    }
-//
-//                                    chats.sortByDescending { it.lastMessage.timeStamp  }
-//                                    adapter.notifyDataSetChanged()
-//                                }
-//
-//                        }
-//
-//                    Log.d("!!!", fromID.toString())
-//                    Log.d("!!!", chats.size.toString())
-//                    //chats.add(document)
-//                }
-//
-//            }
-//    }
-    fun getUserData(userID: String) {
-        val db = Firebase.firestore
-        var selectedUser: User? = null
-        db.collection("users").document(userID).get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    val selectedUser = document.toObject<User>()
-
-                }
             }
 
     }
 
-    private fun addChatsToRecycler(listToAdd: List<Chats>){
+    private fun addChatsToRecycler(listToAdd: List<Chats>) {
         chatsInRecyclerView.clear()
         chatsInRecyclerView.addAll(listToAdd)
         adapter.notifyDataSetChanged()
         tvNoSearchResult.isVisible = listToAdd.isEmpty()
 
     }
-    private fun filterList(textToSearchFor: String?){
-        if (textToSearchFor != null){
+
+    private fun filterList(textToSearchFor: String?) {
+        if (textToSearchFor != null) {
             val filteredList = chats.filter { chat ->
                 chat.fromUser.firstName?.lowercase()?.contains(textToSearchFor) ?: false
             }
 
             addChatsToRecycler(filteredList)
-        }else{
+        } else {
             addChatsToRecycler(chats)
         }
     }
 
 
-    private fun addTextChangeListener(){
-        etvSearchMessage.addTextChangedListener(object : TextWatcher{
+    private fun addTextChangeListener() {
+        etvSearchMessage.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Not using this
             }
@@ -288,7 +211,7 @@ class MessagesFragment : Fragment(), MessageAdapter.MyAdapterListener {
 
     override fun goToMessage(user: User, card: ConstraintLayout) {
         val uid = user.userID
-        if(uid != null) {
+        if (uid != null) {
             val extra = FragmentNavigatorExtras(card to uid)
             val action =
                 MessagesFragmentDirections.actionMessagesFragmentToChatFragment(uid)

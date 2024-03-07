@@ -2,12 +2,8 @@ package com.example.grannar
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavGraphNavigator
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,15 +23,13 @@ interface SignInResultListener {
 
     fun onSignUpPress()
 }
+
 class MainActivity : AppCompatActivity(), SignInResultListener {
 
     private var pendingDestination: NavDestination? = null
     private var pendingDestinationID: Int? = null
     private var pendingBundle: Bundle? = null
     private lateinit var signUpLauncher: ActivityResultLauncher<Intent>
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +42,7 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
             var badge = bottomNav.getOrCreateBadge(R.id.messagesFragment)
             badge.isVisible = (unread > 0)
 // An icon only badge will be displayed unless a number or text is set:
-            badge.number = CurrentUser.unreadMessageNumber.value!!  // or badge.text = "New"
-
+            badge.number = CurrentUser.unreadMessageNumber.value!!
 
         }
 
@@ -66,7 +58,6 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
                 }
             }
 
-
         //Gets logged in users from database and save it to CurrentUser
         val auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
@@ -75,12 +66,10 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
 
         bottomNav.setupWithNavController(navController)
         setMenuItems(bottomNav, navController)
-
     }
 
-
-    private fun setMenuItems(bottomNav: BottomNavigationView, navController: NavController){
-        bottomNav.setOnItemSelectedListener{ item ->
+    private fun setMenuItems(bottomNav: BottomNavigationView, navController: NavController) {
+        bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.searchFragment -> {
                     navController.navigate(R.id.searchFragment)
@@ -116,14 +105,13 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
                     }
                 }
 
-
                 else -> false
 
             }
         }
     }
 
-    private fun openSignInDialog(){
+    private fun openSignInDialog() {
         val dialogFragment = SignInDialogFragment()
         dialogFragment.show(supportFragmentManager, "SignInDialogFragment")
     }
@@ -131,13 +119,12 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
 
     private fun isLoggedIn(): Boolean {
         val auth = FirebaseAuth.getInstance()
-        if (auth.currentUser != null){
+        if (auth.currentUser != null) {
             return true
-        }
-        else return false
+        } else return false
     }
 
-    private fun clearPendingDestination(){
+    private fun clearPendingDestination() {
         pendingDestinationID = null
         pendingDestination = null
         pendingBundle = null
@@ -148,13 +135,11 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         val navController = findNavController(R.id.nav_host_fragment)
         val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
             ?.childFragmentManager?.fragments?.firstOrNull { it.isVisible } as? Fragment
-        if (currentFragment is SearchFragment){
-            //currentFragment.getUsersWithinDistance(5)
+        if (currentFragment is SearchFragment) {
             currentFragment.onSignInSuccess()
         }
         pendingDestinationID?.let { navController.navigate(it, pendingBundle) }
         clearPendingDestination()
-
 
     }
 
@@ -167,20 +152,5 @@ class MainActivity : AppCompatActivity(), SignInResultListener {
         signUpLauncher.launch(intent)
 
     }
-
-
-    fun Fragment.hideKeyboard() {
-        view?.let { activity?.hideKeyboard(it) }
-    }
-
-    fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
-
-    fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
 
 }
