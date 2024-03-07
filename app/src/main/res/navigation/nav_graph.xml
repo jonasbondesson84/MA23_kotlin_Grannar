@@ -8,13 +8,13 @@
         android:id="@+id/searchFragment"
         android:name="com.example.grannar.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_friendProfileFragment"
-            app:destination="@id/friendProfileFragment" >
+            app:destination="@id/friendProfileFragment">
             <argument
                 android:name="userID"
-                app:argType="string" >
+                app:argType="string">
 
             </argument>
         </action>
@@ -23,19 +23,17 @@
             app:destination="@id/searchFragment" />
         <action
             android:id="@+id/action_searchFragment_to_chatFragment"
-            app:destination="@id/chatFragment" >
+            app:destination="@id/chatFragment">
             <argument
                 android:name="userID"
-                app:argType="string"
-                 />
+                app:argType="string" />
         </action>
         <action
             android:id="@+id/action_searchFragment_to_messagesFragment"
             app:destination="@id/messagesFragment">
             <argument
                 android:name="userID"
-                app:argType="string"
-                />
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
@@ -47,90 +45,86 @@
         android:id="@+id/friendProfileFragment"
         android:name="com.example.grannar.FriendProfileFragment"
         android:label="fragment_friend_profile"
-        tools:layout="@layout/fragment_friend_profile" >
+        tools:layout="@layout/fragment_friend_profile">
         <argument
             android:name="userID"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_friendProfileFragment_to_chatFragment"
-            app:destination="@id/chatFragment" >
+            app:destination="@id/chatFragment">
             <argument
                 android:name="userID"
-                app:argType="string"
-                />
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/messagesFragment"
         android:name="com.example.grannar.MessagesFragment"
         android:label="fragment_messages"
-        tools:layout="@layout/fragment_messages" >
+        tools:layout="@layout/fragment_messages">
         <argument
             android:name="userID"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_messagesFragment_to_chatFragment"
-            app:destination="@id/chatFragment" >
+            app:destination="@id/chatFragment">
             <argument
                 android:name="userID"
-                app:argType="string"
-                />
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.grannar.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" >
+        tools:layout="@layout/fragment_chat">
         <argument
             android:name="userID"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_chatFragment_to_messagesFragment"
             app:destination="@id/messagesFragment" />
         <action
             android:id="@+id/action_chatFragment_to_friendProfileFragment"
-            app:destination="@id/friendProfileFragment" >
+            app:destination="@id/friendProfileFragment">
             <argument
                 android:name="userID"
-                app:argType="string"
-                />
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/eventFragment"
         android:name="com.example.grannar.EventFragment"
         android:label="fragment_event"
-        tools:layout="@layout/fragment_event" >
+        tools:layout="@layout/fragment_event">
         <argument
             android:name="eventID"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_eventFragment_to_eventInfoFragment"
             app:destination="@id/eventInfoFragment">
             <argument
                 android:name="eventID"
-                app:argType="string"
-                />
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/eventInfoFragment"
         android:name="com.example.grannar.EventInfoFragment"
         android:label="fragment_event_info"
-        tools:layout="@layout/fragment_event_info" >
+        tools:layout="@layout/fragment_event_info">
         <argument
             android:name="eventID"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
     </fragment>
 </navigation>

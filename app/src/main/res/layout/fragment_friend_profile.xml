@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FriendProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayoutFriend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayoutFriend"
         android:transitionGroup="true">
-
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
@@ -19,19 +18,17 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topFriendProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
-                app:navigationIcon="@drawable/baseline_arrow_back_24"
-                 app:menu="@menu/friends_info_menu"/>
+                app:menu="@menu/friends_info_menu"
+                app:navigationIcon="@drawable/baseline_arrow_back_24" />
 
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/relativeLayout"
@@ -44,7 +41,6 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
@@ -81,9 +77,9 @@
                     android:id="@+id/friendProfileNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="13dp"
+                    android:layout_marginStart="13dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
                     android:text="Name"
                     android:textSize="25sp"
                     android:textStyle="bold" />
@@ -178,7 +174,6 @@
             app:layout_constraintTop_toBottomOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintVertical_bias="1.0" />
 
-
         <ImageView
             android:id="@+id/frameImageView"
             android:layout_width="0dp"
@@ -210,9 +205,9 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest1Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SmallInterestChip.NonClickable"
             android:layout_marginStart="28dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
@@ -220,10 +215,10 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest2Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            style="@style/SmallInterestChip.NonClickable"
             app:layout_constraintEnd_toStartOf="@+id/friendsInterest3Chip"
             app:layout_constraintHorizontal_bias="0.509"
             app:layout_constraintStart_toEndOf="@+id/friendsInterest1Chip"
@@ -231,9 +226,9 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest3Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SmallInterestChip.NonClickable"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="40dp"
             app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
@@ -241,20 +236,20 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest4Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
-            style="@style/SmallInterestChip.NonClickable"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintTop_toBottomOf="@+id/friendsInterest1Chip" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest5Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            style="@style/SmallInterestChip.NonClickable"
             app:layout_constraintEnd_toStartOf="@+id/friendsInterest6Chip"
             app:layout_constraintHorizontal_bias="0.509"
             app:layout_constraintStart_toEndOf="@+id/friendsInterest4Chip"
@@ -262,14 +257,13 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/friendsInterest6Chip"
+            style="@style/SmallInterestChip.NonClickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            style="@style/SmallInterestChip.NonClickable"
             android:layout_marginEnd="40dp"
             app:layout_constraintEnd_toEndOf="@+id/squareInterestConstraintLayout"
             app:layout_constraintTop_toBottomOf="@+id/friendsInterest3Chip" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

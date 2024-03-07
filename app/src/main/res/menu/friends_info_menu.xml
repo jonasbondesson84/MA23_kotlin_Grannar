@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">>
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/addFriendMenu"
-        android:title="Add friend"
         android:icon="@drawable/friend_request"
-        app:showAsAction="always"
-        />
+        android:title="Add friend"
+        app:showAsAction="always" />
     <item
         android:id="@+id/removeFriendMenu"
-        android:title="Remove friend"
         android:icon="@drawable/baseline_delete_24"
-        app:showAsAction="always"
-        />
+        android:title="Remove friend"
+        app:showAsAction="always" />
     <item
         android:id="@+id/sendMessageMenu"
-        android:title="Send Message"
         android:icon="@drawable/message_icon"
-        app:showAsAction="always"
-        />
+        android:title="Send Message"
+        app:showAsAction="always" />
 </menu>

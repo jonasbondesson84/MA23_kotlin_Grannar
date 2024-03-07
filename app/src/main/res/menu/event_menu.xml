@@ -3,21 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/editEvent"
-        android:title="Edit"
         android:icon="@drawable/baseline_edit"
-        app:showAsAction="always"
-        />
+        android:title="Edit"
+        app:showAsAction="always" />
     <item
         android:id="@+id/deleteEvent"
-        android:title="Delete"
         android:icon="@drawable/baseline_delete_24"
-        app:showAsAction="always"
-        />
+        android:title="Delete"
+        app:showAsAction="always" />
     <item
         android:id="@+id/saveEvent"
-        android:title="Save"
         android:icon="@drawable/baseline_favorite_border_24"
-        app:showAsAction="always"
-        />
+        android:title="Save"
+        app:showAsAction="always" />
 
 </menu>

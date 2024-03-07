@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constMessage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ChatFragment"
-    android:id="@+id/constMessage"
-    android:transitionGroup="true">
+    android:transitionGroup="true"
+    tools:context=".ChatFragment">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/md_theme_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/md_theme_background"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topChat"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/baseline_arrow_back_24"
-            />
+            app:navigationIcon="@drawable/baseline_arrow_back_24" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,38 +31,26 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
 
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="4dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/avatar"
         app:civ_border_color="#E0E0E0"
-        app:civ_border_width="2dp"/>
-<!--    <ImageView-->
-<!--        android:id="@+id/imChatImage"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/avatar"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/appBarLayout"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        android:layout_marginTop="4dp"-->
-
-<!--        />-->
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:srcCompat="@drawable/avatar" />
 
     <TextView
         android:id="@+id/tvChatName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@id/imChatImage"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="24dp"
         android:layout_marginTop="12dp"
+        android:text="TextView"
         android:textSize="24sp"
         android:textStyle="bold"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imChatImage" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChatMessages"
@@ -75,43 +62,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvChatName" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etvChatMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnSendMessage"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
         android:hint="Message"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
-        app:startIconContentDescription="Search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnSendMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:startIconContentDescription="Search">
 
-        >
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etvMessageText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"/>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etvMessageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnSendMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etvChatMessage"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="12dp"
-        android:text="Send"
         android:enabled="false"
-        />
-
-
+        android:text="Send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etvChatMessage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

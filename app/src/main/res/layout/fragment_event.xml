@@ -16,7 +16,6 @@
         android:text="Find Events"
         android:textSize="24sp"
         android:textStyle="bold"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,7 +28,6 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintStart_toStartOf="@+id/tvFindEvents"
         app:layout_constraintTop_toBottomOf="@id/tvFindEvents"
         app:startIconContentDescription="Search"
@@ -39,7 +37,8 @@
             android:id="@+id/etvSearchEvent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences"/>
+            android:inputType="textCapSentences" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.chip.Chip
@@ -52,28 +51,27 @@
         app:layout_constraintTop_toBottomOf="@+id/tilSearchEvent" />
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tabEvent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distanceEventChip"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/distanceEventChip">
+
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upcoming"
-            />
+            android:text="Upcoming" />
+
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Map"
-            />
+            android:text="Map" />
+
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Events"
-            />
+            android:text="My Events" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -87,17 +85,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tabEvent" />
 
     <com.google.android.gms.maps.MapView
+        android:id="@+id/eventMapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/eventMapView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabEvent" />
-
-
-
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"
@@ -108,8 +102,7 @@
         android:clickable="true"
         android:src="@drawable/baseline_add_black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tvEmptyEventList"
