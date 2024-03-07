@@ -1,6 +1,5 @@
 package com.example.grannar
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.Exclude
 import java.time.LocalDate
@@ -85,7 +84,7 @@ data class User(
 
     fun showDistanceSpan(): String {
         val distance = round(calculateDistance())
-        Log.d("!!!", distance.toString())
+
         when (distance) {
             in 0.0..9.9 -> {
                 return "0 - 10 km"
