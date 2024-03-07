@@ -42,9 +42,6 @@ interface OnDataEditPassListener {
 
 class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
 
     private lateinit var firstNameEditText: TextInputEditText
     private lateinit var surNameEditText: TextInputEditText
@@ -55,7 +52,6 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
     private var lng: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationImageButton: ImageButton
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,7 +84,6 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
             }
         }
 
-
         birthdayEditText.apply {
             setOnClickListener {
                 showDatePickerDialog()
@@ -111,11 +106,10 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         }
 
         return rootView
-
     }
 
     private fun updateUserInformation() {
-
+      
         val userID = CurrentUser.userID
         if (userID != null) {
             val db = Firebase.firestore
@@ -131,6 +125,7 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
                 R.id.radioButtonNonBinary -> "Non-Binary"
                 else -> null
             }
+
             val userUpdates = mutableMapOf<String, Any>()
             if (firstName.isNotBlank()) userUpdates["firstName"] = firstName
             if (surname.isNotBlank()) userUpdates["surname"] = surname
@@ -172,13 +167,16 @@ class EditProfileDialogFragment : DialogFragment(), OnDataEditPassListener {
         val defaultDateTimestamp = birthDate?.time ?: calendar.timeInMillis
         val calenderConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
+
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Birthdate")
                 .setCalendarConstraints(calenderConstraints.build())
                 .setSelection(defaultDateTimestamp)
                 .build()
+
         datePicker.show(childFragmentManager, "datePicker");
+
         datePicker.addOnPositiveButtonClickListener {
             if (datePicker.selection != null) {
                 val selectedDate = Date(datePicker.selection as Long)
