@@ -3,7 +3,6 @@ package com.example.grannar
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +26,6 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 
-//import android.net.Uri
-//import androidx.activity.result.ActivityResultLauncher
-//import androidx.activity.contract.ActivityResultContracts
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,6 +39,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class FriendProfileFragment : Fragment() {
     val db = com.google.firebase.ktx.Firebase.firestore
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -55,11 +52,9 @@ class FriendProfileFragment : Fragment() {
     private var interestChips = mutableListOf<Chip>()
     private var selectedUser: User? = null
     private lateinit var appBar: MaterialToolbar
-    private lateinit var image: ImageView
     private lateinit var layout: ConstraintLayout
     private lateinit var personalImageView: ImageView
     private lateinit var ivFriendProfile: ImageView
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,24 +81,21 @@ class FriendProfileFragment : Fragment() {
         tvAboutMe = view.findViewById(R.id.friendProfileAbout_meTextView)
         personalImageView = view.findViewById(R.id.personalImageView)
 
+        interestChips.clear() // Need clear to remove old items when user uses back button
         interestChips.add(view.findViewById(R.id.friendsInterest1Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest2Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest3Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest4Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest5Chip))
         interestChips.add(view.findViewById(R.id.friendsInterest6Chip))
+
         layout = view.findViewById(R.id.linearLayoutFriend)
         val friendUid = args.userID
         if (friendUid != null) {
             getUserInfo(friendUid)
             layout.transitionName = friendUid
         }
-//            image = view.findViewById(R.id.friendProfileImageView)
-//        image.transitionName = friendUid
-//
-//        val animation = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-//        sharedElementEnterTransition = animation
-//        sharedElementReturnTransition = animation
+
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment
             duration = 500
@@ -120,40 +112,38 @@ class FriendProfileFragment : Fragment() {
 
         ivFriendProfile = view.findViewById(R.id.friendProfileImageView)
 
-
-
-
-         appBar = view.findViewById(R.id.topFriendProfile)
+        appBar = view.findViewById(R.id.topFriendProfile)
 
         appBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        appBar.setOnMenuItemClickListener {menuItem->
-            when(menuItem.itemId) {
-                R.id.removeFriendMenu-> {
+        appBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.removeFriendMenu -> {
                     showDeleteDialog(view)
                     true
                 }
+
                 R.id.addFriendMenu -> {
                     addFriend()
                     true
                 }
+
                 R.id.sendMessageMenu -> {
                     sendMessage()
                     true
                 }
+
                 else -> false
             }
         }
-
-
 
         return view
     }
 
     private fun sendMessage() {
         val uid = selectedUser?.userID
-        if(uid != null) {
+        if (uid != null) {
             val action =
                 FriendProfileFragmentDirections.actionFriendProfileFragmentToChatFragment(uid)
             findNavController().navigate(action)
@@ -161,26 +151,12 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun addFriend() {
-//        val userMap = mapOf(
-//            "userID" to selectedUser?.userID,
-//            "firstName" to selectedUser?.firstName,
-//            "surname" to selectedUser?.surname,
-//            "age" to selectedUser?.age,
-//            "location" to selectedUser?.location,
-//            "email" to selectedUser?.email,
-//            "gender" to selectedUser?.gender,
-//            "profileImageURL" to selectedUser?.profileImageURL,
-//            "interests" to selectedUser?.interests,
-//            "aboutMe" to selectedUser?.aboutMe,
-//            "imageURLs" to selectedUser?.imageURLs,
-//            "friendsList" to selectedUser?.friendsList
-//
-//        )
+
         db.collection("users").document(CurrentUser.userID.toString()).update(
             "friendsUIDList",
             FieldValue.arrayUnion(selectedUser?.userID)
         ).addOnCompleteListener {
-            Log.d("!!!", "saved friend")
+
             CurrentUser.friendsUIDList.add(selectedUser?.userID.toString())
             selectedUser?.let { it1 -> setIcons(it1) }
         }
@@ -188,27 +164,11 @@ class FriendProfileFragment : Fragment() {
 
     private fun removeFriend() {
 
-//
-//        val userMap = mapOf(
-//            "userID" to (selectedUser?.userID),
-//            "firstName" to (selectedUser?.firstName ),
-//            "surname" to (selectedUser?.surname),
-//            "age" to (selectedUser?.age),
-//            "location" to (selectedUser?.location ),
-//            "email" to (selectedUser?.email ),
-//            "gender" to selectedUser?.gender,
-//            "profileImageURL" to selectedUser?.profileImageURL,
-//            "interests" to selectedUser?.interests,
-//            "aboutMe" to selectedUser?.aboutMe,
-//            "imageURLs" to selectedUser?.imageURLs,
-//            "friendsList" to selectedUser?.friendsList
-//
-//        )
         db.collection("users").document(CurrentUser.userID.toString()).update(
             "friendsUIDList",
             FieldValue.arrayRemove(selectedUser?.userID)
         ).addOnSuccessListener {
-            Log.d("!!!", "friend removed")
+
             CurrentUser.friendsUIDList.remove(selectedUser?.userID.toString())
             selectedUser?.let { it1 -> setIcons(it1) }
         }
@@ -230,12 +190,12 @@ class FriendProfileFragment : Fragment() {
     }
 
     private fun setIcons(selectedUser: User) {
-        if(CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
-            Log.d("!!!", "Contains: true")
+        if (CurrentUser.friendsUIDList.contains(selectedUser.userID.toString())) {
+
             appBar.menu.getItem(0).isVisible = false
             appBar.menu.getItem(1).isVisible = true
         } else {
-            Log.d("!!!", "Contains: false")
+
             appBar.menu.getItem(1).isVisible = false
             appBar.menu.getItem(0).isVisible = true
         }
@@ -264,35 +224,36 @@ class FriendProfileFragment : Fragment() {
 
     }
 
-    private fun showProfileImage(selectedUser: User){
+    private fun showProfileImage(selectedUser: User) {
 
-        if (selectedUser.profileImageURL != null){
+        if (selectedUser.profileImageURL != null) {
             Glide.with(this)
                 .load(selectedUser.profileImageURL)
                 .placeholder(R.drawable.img_album)
                 .error(R.drawable.img_album)
                 .into(ivFriendProfile)
         }
-
-
-
     }
 
-
-    private fun showInterests(interests: List<Interest>?){
-        interests?.forEachIndexed{ index, interest ->
+    private fun showInterests(interests: List<Interest>?) {
+        interests?.forEachIndexed { index, interest ->
 
             interestChips[index].text = interest.name
-            val backgroundColor = ContextCompat.getColor(requireContext(), CategoryManager.getCategoryColorId(interest.category))
+            val backgroundColor = ContextCompat.getColor(
+                requireContext(),
+                CategoryManager.getCategoryColorId(interest.category)
+            )
             interestChips[index].chipBackgroundColor = ColorStateList.valueOf(backgroundColor)
             interestChips[index].isVisible = true
             interestChips[index].setTextColor(
-                AppCompatResources.getColorStateList(requireContext(), CategoryManager.getCategoryTextColorID(interest.category)))
+                AppCompatResources.getColorStateList(
+                    requireContext(),
+                    CategoryManager.getCategoryTextColorID(interest.category)
+                )
+            )
 
         }
     }
-
-
 
 
     companion object {

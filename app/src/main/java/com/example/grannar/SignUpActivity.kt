@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -202,7 +201,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         btnSignUp = findViewById(R.id.signUpButton)
 
         genderRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            Log.d("!!!", "what")
+
             imGenderCheck.visibility = View.VISIBLE
             btnSignUp.isEnabled = checkIfAllDataIsCorrect()
         }
@@ -216,7 +215,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         }
 
         findViewById<ImageButton>(R.id.locationImageButton).setOnClickListener {
-            Log.d("!!!", "Button clicked")
+
             getPermission()
         }
 
@@ -292,7 +291,7 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
     }
 
     private fun showMapDialogFragment() {
-        Log.d("!!!", "the")
+
         val dialogFragment = MapDialogFragment()
         val args = Bundle()
         userLocation?.let { args.putDouble("lat", it.latitude) }
@@ -388,6 +387,6 @@ class SignUpActivity : AppCompatActivity(), OnDataPassListener {
         location = data
         imLocationCheck.visibility = View.VISIBLE
         btnSignUp.isEnabled = checkIfAllDataIsCorrect()
-        Log.d("!!!", "Data från dialogfragment ${location}")
+
     }
 }
